@@ -62,13 +62,13 @@ export function parseUri(uri: string): ParsedUri {
 
   // Check for org scope (starts with ~)
   if (parts[idx]?.startsWith("~")) {
-    org = parts[idx].slice(1);
+    org = parts[idx]!.slice(1);
     scopeLevel = "org";
     idx++;
 
     // Check for team scope (also starts with ~)
     if (parts[idx]?.startsWith("~")) {
-      team = parts[idx].slice(1);
+      team = parts[idx]!.slice(1);
       scopeLevel = "team";
       idx++;
     }
