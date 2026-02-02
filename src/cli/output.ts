@@ -159,7 +159,8 @@ export function formatCloneResult(result: {
   const lines: string[] = [];
 
   if (result.cloned.length > 0) {
-    lines.push(green(`✓ Cloned ${result.cloned.length} repositor${result.cloned.length > 1 ? "ies" : "y"}:`));
+    const repoWord = result.cloned.length === 1 ? "repository" : "repositories";
+    lines.push(green(`✓ Cloned ${result.cloned.length} ${repoWord}:`));
     for (const name of result.cloned) {
       lines.push(`  ${name}`);
     }
@@ -194,18 +195,21 @@ export function formatSyncResult(result: {
   const lines: string[] = [];
 
   if (result.created.length > 0) {
-    lines.push(green(`✓ Created ${result.created.length} director${result.created.length > 1 ? "ies" : "y"}:`));
+    const dirWord = result.created.length === 1 ? "directory" : "directories";
+    lines.push(green(`✓ Created ${result.created.length} ${dirWord}:`));
     for (const name of result.created) {
       lines.push(`  ${name}`);
     }
   }
 
   if (result.fetched.length > 0) {
-    lines.push(green(`✓ Fetched ${result.fetched.length} repositor${result.fetched.length > 1 ? "ies" : "y"}`));
+    const repoWord = result.fetched.length === 1 ? "repository" : "repositories";
+    lines.push(green(`✓ Fetched ${result.fetched.length} ${repoWord}`));
   }
 
   if (result.orphaned.length > 0) {
-    lines.push(yellow(`! Found ${result.orphaned.length} orphaned repositor${result.orphaned.length > 1 ? "ies" : "y"}:`));
+    const repoWord = result.orphaned.length === 1 ? "repository" : "repositories";
+    lines.push(yellow(`! Found ${result.orphaned.length} orphaned ${repoWord}:`));
     for (const name of result.orphaned) {
       lines.push(`  ${name}`);
     }
