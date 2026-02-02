@@ -108,32 +108,34 @@ Implementation tasks for the core library.
 
 ---
 
-## Phase 5: Memory System
+## Phase 5: Memory System ✓
 
-**Source:** Copy from `tyvi-mcp/src/memory/`
+**Status:** Implemented from scratch based on type definitions
 
-### Files to Move
-- [ ] `storage.ts` — Memory read/write
-- [ ] `strength.ts` — Strength calculation with decay
-- [ ] `reinforcement.ts` — Memory reinforcement logic
-- [ ] `similarity.ts` — Similarity detection between memories
-- [ ] `query.ts` — Memory queries
-- [ ] `lifecycle.ts` — Create, update, prune operations
-- [ ] `logs.ts` — Log entry management
-- [ ] `paths.ts` — Path utilities for memory files
-- [ ] `mod.ts` — Module exports
+### Files Implemented
+- [x] `storage.ts` — Memory read/write with TOML
+- [x] `strength.ts` — Strength calculation with exponential decay
+- [x] `reinforcement.ts` — Memory reinforcement logic
+- [x] `similarity.ts` — Similarity detection between memories (Jaccard + time proximity)
+- [x] `query.ts` — Memory queries with filtering and sorting
+- [x] `lifecycle.ts` — Create, update, prune operations
+- [x] `logs.ts` — Log entry management for memory events
+- [x] `paths.ts` — Path utilities for memory files
+- [x] `mod.ts` — Module exports with public API
 
 ### Public API
-- [ ] `recallMemories(dataPath, query)` — Query memories
-- [ ] `listMemories(dataPath, filters)` — List memory summaries
-- [ ] `recordMemory(dataPath, input)` — Create new memory
-- [ ] `reinforceMemory(dataPath, id, reason)` — Reinforce existing
-- [ ] `pruneMemories(dataPath)` — Remove weak memories
+- [x] `recallMemories(dataPath, query)` — Query memories
+- [x] `listMemories(dataPath, filters)` — List memory summaries
+- [x] `recordMemory(dataPath, input)` — Create new memory
+- [x] `reinforceMemory(dataPath, id, reason)` — Reinforce existing
+- [x] `pruneMemories(dataPath)` — Remove weak memories
 
-### After Move
-- [ ] Update imports
-- [ ] Export from main mod.ts
-- [ ] Move tests from tyvi-mcp/tests/memory/
+### Integration
+- [x] Update imports to use `../types/mod.ts`
+- [x] Export from main mod.ts
+- [x] Comprehensive tests written (storage, strength, reinforcement, similarity, query, lifecycle)
+- [x] Manual verification confirms decay formula accuracy
+- [x] Documentation added (docs/MEMORY.md)
 
 ---
 
