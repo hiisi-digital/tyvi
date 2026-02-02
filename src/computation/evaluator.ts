@@ -102,6 +102,18 @@ export function evaluate(
             throw new Error("Division by zero");
           }
           return left / right;
+        case ">":
+          return left > right ? 1 : 0;
+        case ">=":
+          return left >= right ? 1 : 0;
+        case "<":
+          return left < right ? 1 : 0;
+        case "<=":
+          return left <= right ? 1 : 0;
+        case "==":
+          return left === right ? 1 : 0;
+        case "!=":
+          return left !== right ? 1 : 0;
       }
       break;
     }

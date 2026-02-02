@@ -15,9 +15,11 @@ import { tokenize } from "./lexer.ts";
  *
  * Grammar:
  * ```
- * expression  := term (('+' | '-') term)*
- * term        := factor (('*' | '/') factor)*
- * factor      := '-' factor | primary
+ * expression  := comparison
+ * comparison  := term (('>' | '>=' | '<' | '<=' | '==' | '!=') term)?
+ * term        := factor (('+' | '-') factor)*
+ * factor      := unary (('*' | '/') unary)*
+ * unary       := '-' unary | primary
  * primary     := number | reference | function | '(' expression ')'
  * reference   := identifier '.' identifier
  * function    := identifier '(' args? ')'
@@ -30,6 +32,7 @@ import { tokenize } from "./lexer.ts";
  * @example
  * ```ts
  * const ast = parse("trait.caution * 0.5 + 10");
+ * const comparisonAst = parse("trait.caution > 50");
  * ```
  */
 export function parse(input: string): Expression {
@@ -57,6 +60,53 @@ class Parser {
   }
 
   private expression(): Expression {
+    return this.comparison();
+  }
+
+  private comparison(): Expression {
+    let left = this.additive();
+
+    if (
+      this.match("gt", "gte", "lt", "lte", "eq", "neq")
+    ) {
+      const tokenType = this.previous().type;
+      let operator: ">" | ">=" | "<" | "<=" | "==" | "!=";
+      switch (tokenType) {
+        case "gt":
+          operator = ">";
+          break;
+        case "gte":
+          operator = ">=";
+          break;
+        case "lt":
+          operator = "<";
+          break;
+        case "lte":
+          operator = "<=";
+          break;
+        case "eq":
+          operator = "==";
+          break;
+        case "neq":
+          operator = "!=";
+          break;
+        default:
+          throw new Error(`Unknown comparison operator: ${tokenType}`);
+      }
+
+      const right = this.additive();
+      left = {
+        type: "binary",
+        operator,
+        left,
+        right,
+      };
+    }
+
+    return left;
+  }
+
+  private additive(): Expression {
     let left = this.term();
 
     while (this.match("plus", "minus")) {

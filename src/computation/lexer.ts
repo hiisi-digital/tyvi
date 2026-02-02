@@ -20,6 +20,12 @@ export type TokenType =
   | "lparen"
   | "rparen"
   | "comma"
+  | "gt"
+  | "gte"
+  | "lt"
+  | "lte"
+  | "eq"
+  | "neq"
   | "eof";
 
 /**
@@ -133,6 +139,44 @@ export function tokenize(input: string): Token[] {
       case ",":
         tokens.push({ type: "comma", value: ",", position: start });
         i++;
+        break;
+      case ">":
+        if (input[i + 1] === "=") {
+          tokens.push({ type: "gte", value: ">=", position: start });
+          i += 2;
+        } else {
+          tokens.push({ type: "gt", value: ">", position: start });
+          i++;
+        }
+        break;
+      case "<":
+        if (input[i + 1] === "=") {
+          tokens.push({ type: "lte", value: "<=", position: start });
+          i += 2;
+        } else {
+          tokens.push({ type: "lt", value: "<", position: start });
+          i++;
+        }
+        break;
+      case "=":
+        if (input[i + 1] === "=") {
+          tokens.push({ type: "eq", value: "==", position: start });
+          i += 2;
+        } else {
+          throw new Error(
+            `Unexpected character '${char}' at position ${start} in expression: ${input}. Did you mean '=='?`
+          );
+        }
+        break;
+      case "!":
+        if (input[i + 1] === "=") {
+          tokens.push({ type: "neq", value: "!=", position: start });
+          i += 2;
+        } else {
+          throw new Error(
+            `Unexpected character '${char}' at position ${start} in expression: ${input}`
+          );
+        }
         break;
       default:
         throw new Error(

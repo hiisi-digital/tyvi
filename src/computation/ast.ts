@@ -37,11 +37,11 @@ export interface Reference {
 }
 
 /**
- * Binary operation (+, -, *, /).
+ * Binary operation (+, -, *, /, >, >=, <, <=, ==, !=).
  */
 export interface BinaryOp {
   type: "binary";
-  operator: "+" | "-" | "*" | "/";
+  operator: "+" | "-" | "*" | "/" | ">" | ">=" | "<" | "<=" | "==" | "!=";
   left: Expression;
   right: Expression;
 }

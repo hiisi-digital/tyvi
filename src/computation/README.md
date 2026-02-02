@@ -209,6 +209,12 @@ Reference values by category and name:
 - `*` - Multiplication
 - `/` - Division
 - `-expr` - Unary negation
+- `>` - Greater than
+- `>=` - Greater than or equal
+- `<` - Less than
+- `<=` - Less than or equal
+- `==` - Equal
+- `!=` - Not equal
 
 ### Functions
 
@@ -226,7 +232,12 @@ avg(trait.caution, trait.detail-focus)
 max(skill.a, skill.b, skill.c)
 clamp(trait.boldness + 20, 0, 100)
 (trait.a + trait.b) / 2
+trait.detail-focus > 70
+skill.api-design >= 80
+trait.caution != 50
 ```
+
+Comparison operators return 1 for true, 0 for false. This allows them to be used in conditions for quirks and phrases.
 
 ## Error Handling
 
