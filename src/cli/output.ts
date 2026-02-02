@@ -99,7 +99,7 @@ export function formatStatus(
           }
 
           if (parts.length > 0) {
-            info = dim(` (${parts.join(" ")})` );
+            info = dim(` (${parts.join(" ")})`);
           }
         }
 
