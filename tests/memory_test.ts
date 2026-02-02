@@ -17,6 +17,7 @@ import {
   findSimilarMemories
 } from "../src/memory/mod.ts";
 import { readMemory, listMemoryIds } from "../src/memory/storage.ts";
+import { createMemory } from "../src/memory/lifecycle.ts";
 import type { Memory, MemoryInput } from "../src/types/mod.ts";
 
 const FIXTURES_PATH = join(Deno.cwd(), "tests", "fixtures");
@@ -123,7 +124,8 @@ Deno.test("reinforcement - increases memory strength", async () => {
   const tempDir = await Deno.makeTempDir();
   
   try {
-    // Create a memory
+    // Create a memory with date 2 days ago (to pass 24hr reinforcement check)
+    const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
     const input: MemoryInput = {
       person: "ctx://person/test",
       content: {
@@ -137,11 +139,8 @@ Deno.test("reinforcement - increases memory strength", async () => {
       initial: 0.5
     };
     
-    const memory = await recordMemory(tempDir, input);
+    const memory = await createMemory(tempDir, input, twoDaysAgo);
     const initialStrength = memory.strength.current;
-    
-    // Wait a bit to ensure reinforcement is allowed
-    await new Promise(resolve => setTimeout(resolve, 10));
     
     // Reinforce it
     const result = await reinforceMemory(tempDir, memory.id, "Test reinforcement");
@@ -236,7 +235,8 @@ Deno.test("query - limit results", async () => {
 // ============================================================================
 
 Deno.test("list - returns summaries", async () => {
-  const summaries = await listMemories(MEMORIES_PATH);
+  // Use includeWeak since fixtures have old dates (strength decayed)
+  const summaries = await listMemories(FIXTURES_PATH, { includeWeak: true });
   
   assert(summaries.length >= 3);
   
@@ -249,8 +249,10 @@ Deno.test("list - returns summaries", async () => {
 });
 
 Deno.test("list - filter by topic", async () => {
-  const summaries = await listMemories(MEMORIES_PATH, {
-    topic: "security"
+  // Use includeWeak since fixtures have old dates (strength decayed)
+  const summaries = await listMemories(FIXTURES_PATH, {
+    topic: "security",
+    includeWeak: true
   });
   
   assert(summaries.length >= 2);
