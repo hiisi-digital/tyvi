@@ -1,0 +1,16 @@
+[phrase]
+id = "phrase.direct-clarity"
+
+[phrase.description]
+name = "Direct Clarity"
+summary = "Prefers straightforward, unambiguous communication"
+
+[phrase.examples]
+variations = [
+  "States conclusions upfront",
+  "Uses concrete examples",
+  "Avoids hedging language"
+]
+
+[phrase.usage]
+note = "Most effective when precision is valued over diplomacy"
