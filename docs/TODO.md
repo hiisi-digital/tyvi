@@ -20,7 +20,7 @@ Implementation tasks for the core library.
 - [x] Set up TypeScript strict mode
 - [x] Create mod.ts entry point
 - [x] Add LICENSE (MPL-2.0)
-- [ ] Set up test infrastructure
+- [x] Set up test infrastructure
 - [ ] Configure CI workflow
 
 ### Core Types
@@ -42,86 +42,71 @@ Implementation tasks for the core library.
 
 ---
 
-## Phase 2: Computation Engine
+## Phase 2: Computation Engine ✓
 
-**Source:** Copy from `tyvi-mcp/src/computation/`
+### Files Implemented
+- [x] `lexer.ts` — Expression tokenizer (Moo-based)
+- [x] `parser.ts` — Recursive descent parser
+- [x] `ast.ts` — AST node types
+- [x] `evaluator.ts` — Expression evaluator with context
+- [x] `dependencies.ts` — Dependency analysis and cycle detection
+- [x] `rules.ts` — Rule application
+- [x] `mod.ts` — Module exports
+- [x] `README.md` — Documentation
 
-### Files to Move
-- [ ] `lexer.ts` — Expression tokenizer
-- [ ] `parser.ts` — Expression parser  
-- [ ] `ast.ts` — AST node types
-- [ ] `evaluator.ts` — Expression evaluator
-- [ ] `dependencies.ts` — Dependency analysis
-- [ ] `rules.ts` — Rule application
-- [ ] `quirks.ts` — Quirk auto-assignment
-- [ ] `phrases.ts` — Phrase matching
-- [ ] `mod.ts` — Module exports
-- [ ] `README.md` — Documentation
-
-### After Move
-- [ ] Update imports to use `../types/mod.ts`
-- [ ] Export from main `mod.ts`
-- [ ] Move computation tests from tyvi-mcp/tests/computation/
-- [ ] Ensure all tests pass
+### Tests
+- [x] Lexer tests (19 tests)
+- [x] Parser tests (36 tests)
+- [x] Evaluator tests (78 tests)
+- [x] Dependencies tests (27 tests)
 
 ---
 
-## Phase 3: Atoms System
+## Phase 3: Atoms System ✓
 
-**Source:** Copy from `tyvi-mcp/src/atoms/`
+### Files Implemented
+- [x] `traits.ts` — Load trait axis definitions
+- [x] `skills.ts` — Load skill definitions
+- [x] `quirks.ts` — Load quirk definitions
+- [x] `phrases.ts` — Load phrase definitions
+- [x] `experience.ts` — Load experience definitions
+- [x] `stacks.ts` — Load stack definitions
+- [x] `mod.ts` — Module exports with `loadAtoms()` function
 
-### Files to Create/Move
-- [ ] `traits.ts` — Load trait axis definitions
-- [ ] `skills.ts` — Load skill definitions
-- [ ] `quirks.ts` — Load quirk definitions
-- [ ] `phrases.ts` — Load phrase definitions
-- [ ] `experience.ts` — Load experience definitions
-- [ ] `stacks.ts` — Load stack definitions
-- [ ] `mod.ts` — Module exports with `loadAtoms()` function
-
-### Implementation
-- [ ] Parse TOML files from data/atoms/ directories
-- [ ] Return `Atoms` type from types/atoms.ts
-- [ ] Handle missing files gracefully
-- [ ] Cache loaded atoms
+### Tests
+- [x] Atoms loading tests (14 tests)
 
 ---
 
-## Phase 4: People System
+## Phase 4: People System ✓
 
-**Source:** Copy from `tyvi-mcp/src/people/`
-
-### Files to Move
-- [ ] `computation.ts` — Full person computation pipeline
-- [ ] `loading.ts` — Load person TOML files
-- [ ] `mod.ts` — Module exports
+### Files Implemented
+- [x] `computation.ts` — Person computation pipeline
+- [x] `loading.ts` — Load person TOML files
+- [x] `mod.ts` — Module exports
 
 ### Public API
-- [ ] `loadPerson(dataPath, id)` — Load raw person definition
-- [ ] `computePerson(dataPath, id)` — Compute all derived values
-- [ ] `listPeople(dataPath)` — List all people summaries
+- [x] `loadPerson(dataPath, id)` — Load raw person definition
+- [x] `computePerson(dataPath, id)` — Compute all derived values
+- [x] `listPeople(dataPath)` — List all people summaries
 
-### After Move
-- [ ] Update imports
-- [ ] Export from main mod.ts
-- [ ] Move tests from tyvi-mcp/tests/people/
+### Tests
+- [x] People system tests (7 tests)
 
 ---
 
 ## Phase 5: Memory System ✓
 
-**Status:** Implemented from scratch based on type definitions
-
 ### Files Implemented
 - [x] `storage.ts` — Memory read/write with TOML
 - [x] `strength.ts` — Strength calculation with exponential decay
 - [x] `reinforcement.ts` — Memory reinforcement logic
-- [x] `similarity.ts` — Similarity detection between memories (Jaccard + time proximity)
+- [x] `similarity.ts` — Similarity detection (Jaccard + time proximity)
 - [x] `query.ts` — Memory queries with filtering and sorting
 - [x] `lifecycle.ts` — Create, update, prune operations
-- [x] `logs.ts` — Log entry management for memory events
-- [x] `paths.ts` — Path utilities for memory files
-- [x] `mod.ts` — Module exports with public API
+- [x] `logs.ts` — Log entry management
+- [x] `paths.ts` — Path utilities
+- [x] `mod.ts` — Module exports
 
 ### Public API
 - [x] `recallMemories(dataPath, query)` — Query memories
@@ -130,35 +115,28 @@ Implementation tasks for the core library.
 - [x] `reinforceMemory(dataPath, id, reason)` — Reinforce existing
 - [x] `pruneMemories(dataPath)` — Remove weak memories
 
-### Integration
-- [x] Update imports to use `../types/mod.ts`
-- [x] Export from main mod.ts
-- [x] Comprehensive tests written (storage, strength, reinforcement, similarity, query, lifecycle)
-- [x] Manual verification confirms decay formula accuracy
-- [x] Documentation added (docs/MEMORY.md)
+### Tests
+- [x] Memory system tests (15+ tests)
+- [x] Manual decay formula verification
 
 ---
 
-## Phase 6: Context Resolution
+## Phase 6: Context Resolution ✓
 
-**Source:** Copy from `tyvi-mcp/src/context/`
-
-### Files to Move/Create
-- [ ] `uri.ts` — Parse ctx:// URIs
-- [ ] `scope.ts` — Scope hierarchy and chain building
-- [ ] `resolution.ts` — Resolve references with fallback
-- [ ] `search.ts` — Search context by query
-- [ ] `mod.ts` — Module exports
+### Files Implemented
+- [x] `uri.ts` — Parse ctx:// URIs
+- [x] `scope.ts` — Scope hierarchy and chain building
+- [x] `resolution.ts` — Resolve references with fallback
+- [x] `search.ts` — Search context by query
+- [x] `mod.ts` — Module exports
 
 ### Public API
-- [ ] `parseUri(uri)` — Parse ctx:// URI into components
-- [ ] `resolveContext(dataPath, uri)` — Resolve with fallback
-- [ ] `searchContext(dataPath, query)` — Search all context
+- [x] `parseUri(uri)` — Parse ctx:// URI into components
+- [x] `resolveContext(dataPath, uri)` — Resolve with fallback
+- [x] `searchContext(dataPath, query)` — Search all context
 
-### After Move
-- [ ] Update imports
-- [ ] Export from main mod.ts
-- [ ] Write tests for URI parsing and resolution
+### Tests
+- [x] Context resolution tests (40 tests)
 
 ---
 
@@ -186,35 +164,20 @@ Implementation tasks for the core library.
 
 ---
 
-## Phase 8: Schemas & Testing Prep
+## Phase 8: Schemas
 
-### Schemas
 - [ ] Copy schemas/ from tyvi-mcp
 - [ ] Add devspace.schema.json
 - [ ] Add inventory.schema.json
 
 ---
 
-## Phase 9: Testing
+## Phase 9: Cache System
 
-### Test Infrastructure
-- [ ] Create tests/ directory structure
-- [ ] Set up test utilities and fixtures
-- [ ] Configure test tasks in deno.json
-
-### Test Suites
-- [ ] Computation engine tests
-- [ ] Atoms loading tests
-- [ ] People computation tests
-- [ ] Memory system tests
-- [ ] Context resolution tests
-- [ ] Devspace operation tests
-
-### Integration Tests
-- [ ] Full person computation pipeline
-- [ ] Memory lifecycle (create, reinforce, prune)
-- [ ] Context fallback chain
-- [ ] Load/unload workflow
+- [ ] Implement cache storage
+- [ ] Content hashing
+- [ ] Cache validation
+- [ ] Export from mod.ts
 
 ---
 
@@ -237,18 +200,26 @@ Implementation tasks for the core library.
 
 ---
 
+## Test Summary
+
+**Total: 247 passing tests**
+
+| Module | Tests |
+|--------|-------|
+| Computation (lexer) | 19 |
+| Computation (parser) | 36 |
+| Computation (evaluator) | 78 |
+| Computation (dependencies) | 27 |
+| Atoms | 14 |
+| People | 7 |
+| Memory | 15 |
+| Context | 40 |
+| Config | 9 |
+| Workspace | 2 |
+
+---
+
 ## Notes
-
-### Migration Order
-
-The recommended order for migration is:
-
-1. **Computation engine** — No dependencies on other tyvi-mcp code
-2. **Atoms loading** — Depends only on types
-3. **People system** — Depends on computation, atoms
-4. **Memory system** — Depends only on types
-5. **Context resolution** — Depends only on types
-6. **Wire up devspace** — Uses all systems
 
 ### Design Principles
 
@@ -256,6 +227,7 @@ The recommended order for migration is:
 - **Clean exports**: Only expose public API from mod.ts
 - **Testable**: All modules independently testable
 - **No opinions**: Configuration drives behavior
+- **No built-in data**: All data comes from user projects
 
 ### Dependencies
 
@@ -271,6 +243,7 @@ No external dependencies.
 ## Related Documents
 
 - `docs/DESIGN.md` — Architecture decisions
-- `docs/TODO.DEPRECATION.md` — Migration tracking
+- `docs/MEMORY.md` — Memory system documentation
+- `docs/IMPLEMENTATION_SUMMARY.md` — Memory implementation details
 - `tyvi-cli/docs/DESIGN.md` — CLI interface design
 - `tyvi-mcp/docs/DESIGN.md` — MCP server design
