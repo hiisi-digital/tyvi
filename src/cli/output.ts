@@ -125,6 +125,7 @@ export function formatStatus(
 
 /**
  * Format a date as relative time.
+ * Note: Month calculation uses 30-day approximation for simplicity.
  */
 function formatTimeAgo(date: Date): string {
   const now = new Date();
@@ -134,6 +135,7 @@ function formatTimeAgo(date: Date): string {
   const diffHour = Math.floor(diffMin / 60);
   const diffDay = Math.floor(diffHour / 24);
 
+  // Use 30-day approximation for months
   if (diffDay > 30) {
     const months = Math.floor(diffDay / 30);
     return `${months} month${months > 1 ? "s" : ""} ago`;

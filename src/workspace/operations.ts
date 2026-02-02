@@ -267,6 +267,9 @@ export async function addRepo(
   const escapedName = escapeTOMLString(repoName);
   const escapedUrl = escapeTOMLString(url);
 
+  // Ensure content ends with newline before appending
+  const contentWithNewline = content.endsWith("\n") ? content : content + "\n";
+
   // Append new repo entry
   const newEntry = `\n[[repos]]\nname = "${escapedName}"\nremotes = [{ name = "origin", url = "${escapedUrl}" }]\n`;
 
@@ -276,10 +279,10 @@ export async function addRepo(
     const escapedCategory = escapeTOMLString(options.category);
     await Deno.writeTextFile(
       inventoryPath,
-      content + newEntry + `local_path = "${escapedLocalPath}"\ncategory = "${escapedCategory}"\n`,
+      contentWithNewline + newEntry + `local_path = "${escapedLocalPath}"\ncategory = "${escapedCategory}"\n`,
     );
   } else {
-    await Deno.writeTextFile(inventoryPath, content + newEntry);
+    await Deno.writeTextFile(inventoryPath, contentWithNewline + newEntry);
   }
 }
 
@@ -315,6 +318,9 @@ export async function removeRepo(
     }
 
     // Remove from inventory.toml
+    // Note: This is a simple text-based removal. The repo name validation
+    // ensures names contain only safe characters (alphanumeric, hyphens, underscores),
+    // so we can safely use string matching without worrying about escaped quotes.
     const inventoryPath = join(workspace.rootPath, namespace, "inventory.toml");
     const content = await Deno.readTextFile(inventoryPath);
 
@@ -332,7 +338,7 @@ export async function removeRepo(
       } else if (line.trim().startsWith("name =") && inRepoSection) {
         const match = line.match(/name\s*=\s*"([^"]+)"/);
         if (match) {
-          currentRepoName = match[1];
+          currentRepoName = match[1] || "";
         }
       } else if (line.trim().startsWith("[[") || line.trim().startsWith("[meta")) {
         inRepoSection = false;
