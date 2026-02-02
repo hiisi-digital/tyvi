@@ -1,208 +1,307 @@
-# TODO - tyvi
+# tyvi TODO
 
-Config-driven workspace orchestration for multi-repo development environments.
+Implementation tasks for the core library.
 
-## Phase 1: Foundation
+---
+
+## Legend
+
+- `[ ]` - Not started
+- `[~]` - In progress
+- `[x]` - Complete
+- `[!]` - Blocked / needs attention
+
+---
+
+## Phase 1: Foundation (Partial)
 
 ### Project Setup
-- [ ] Initialize deno.json with package metadata
-- [ ] Set up imports for @std/path, @std/fs, @std/toml, @std/fmt
-- [ ] Create basic module structure
-- [ ] Add LICENSE (MPL-2.0)
-- [ ] Write README.md with usage examples
+- [x] Initialize deno.json with dependencies
+- [x] Set up TypeScript strict mode
+- [x] Create mod.ts entry point
+- [x] Add LICENSE (MPL-2.0)
+- [ ] Set up test infrastructure
+- [ ] Configure CI workflow
 
-### Type Definitions (`src/types.ts`, `src/config/types.ts`)
-- [ ] Define WorkspaceConfig interface (tyvi.toml shape)
-- [ ] Define InventoryConfig interface (inventory.toml shape)
-- [ ] Define RepoDefinition interface
-- [ ] Define RemoteDefinition interface
-- [ ] Define RepoStatus enum (active, stable, wip, archived, needs-review)
-- [ ] Define CloneStatus type (cloned, missing, partial)
-- [ ] Define GitStatus type (clean, dirty, ahead, behind)
+### Core Types (from tyvi-mcp)
+- [ ] Move types.ts from tyvi-mcp
+- [ ] Organize into src/types/ directory
+- [ ] Split into atoms.ts, people.ts, memory.ts, devspace.ts, context.ts
+- [ ] Export all from types/mod.ts
 
-### Config Parsing (`src/config/`)
-- [ ] Implement tyvi.toml parser (`workspace.ts`)
-- [ ] Implement inventory.toml parser (`inventory.ts`)
-- [ ] Validate config against expected structure
-- [ ] Handle missing optional fields with defaults
-- [ ] Report clear errors for malformed config
+### JSON Schemas (from tyvi-mcp)
+- [ ] Move schemas/ from tyvi-mcp
+- [ ] Ensure all schemas are complete
+- [ ] Add devspace.schema.json
+- [ ] Add inventory.schema.json
 
-## Phase 2: Core Operations
+---
 
-### Workspace Discovery (`src/workspace/discovery.ts`)
-- [ ] Find tyvi.toml from current directory upward
-- [ ] Locate all inventory.toml files in namespace directories
-- [ ] Build workspace model from discovered config
-- [ ] Handle workspace not found gracefully
+## Phase 2: Computation Engine (from tyvi-mcp)
 
-### Workspace Operations (`src/workspace/operations.ts`)
-- [ ] Create directory structure from config
-- [ ] Move repos to correct locations
-- [ ] Detect orphaned repos (local but not in inventory)
-- [ ] Detect missing repos (in inventory but not cloned)
+### Move from tyvi-mcp
+- [ ] Move src/computation/ directory
+- [ ] Move src/parsing/ directory (if separate)
+- [ ] Update imports
 
-### Git Operations (`src/git/`)
-- [ ] Clone repository to specified path (`clone.ts`)
-- [ ] Get repository status (clean, dirty, ahead, behind) (`status.ts`)
-- [ ] Fetch all remotes (`remote.ts`)
-- [ ] Get current branch name
-- [ ] Get last commit date
-- [ ] Check if directory is a git repo
+### Computation Components
+- [x] Lexer (tokenize expressions)
+- [x] Parser (build AST)
+- [x] AST node types
+- [x] Evaluator (compute values)
+- [x] Dependency analysis
+- [x] Rule application engine
+- [x] Quirk auto-assignment
+- [x] Phrase matching
 
-## Phase 3: CLI Commands
+### Tests
+- [ ] Move computation tests from tyvi-mcp
+- [ ] Ensure all pass after move
 
-### CLI Framework (`src/cli/mod.ts`)
-- [ ] Set up command parsing (use @std/cli or manual)
-- [ ] Handle global flags (--help, --version, --quiet, --verbose)
-- [ ] Route to subcommand handlers
-- [ ] Consistent error handling and exit codes
+---
 
-### Output Formatting (`src/cli/output.ts`)
-- [ ] Status table formatting with alignment
-- [ ] Color coding for status indicators
-- [ ] Progress indicators for long operations
-- [ ] JSON output mode
-- [ ] Quiet mode (minimal output)
+## Phase 3: People System (from tyvi-mcp)
 
-### Command: init (`src/cli/commands/init.ts`)
-- [ ] Create tyvi.toml with defaults
-- [ ] Create namespace directories
-- [ ] Create template inventory.toml files
-- [ ] Interactive mode for guided setup
-- [ ] Minimal mode for quick setup
+### Move from tyvi-mcp
+- [ ] Move src/people/ directory
+- [ ] Move src/atoms/ directory
+- [ ] Update imports
 
-### Command: status (`src/cli/commands/status.ts`)
-- [ ] Show all repos with clone and git status
-- [ ] Filter by namespace pattern
-- [ ] Filter by repo name pattern
-- [ ] Filter by status (--dirty, --behind, --missing)
-- [ ] Summary line at end
+### People Components
+- [x] Person TOML loading
+- [x] Full computation pipeline
+- [ ] Person listing
+- [ ] Computed value caching
 
-### Command: clone (`src/cli/commands/clone.ts`)
-- [ ] Clone repos matching pattern
-- [ ] Clone by namespace/category
-- [ ] Clone all with --all flag
-- [ ] Filter by status (--status active)
-- [ ] Show progress during clone
-- [ ] Skip already cloned repos
+### Atom Loading
+- [ ] Trait axis loading
+- [ ] Skill definition loading
+- [ ] Quirk definition loading
+- [ ] Phrase atom loading
+- [ ] Experience loading
+- [ ] Stack loading
 
-### Command: sync (`src/cli/commands/sync.ts`)
-- [ ] Create missing directories
-- [ ] Move misplaced repos to correct location
-- [ ] Report orphaned repos
-- [ ] Optional --fetch to update all remotes
-- [ ] Optional --prune to remove orphaned repos
-- [ ] Dry run mode (--dry-run)
+### Tests
+- [ ] Move people tests from tyvi-mcp
+- [ ] Ensure all pass after move
 
-### Command: list (`src/cli/commands/list.ts`)
-- [ ] List all repos from inventory
-- [ ] Filter by cloned/missing status
-- [ ] JSON output format
-- [ ] Table output format
+---
 
-### Command: add (`src/cli/commands/add.ts`)
-- [ ] Parse git URL to extract repo info
-- [ ] Prompt for namespace/category if not specified
-- [ ] Add entry to inventory.toml
-- [ ] Optionally clone immediately
+## Phase 4: Memory System (from tyvi-mcp)
 
-### Command: remove (`src/cli/commands/remove.ts`)
-- [ ] Remove repo from inventory.toml
-- [ ] Optionally delete local clone (--delete)
-- [ ] Require confirmation for delete
+### Move from tyvi-mcp
+- [ ] Move src/memory/ directory
+- [ ] Update imports
 
-## Phase 4: Testing
+### Memory Components
+- [x] Storage (read/write)
+- [x] Strength calculation
+- [x] Reinforcement logic
+- [x] Similarity detection
+- [x] Query system
+- [x] Lifecycle (create, update, prune)
+- [x] Log management
+
+### Tests
+- [ ] Move memory tests from tyvi-mcp
+- [ ] Ensure all pass after move
+
+---
+
+## Phase 5: Context Resolution (from tyvi-mcp)
+
+### Move from tyvi-mcp
+- [ ] Move src/context/ directory
+- [ ] Update imports
+
+### Context Components
+- [ ] URI parsing (ctx://, model://, etc.)
+- [ ] Scope hierarchy (global → org → team)
+- [ ] Reference resolution
+- [ ] Fallback behavior
+- [ ] Provenance annotation
+
+### Tests
+- [ ] Move context tests from tyvi-mcp
+- [ ] Ensure all pass after move
+
+---
+
+## Phase 6: Devspace System (existing + new)
+
+### Config Parsing (existing)
+- [x] tyvi.toml parsing
+- [x] inventory.toml parsing
+- [ ] Add [devspace] section support
+- [ ] Add [devspace.git_policy] support
+- [ ] Add trusted_orgs parsing
+
+### Git Operations (existing)
+- [x] Check if directory is git repo
+- [x] Get repository status
+- [x] Get current branch
+- [x] Clone operations
+- [x] Fetch operations
+
+### State Management (new)
+- [ ] Create .state/ directory structure
+- [ ] Implement .state/lab.toml read/write
+- [ ] Implement .state/ext.toml read/write
+- [ ] Track loaded repos with timestamps
+
+### Load/Unload Operations (new)
+- [ ] Implement load operation
+- [ ] Clone to staging if missing
+- [ ] Move from staging to lab
+- [ ] Handle naming collisions
+- [ ] Update lab state
+- [ ] Implement unload operation
+- [ ] Check for uncommitted changes
+- [ ] Check for unpushed commits
+- [ ] Move from lab to staging
+- [ ] Update lab state
+
+### Git Restrictions (new)
+- [ ] Implement checkGitAllowed
+- [ ] Parse allowed_paths from config
+- [ ] Check path against allowed list
+- [ ] Implement getDevspaceHint
+- [ ] Implement findDevspaceRoot
+
+### External Repos (new)
+- [ ] Implement ext operation
+- [ ] Check trusted_orgs
+- [ ] Prompt for inventory addition (delegate to CLI)
+- [ ] Clone to .tmp/ext/
+- [ ] Track in .state/ext.toml
+
+---
+
+## Phase 7: Caching System
+
+### Cache Infrastructure
+- [ ] Create .cache/ directory structure
+- [ ] Binary serialization format (MessagePack?)
+- [ ] Cache file read/write
+- [ ] Cache metadata storage
+
+### Hash-Based Invalidation
+- [ ] File hashing utilities
+- [ ] Section-level hashing for TOML
+- [ ] Source hash storage
+- [ ] Hash comparison on access
+
+### Validation Schedule
+- [ ] Daily section hash check
+- [ ] Weekly full hash check
+- [ ] Monthly deep validation
+
+### Summary Caching
+- [ ] Person summary generation
+- [ ] Memory summary generation
+- [ ] Fast binary storage
+
+---
+
+## Phase 8: Public API
+
+### Export Design
+- [ ] Design clean public API surface
+- [ ] Export from mod.ts
+- [ ] Ensure internal modules not exposed
+- [ ] Document all exports with JSDoc
+
+### API Functions
+- [ ] Devspace: loadDevspace, load, unload, clone, sync
+- [ ] Devspace: checkGitAllowed, getDevspaceHint, findDevspaceRoot
+- [ ] People: loadPerson, computePerson, listPeople, loadAtoms
+- [ ] Memory: recallMemories, listMemories, recordMemory, reinforceMemory
+- [ ] Context: parseUri, resolveContext, searchContext
+
+---
+
+## Phase 9: Testing
 
 ### Unit Tests
-- [ ] `tests/config_test.ts` - Config parsing
-- [ ] `tests/workspace_test.ts` - Workspace operations
-- [ ] `tests/git_test.ts` - Git operations (with mocks)
-- [ ] `tests/cli_test.ts` - Command parsing
-
-### Test Fixtures
-- [ ] `tests/fixtures/valid-workspace/` - Complete workspace
-- [ ] `tests/fixtures/minimal-workspace/` - Minimal config
-- [ ] `tests/fixtures/invalid-config/` - Malformed config files
+- [ ] Types validation tests
+- [ ] Config parsing tests
+- [ ] Computation engine tests
+- [ ] Memory system tests
+- [ ] Context resolution tests
+- [ ] Devspace operation tests
 
 ### Integration Tests
-- [ ] Full init -> clone -> status workflow
-- [ ] Sync with moved repos
-- [ ] Add and remove repos
+- [ ] Full person computation
+- [ ] Memory lifecycle
+- [ ] Context fallback
+- [ ] Load/unload workflow
 
-## Phase 5: Documentation and Polish
+### Test Fixtures
+- [ ] Example devspace
+- [ ] Example atoms
+- [ ] Example people
+- [ ] Example memories
 
-### Documentation
-- [ ] Complete README with all commands
-- [ ] Document config file formats
-- [ ] Add examples for common workflows
-- [ ] Document error messages and recovery
+---
 
-### Polish
-- [ ] Ensure all tests pass
-- [ ] Type checking passes
-- [ ] Error messages are helpful
-- [ ] Output is readable and scannable
+## Phase 10: Documentation
 
-## CI/CD
+### Code Documentation
+- [ ] JSDoc for all public functions
+- [ ] Examples in doc comments
+- [ ] Type documentation
 
-- [ ] CI workflow (thin wrapper to reusable)
-- [ ] Release workflow (thin wrapper to reusable)
+### README
+- [ ] Installation instructions
+- [ ] Quick start guide
+- [ ] API overview
+- [ ] Link to detailed docs
 
-## Future Enhancements
+---
 
-### Watch Mode
-- [ ] Continuous status updates
-- [ ] Notify on status changes
+## Blocked
 
-### API Integration
-- [ ] GitHub API for repo discovery
-- [ ] GitLab API support
-- [ ] Auto-populate inventory from org
+These require completing the migration first:
 
-### Templates
-- [ ] Workspace templates
-- [ ] Share templates between users
+- [!] Remove CLI from tyvi (after tyvi-cli works)
+- [!] Public API finalization (after all modules moved)
+- [!] Full test suite (after all code moved)
 
-### Hooks
-- [ ] Pre/post clone hooks
-- [ ] Pre/post sync hooks
-
-### TUI Mode
-- [ ] Interactive repo browser
-- [ ] Status dashboard
-- [ ] Clone/sync with selection
+---
 
 ## Notes
 
+### Migration Order
+
+1. Types and schemas (foundation)
+2. Computation engine (no deps on other tyvi-mcp code)
+3. Atoms loading (depends on types)
+4. People system (depends on computation, atoms)
+5. Memory system (depends on types)
+6. Context resolution (depends on types)
+7. Wire up devspace to use all systems
+
 ### Design Principles
 
-- Config-driven; no magic
-- Clear error messages with recovery suggestions
-- No hidden state; all in config or git
-- Works offline; no required network calls except clone/fetch
+- **Core library**: No CLI code, no user interaction
+- **Clean exports**: Only expose public API from mod.ts
+- **Testable**: All modules independently testable
+- **No opinions**: Configuration drives behavior
 
 ### Dependencies
 
 Only Deno std library:
-- `@std/path` - Path utilities
-- `@std/fs` - File system utilities
-- `@std/toml` - TOML parsing
-- `@std/fmt` - Terminal formatting
+- `@std/path` — Path utilities
+- `@std/fs` — File system utilities
+- `@std/toml` — TOML parsing
 
-Do not add external dependencies without explicit approval.
+No external dependencies.
 
-### Output Style
+---
 
-Status output should be:
-- Scannable (aligned columns, clear indicators)
-- Informative (show relevant info, hide noise)
-- Actionable (suggest next steps)
+## Related Documents
 
-```
-@hiisi
-  viola/
-    viola ............... ✓ clean (main) 3 days ago
-    viola-cli ........... ✓ clean (main ↑2) 1 day ago
-
-Summary: 2 cloned, 0 dirty
-```
+- `docs/DESIGN.md` — Architecture decisions
+- `docs/TODO.DEPRECATION.md` — Migration tracking
+- `tyvi-cli/docs/DESIGN.md` — CLI interface design
+- `tyvi-mcp/docs/DESIGN.md` — MCP server design
