@@ -3,7 +3,7 @@
  * @module
  */
 
-import { parseArgs } from "@std/cli/parse-args";
+import { parseArgs } from "jsr:@std/cli@1/parse-args";
 import { initCommand } from "./commands/init.ts";
 import { statusCommand } from "./commands/status.ts";
 import { cloneCommand } from "./commands/clone.ts";

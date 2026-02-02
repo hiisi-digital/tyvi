@@ -1,0 +1,28 @@
+# Deno
+.deno/
+coverage/
+*.lcov
+
+# Build artifacts
+tyvi
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test artifacts
+/tmp/
+
+# Node (for compatibility checks only)
+node_modules/
+package-lock.json
+tsconfig.json
