@@ -362,7 +362,10 @@ Deno.test("searchContext - with limit", async () => {
   });
 
   assertExists(results);
+  // totalCount should be at most the limit
   assertEquals(results.totalCount <= 2, true);
+  // results array length should match totalCount
+  assertEquals(results.results.length, results.totalCount);
 });
 
 Deno.test("searchContext - no results for nonexistent query", async () => {
