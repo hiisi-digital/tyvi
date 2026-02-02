@@ -44,7 +44,7 @@ export async function searchContext(
   query: ContextSearchQuery,
 ): Promise<ContextSearchResults> {
   // Determine which scopes to search
-  const scopes = query.scope ? getVisibleScopes(query.scope) : [{ level: "global" }] as Scope[];
+  const scopes = query.scope ? getVisibleScopes(query.scope) : [{ level: "global" as const }];
 
   const results: ContextSearchResult[] = [];
 
