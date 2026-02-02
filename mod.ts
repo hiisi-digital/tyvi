@@ -168,8 +168,20 @@ export {
 // export { recallMemories, listMemories, recordMemory, reinforceMemory, pruneMemories } from "./src/memory/mod.ts";
 
 // ============================================================================
-// Context Operations (to be migrated from tyvi-mcp)
+// Context Operations
 // ============================================================================
 
-// TODO: These will be implemented after migration
-// export { parseUri, resolveContext, searchContext } from "./src/context/mod.ts";
+export {
+  buildScopeChain,
+  buildUri,
+  canResolve,
+  createScope,
+  formatScope,
+  getVisibleScopes,
+  parseUri,
+  resolveContext,
+  resolveContextBatch,
+  scopeMatches,
+  searchContext,
+  validateUri,
+} from "./src/context/mod.ts";
