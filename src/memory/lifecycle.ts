@@ -39,7 +39,7 @@ export function generateMemoryId(person: string, topic: string, created: Date): 
     .replace(/^-|-$/g, "")
     .slice(0, 20);
   
-  // Format: YYYY-MM
+  // Format: YYYY-MM (first 7 characters of ISO string)
   const yearMonth = created.toISOString().slice(0, 7);
   
   return `${personId}-${topicSlug}-${yearMonth}`;
