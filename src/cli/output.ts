@@ -125,10 +125,10 @@ export function formatStatus(
 
 /**
  * Format a date as relative time.
- * 
+ *
  * @param date - The date to format
  * @returns Human-readable relative time string
- * 
+ *
  * @remarks
  * Month calculations use a 30-day approximation for simplicity.
  * This may be slightly inaccurate for specific month boundaries
