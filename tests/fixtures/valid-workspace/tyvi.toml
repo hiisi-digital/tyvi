@@ -1,0 +1,9 @@
+[workspace]
+name = "test-workspace"
+
+[workspace.namespaces]
+default = "@default"
+paths = ["@default"]
+
+[defaults]
+clone_method = "ssh"

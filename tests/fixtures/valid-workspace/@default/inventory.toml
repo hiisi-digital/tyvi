@@ -1,0 +1,18 @@
+[meta]
+description = "Test inventory"
+
+[meta.defaults]
+language = "typescript"
+keep_in_sync = true
+
+[[repos]]
+name = "test-repo-1"
+remotes = [{ name = "origin", url = "git@github.com:test/repo1.git" }]
+local_path = "apps/test-repo-1"
+status = "active"
+
+[[repos]]
+name = "test-repo-2"
+remotes = [{ name = "origin", url = "git@github.com:test/repo2.git" }]
+local_path = "libs/test-repo-2"
+status = "stable"
