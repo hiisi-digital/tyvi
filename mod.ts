@@ -153,6 +153,7 @@ export {
 // export { checkGitAllowed, getDevspaceHint, findDevspaceRoot } from "./src/devspace/restrictions.ts";
 
 // ============================================================================
+<<<<<<< HEAD
 // Computation Engine
 // ============================================================================
 
@@ -203,6 +204,21 @@ export type {
     Token, ValueType, Wildcard
 } from "./src/computation/mod.ts";
 
+/**
+ * Create an empty computation trace for debugging.
+ *
+ * Helper function for initializing a trace when computation details aren't needed.
+ *
+ * @returns Empty computation trace
+ */
+export function createEmptyTrace(): import("./src/types/mod.ts").ComputationTrace {
+  return {
+    values: new Map(),
+    circularDependencies: [],
+    computationOrder: [],
+  };
+}
+
 // ============================================================================
 // Atoms Operations
 // ============================================================================
@@ -210,11 +226,10 @@ export type {
 export { loadAtoms, loadExperience, loadPhrases, loadQuirks, loadSkills, loadStacks, loadTraits } from "./src/atoms/mod.ts";
 
 // ============================================================================
-// People Operations (to be migrated from tyvi-mcp)
+// People Operations
 // ============================================================================
 
-// TODO: These will be implemented after migration
-// export { loadPerson, computePerson, listPeople } from "./src/people/mod.ts";
+export { loadPerson, computePerson, listPeople } from "./src/people/mod.ts";
 
 // ============================================================================
 // Memory Operations (to be migrated from tyvi-mcp)

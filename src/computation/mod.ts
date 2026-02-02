@@ -85,3 +85,18 @@ export {
 } from "./rules.ts";
 export type { CompositionRule, RuleCollection, RuleResult, ValueType } from "./rules.ts";
 
+/**
+ * Create an empty computation trace for debugging.
+ *
+ * Helper function for initializing a trace when computation details aren't needed.
+ *
+ * @returns Empty computation trace
+ */
+export function createEmptyTrace(): import("../types/mod.ts").ComputationTrace {
+  return {
+    values: new Map(),
+    circularDependencies: [],
+    computationOrder: [],
+  };
+}
+
