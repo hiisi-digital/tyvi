@@ -1,388 +1,489 @@
 # tyvi Design Document
 
-## Overview
-
-`tyvi` is a config-driven workspace orchestration tool for managing multi-repo development environments. It provides a structured way to organize, clone, sync, and manage repositories across multiple organizations and namespaces.
+> Core library for devspace orchestration, people computation, and context management.
 
 The name comes from Finnish "tyvi" meaning "base" or "trunk"; the foundational part from which branches grow.
 
-## Purpose
+---
 
-This tool provides:
+## Overview
 
-1. **Workspace structure management** via `inventory.toml` files
-2. **Repository orchestration** with clone, sync, and status operations
-3. **Namespace organization** for multi-org development
-4. **Config-driven operation** where behavior is defined declaratively
+tyvi is the **core library** that contains all types, logic, and functionality for:
 
-## Core Concepts
+- **Devspace management** — repos, staging, lab, git restrictions
+- **People system** — atomic personality composition and computation
+- **Memory system** — significant events with fading and reinforcement
+- **Context resolution** — scoped URI-based context with fallback
 
-### Workspace Root
+tyvi is a **library**, not a CLI. Interfaces are provided by:
 
-A tyvi workspace is a directory containing:
-- `tyvi.toml` configuration file
-- Namespace directories (e.g., `@hiisi/`, `@orgrinrt/`)
-- Each namespace has its own `inventory.toml`
+| Package | Purpose |
+|---------|---------|
+| **tyvi** | Core library (this package) |
+| **tyvi-cli** | Human interaction via terminal |
+| **tyvi-mcp** | AI agent interaction via MCP protocol |
 
-```
-workspace/
-├── tyvi.toml              # Workspace-level config
-├── @hiisi/
-│   ├── inventory.toml     # Namespace inventory
-│   ├── viola/
-│   │   ├── viola/         # Cloned repo
-│   │   ├── viola-cli/     # Cloned repo
-│   │   └── viola-default-lints/
-│   └── muse/
-│       └── lets-muse/
-└── @orgrinrt/
-    ├── inventory.toml
-    └── agent-tooling/
-        └── meet-mcp/
-```
+---
 
-### Inventory Files
+## Scope
 
-Each namespace has an `inventory.toml` that defines:
-- Namespace metadata and defaults
-- Repository definitions with remotes, paths, and status
-- Sync and agent configuration
+### In Scope
 
-```toml
-[meta]
-description = "Namespace description"
+- All types and schemas
+- Devspace operations (load, unload, clone, sync)
+- Git operations and restriction checking
+- Config parsing (tyvi.toml, inventory.toml)
+- People computation engine (traits, skills, quirks, phrases)
+- Memory system (storage, fading, reinforcement, query)
+- Context resolution (URI parsing, scope hierarchy, fallback)
+- Relationship tracking
+- Caching system
 
-[meta.defaults]
-language = "typescript"
-runtime = "deno"
+### Out of Scope
 
-[[repos]]
-name = "my-repo"
-description = "Repository description"
-remotes = [
-  { name = "origin", url = "git@github.com:org/repo.git", host = "github" }
-]
-local_path = "category/my-repo"
-status = "active"
-keep_in_sync = true
-```
+**The following are NOT part of tyvi core:**
 
-### Repository Status
+- CLI argument parsing → see `tyvi-cli`
+- Terminal output formatting → see `tyvi-cli`
+- User interaction (prompts) → see `tyvi-cli`
+- MCP protocol handling → see `tyvi-mcp`
+- AI agent instructions → see `tyvi-mcp`
 
-- `active` - Under active development
-- `stable` - Stable, minimal changes expected
-- `wip` - Work in progress, not ready
-- `archived` - No longer maintained
-- `needs-review` - Requires manual attention
+---
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                           tyvi                                  │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌───────────────────────────────────────────────────────────┐ │
-│  │                    CLI Interface                          │ │
-│  │  tyvi init | status | clone | sync | list                │ │
-│  └───────────────────────────────────────────────────────────┘ │
-│                             │                                   │
-│  ┌───────────────────────────────────────────────────────────┐ │
-│  │                    Core Library                           │ │
-│  │  - Config parsing (tyvi.toml, inventory.toml)            │ │
-│  │  - Workspace operations                                   │ │
-│  │  - Repository management                                  │ │
-│  └───────────────────────────────────────────────────────────┘ │
-│                             │                                   │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌────────────────┐  │
-│  │   Config Layer  │  │   Git Layer     │  │  Output Layer  │  │
-│  │   TOML parsing  │  │   Clone/fetch   │  │  Status/logs   │  │
-│  └─────────────────┘  └─────────────────┘  └────────────────┘  │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+tyvi/
+├── src/
+│   ├── types/                  # All type definitions
+│   │   ├── atoms.ts            # Traits, skills, quirks, phrases
+│   │   ├── people.ts           # Person, ComputedPerson
+│   │   ├── memory.ts           # Memory, MemoryQuery
+│   │   ├── relationship.ts     # Relationships
+│   │   ├── devspace.ts         # Devspace config, inventory, repos
+│   │   ├── context.ts          # URI, Scope, Context
+│   │   └── mod.ts              # Re-exports all types
+│   │
+│   ├── atoms/                  # Atom loading and parsing
+│   │   ├── traits.ts
+│   │   ├── skills.ts
+│   │   ├── quirks.ts
+│   │   ├── phrases.ts
+│   │   └── mod.ts
+│   │
+│   ├── computation/            # Expression evaluation engine
+│   │   ├── lexer.ts            # Tokenize expressions
+│   │   ├── parser.ts           # Parse to AST
+│   │   ├── ast.ts              # AST node types
+│   │   ├── evaluator.ts        # Evaluate expressions
+│   │   ├── dependencies.ts     # Dependency analysis
+│   │   ├── rules.ts            # Rule application
+│   │   ├── quirks.ts           # Quirk auto-assignment
+│   │   ├── phrases.ts          # Phrase matching
+│   │   └── mod.ts
+│   │
+│   ├── people/                 # Person computation pipeline
+│   │   ├── computation.ts      # Full computation pipeline
+│   │   ├── loading.ts          # Load person TOML
+│   │   └── mod.ts
+│   │
+│   ├── memory/                 # Memory system
+│   │   ├── storage.ts          # Read/write memories
+│   │   ├── strength.ts         # Strength calculation
+│   │   ├── reinforcement.ts    # Memory reinforcement
+│   │   ├── similarity.ts       # Memory similarity
+│   │   ├── query.ts            # Query memories
+│   │   ├── lifecycle.ts        # Create, update, prune
+│   │   ├── logs.ts             # Memory event logs
+│   │   └── mod.ts
+│   │
+│   ├── context/                # Context resolution
+│   │   ├── uri.ts              # Parse ctx:// URIs
+│   │   ├── scope.ts            # Scope hierarchy
+│   │   ├── resolution.ts       # Resolve references
+│   │   ├── fallback.ts         # Fallback behavior
+│   │   └── mod.ts
+│   │
+│   ├── devspace/               # Devspace operations
+│   │   ├── operations.ts       # Load, unload, sync
+│   │   ├── state.ts            # State file management
+│   │   ├── restrictions.ts     # Git policy checking
+│   │   └── mod.ts
+│   │
+│   ├── config/                 # Config parsing
+│   │   ├── devspace.ts         # tyvi.toml parsing
+│   │   ├── inventory.ts        # inventory.toml parsing
+│   │   └── mod.ts
+│   │
+│   ├── git/                    # Git operations
+│   │   ├── status.ts           # Status checking
+│   │   ├── clone.ts            # Clone operations
+│   │   ├── remote.ts           # Remote operations
+│   │   └── mod.ts
+│   │
+│   └── cache/                  # Caching system
+│       ├── storage.ts          # Cache read/write
+│       ├── hashing.ts          # Content hashing
+│       ├── validation.ts       # Cache validation
+│       └── mod.ts
+│
+├── schemas/                    # JSON schemas for validation
+│   ├── trait-axis.schema.json
+│   ├── skill.schema.json
+│   ├── quirk.schema.json
+│   ├── phrase.schema.json
+│   ├── person.schema.json
+│   ├── memory.schema.json
+│   ├── relationship.schema.json
+│   ├── devspace.schema.json
+│   └── inventory.schema.json
+│
+├── data/                       # Example/default data
+│   ├── atoms/
+│   ├── people/
+│   └── config.toml
+│
+├── docs/
+│   ├── DESIGN.md               # This file
+│   ├── TODO.md                 # Implementation tasks
+│   └── TODO.DEPRECATION.md     # Migration tracking
+│
+├── tests/
+├── mod.ts                      # Public API exports
+├── deno.json
+├── README.md
+└── LICENSE
 ```
 
-## Commands
+---
 
-### tyvi init
+## Devspace System
 
-Initialize a new workspace or add tyvi to an existing directory.
+### Directory Structure
 
-```bash
-tyvi init                    # Interactive setup
-tyvi init --from-template    # Use a template
-tyvi init --minimal          # Minimal setup
+Configurable via `tyvi.toml`:
+
 ```
+devspace/
+├── tyvi.toml                 # Devspace config
+├── @hiisi/
+│   └── inventory.toml        # Repos by namespace
+├── @orgrinrt/
+│   └── inventory.toml
+├── .staging/                 # Cold repos (organized by namespace)
+│   ├── @hiisi/
+│   │   └── viola/
+│   └── @orgrinrt/
+│       └── nutshell/
+├── .state/                   # Runtime state
+│   ├── lab.toml              # What's loaded
+│   └── ext.toml              # External repos
+└── .tmp/                     # Scratch space
+    └── ext/                  # External repos
 
-Creates:
-- `tyvi.toml` with workspace config
-- Default namespace directory structure
-- Template `inventory.toml` files
-
-### tyvi status
-
-Show status of all managed repositories.
-
-```bash
-tyvi status                  # All repos
-tyvi status @hiisi           # Specific namespace
-tyvi status viola            # Repos matching pattern
-tyvi status --dirty          # Only repos with uncommitted changes
-tyvi status --behind         # Only repos behind remote
+.lab/                         # Active work (flat, git allowed)
+├── viola/
+└── nutshell/
 ```
-
-Output shows:
-- Clone status (cloned, missing, partial)
-- Git status (clean, dirty, ahead, behind)
-- Branch information
-- Last activity
-
-### tyvi clone
-
-Clone repositories defined in inventory.
-
-```bash
-tyvi clone viola             # Clone repos matching pattern
-tyvi clone @hiisi/viola      # Clone specific namespace/category
-tyvi clone --all             # Clone all repos
-tyvi clone --category viola  # Clone by category
-tyvi clone --status active   # Clone only active repos
-```
-
-### tyvi sync
-
-Synchronize workspace structure with inventory definitions.
-
-```bash
-tyvi sync                    # Sync structure
-tyvi sync --fetch            # Also fetch all remotes
-tyvi sync --prune            # Remove repos not in inventory
-```
-
-Operations:
-1. Create missing directories
-2. Move repos to correct locations if needed
-3. Report orphaned repos (local but not in inventory)
-4. Optionally fetch all remotes
-
-### tyvi list
-
-List repositories from inventory without checking filesystem.
-
-```bash
-tyvi list                    # All repos
-tyvi list --cloned           # Only cloned
-tyvi list --missing          # Only not cloned
-tyvi list --format json      # JSON output
-```
-
-### tyvi add
-
-Add a repository to inventory.
-
-```bash
-tyvi add git@github.com:org/repo.git
-tyvi add org/repo --namespace @hiisi --category tools
-```
-
-### tyvi remove
-
-Remove a repository from inventory (optionally delete local clone).
-
-```bash
-tyvi remove repo-name
-tyvi remove repo-name --delete  # Also delete local files
-```
-
-## Configuration
 
 ### tyvi.toml
 
-Workspace-level configuration.
-
 ```toml
-[workspace]
-name = "my-workspace"
-root = "."
+[devspace]
+name = "control-center"
 
-[workspace.namespaces]
-default = "@hiisi"
+staging_path = ".staging"
+lab_path = "../.lab"
+state_path = ".state"
+tmp_path = ".tmp"
+ext_path = ".tmp/ext"
+
+trusted_orgs = ["hiisi-digital", "orgrinrt"]
+
+[devspace.namespaces]
 paths = ["@hiisi", "@orgrinrt"]
+default = "@hiisi"
 
-[defaults]
-host = "github"
-clone_method = "ssh"  # ssh, https
-fetch_on_status = false
+[devspace.git_policy]
+enabled = true
+allowed_paths = [".staging", "../.lab", "../.labs"]
 ```
 
-### inventory.toml
+### Operations
 
-Namespace-level repository inventory.
+| Operation | Description |
+|-----------|-------------|
+| `load` | Move repos from staging to lab |
+| `unload` | Move repos from lab to staging (requires clean state) |
+| `clone` | Clone repos to staging |
+| `sync` | Synchronize devspace with inventory |
+| `checkGitAllowed` | Check if git operations allowed in path |
+
+---
+
+## People System
+
+### Atoms
+
+People are composed from atomic building blocks:
+
+| Type | Range | Description |
+|------|-------|-------------|
+| Traits | -100 to +100 | Personality axes (both extremes problematic) |
+| Skills | 0 to 100 | Technical capabilities |
+| Experience | 0 to 100 | Domain familiarity |
+| Stacks | 0 to 100 | Technology proficiency |
+| Quirks | boolean | Binary personality markers |
+| Phrases | conditional | Communication flavor |
+
+### Composition Rules
+
+Atoms define rules for computing related values:
 
 ```toml
-[meta]
-description = "Namespace description"
-last_updated = "2025-02-01"
-
-[meta.defaults]
-language = "typescript"
-runtime = "deno"
-keep_in_sync = true
-
-[[repos]]
-name = "my-repo"
-description = "What this repo does"
-remotes = [
-  { name = "origin", url = "git@github.com:org/repo.git", host = "github" }
-]
-local_path = "category/my-repo"
-category = "tools"
-status = "active"
-language = "typescript"
-publish_targets = ["jsr:@scope/package"]
-dependencies = ["other-repo"]
-keep_in_sync = true
-allow_agents = true
-notes = "Additional context"
+[[composition.rule]]
+description = "Detail-focused people tend toward caution"
+expression = "trait.detail-focus * 0.5"
+weight = 0.4
 ```
 
-### Repository Fields
+### Expression Language
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| name | string | yes | Repository name |
-| description | string | no | Human description |
-| remotes | array | yes | Git remotes |
-| local_path | string/false | no | Path relative to namespace, false if not cloned locally |
-| category | string | no | Grouping category |
-| status | string | no | Repository status |
-| language | string | no | Primary language |
-| publish_targets | array | no | Where published (jsr, npm, crates.io) |
-| dependencies | array | no | Internal dependencies |
-| keep_in_sync | bool | no | Include in sync operations |
-| allow_agents | bool | no | Allow AI agents to work on this repo |
-| notes | string | no | Additional notes |
+| Syntax | Meaning |
+|--------|---------|
+| `trait.name` | Trait value |
+| `skill.name` | Skill value |
+| `exp.name` | Experience value |
+| `stack.name` | Stack value |
+| `avg(...)` | Average of values |
+| `max(...)` | Maximum |
+| `min(...)` | Minimum |
+| `clamp(v, min, max)` | Clamp to range |
 
-## File Structure
+### Person Definition
+
+Only anchor values (what makes this person unique):
+
+```toml
+[identity]
+id = "alex"
+name = "Alex"
+pronouns = "they/them"
+github_username = "alex-dev"
+
+[orgs]
+primary = "hiisi"
+teams = ["correctness", "core"]
+
+[traits]
+detail-focus = 75
+perfectionism = 60
+
+[skills]
+type-system-design = 85
+api-design = 75
+
+[quirks]
+explicit = ["edge-case-hunter"]
+```
+
+Everything else is computed from these anchors plus composition rules.
+
+---
+
+## Memory System
+
+### Memory Structure
+
+```toml
+[memory]
+id = "alex-oauth-2025-02"
+person = "ctx://person/alex"
+created = "2025-02-01T14:30:00Z"
+
+[memory.content]
+summary = "Led OAuth2 design review"
+detail = "Discovered missing PKCE in mobile flow"
+significance = "high"
+
+[memory.tags]
+topics = ["oauth", "security"]
+people = ["ctx://person/viktor"]
+outcome = "positive"
+
+[memory.strength]
+initial = 1.0
+current = 1.0
+last_reinforced = "2025-02-01T14:30:00Z"
+
+[memory.fade]
+half_life_days = 90
+min_strength = 0.1
+```
+
+### Fading and Reinforcement
 
 ```
-tyvi/
-├── mod.ts                    # Main export
-├── deno.json                 # Package manifest
-├── README.md                 # Usage documentation
-├── LICENSE                   # MPL-2.0
-├── docs/
-│   ├── DESIGN.md             # This file
-│   └── TODO.md               # Implementation tasks
-├── .github/
-│   ├── copilot-instructions.md
-│   └── workflows/
-│       ├── ci.yml
-│       └── release.yml
-├── src/
-│   ├── cli/
-│   │   ├── mod.ts            # CLI entry point
-│   │   ├── commands/
-│   │   │   ├── init.ts
-│   │   │   ├── status.ts
-│   │   │   ├── clone.ts
-│   │   │   ├── sync.ts
-│   │   │   ├── list.ts
-│   │   │   ├── add.ts
-│   │   │   └── remove.ts
-│   │   └── output.ts         # Terminal output formatting
-│   ├── config/
-│   │   ├── mod.ts
-│   │   ├── workspace.ts      # tyvi.toml parsing
-│   │   ├── inventory.ts      # inventory.toml parsing
-│   │   └── types.ts          # Config type definitions
-│   ├── workspace/
-│   │   ├── mod.ts
-│   │   ├── operations.ts     # Workspace operations
-│   │   └── discovery.ts      # Find workspaces/inventories
-│   ├── git/
-│   │   ├── mod.ts
-│   │   ├── clone.ts          # Clone operations
-│   │   ├── status.ts         # Status checking
-│   │   └── remote.ts         # Remote operations
-│   └── types.ts              # Shared types
-└── tests/
-    ├── config_test.ts
-    ├── workspace_test.ts
-    └── fixtures/
+strength(t) = max(min_strength, initial * (0.5 ^ (days / half_life)))
 ```
+
+Similar memories reinforce each other, increasing strength.
+
+---
+
+## Context Resolution
+
+### URI Scheme
+
+```
+ctx://[~org/][~team/]{type}/{path}
+```
+
+| Prefix | Meaning | Example |
+|--------|---------|---------|
+| (none) | Global | `ctx://person/alex` |
+| `~{org}/` | Org scope | `ctx://~hiisi/rules/commit-style` |
+| `~{org}/~{team}/` | Team scope | `ctx://~hiisi/~correctness/research/types` |
+
+### Scope Hierarchy
+
+```
+Global → Org → Team
+```
+
+Lower scopes inherit from higher, with automatic fallback.
+
+### Visibility Rules
+
+| Scope | Can See |
+|-------|---------|
+| Global | Only global |
+| Org | Own org + global |
+| Team | Own team + own org + global |
+
+---
+
+## Public API
+
+The library exports these main functions:
+
+### Devspace
+
+```typescript
+// Load devspace config
+loadDevspace(root: string): Promise<Devspace>
+
+// Operations
+load(devspace: Devspace, pattern: string): Promise<LoadResult>
+unload(devspace: Devspace, pattern: string): Promise<UnloadResult>
+clone(devspace: Devspace, pattern: string): Promise<CloneResult>
+sync(devspace: Devspace, options?: SyncOptions): Promise<SyncResult>
+
+// Git restrictions
+checkGitAllowed(devspace: Devspace, path: string): boolean
+getDevspaceHint(devspace: Devspace): string
+findDevspaceRoot(from: string): string | null
+```
+
+### People
+
+```typescript
+// Load and compute
+loadPerson(dataPath: string, id: string): Promise<Person>
+computePerson(dataPath: string, id: string): Promise<ComputedPerson>
+listPeople(dataPath: string): Promise<PersonSummary[]>
+
+// Atoms
+loadAtoms(dataPath: string): Promise<Atoms>
+```
+
+### Memory
+
+```typescript
+// Query
+recallMemories(dataPath: string, query: MemoryQuery): Promise<Memory[]>
+listMemories(dataPath: string, filters?: MemoryFilters): Promise<MemorySummary[]>
+
+// Lifecycle
+recordMemory(dataPath: string, input: MemoryInput): Promise<Memory>
+reinforceMemory(dataPath: string, id: string, event: string): Promise<Memory>
+pruneMemories(dataPath: string): Promise<PruneResult>
+```
+
+### Context
+
+```typescript
+// Resolution
+parseUri(uri: string): ParsedUri
+resolveContext(dataPath: string, uri: string): Promise<Context>
+searchContext(dataPath: string, query: string): Promise<SearchResult[]>
+```
+
+---
 
 ## Dependencies
 
-- `@std/path` - Path utilities
-- `@std/fs` - File system utilities
-- `@std/toml` - TOML parsing
-- `@std/fmt` - Terminal formatting
+Only Deno standard library:
 
-No external dependencies beyond Deno std library.
+- `@std/path` — Path utilities
+- `@std/fs` — File system utilities
+- `@std/toml` — TOML parsing
 
-## Error Handling
+No external dependencies.
 
-All operations should:
-- Never crash on missing files or bad config
-- Provide clear error messages with context
-- Suggest recovery actions
-- Support dry-run mode for destructive operations
+---
 
-```typescript
-// Good error message
-Error: Repository 'viola' not found in inventory.
-  Searched: @hiisi/inventory.toml, @orgrinrt/inventory.toml
-  Did you mean: viola-cli, viola-default-lints?
-  To add: tyvi add git@github.com:hiisi-digital/viola.git
+## Design Principles
+
+### Everything Computed
+
+No fixed defaults. Every value derives from:
+1. Explicitly defined anchor values
+2. Composition rules that propagate
+3. Starting points for computation chains
+
+### Lightweight References
+
+Use `ctx://` references instead of inline data:
+
+```toml
+# Good
+people = ["ctx://person/viktor", "ctx://person/graydon"]
+
+# Bad
+people = ["viktor", "graydon"]
 ```
 
-## Output Design
+### Scoped with Fallback
 
-Status output should be scannable and useful:
+Context at multiple levels with automatic inheritance. Query team level, get global if team doesn't override.
 
-```
-@hiisi
-  viola/
-    viola ............... ✓ clean (main) 3 days ago
-    viola-cli ........... ✓ clean (main ↑2) 1 day ago
-    viola-default-lints . ! dirty (fix/tests +3 -1) 2 hours ago
-  muse/
-    lets-muse ........... ✓ clean (main) 1 week ago
+### Config-Driven
 
-@orgrinrt
-  agent-tooling/
-    meet-mcp ............ - not cloned
+All behavior defined in config files. No magic, no implicit behavior.
 
-Summary: 4 cloned, 1 dirty, 1 not cloned
-```
+### No Hidden State
 
-## Design Decisions
+All state in:
+- Config files (TOML)
+- State files (`.state/`)
+- Git repos themselves
 
-### Config over convention
+---
 
-All behavior is driven by config files. No magic directory detection or implicit behavior.
+## Open Questions
 
-### TOML format
+1. **Cache storage format**: Binary (fast) vs TOML (debuggable)?
+2. **Memory similarity algorithm**: Exact threshold for "similar"?
+3. **Cross-org people**: Can a person belong to multiple orgs?
+4. **Expression complexity**: Limit nesting depth?
 
-TOML is human-readable, supports comments, and has good tooling. Better than JSON for config, simpler than YAML.
+---
 
-### Namespace-based organization
+## Related Documents
 
-Namespaces (like npm scopes) keep repos organized and allow different defaults per org.
-
-### Local path flexibility
-
-Repos can have any local path structure. The tool doesn't enforce a layout; it just manages what you define.
-
-### No hidden state
-
-All state is in config files or the git repos themselves. No hidden databases or caches.
-
-## Future Considerations
-
-- Watch mode for continuous status updates
-- Integration with github/gitlab APIs for repo discovery
-- Workspace templates for common setups
-- Hooks for clone/sync events
-- TUI mode for interactive management
+- `docs/TODO.md` — Implementation tasks
+- `docs/TODO.DEPRECATION.md` — Migration tracking
+- `tyvi-cli/docs/DESIGN.md` — CLI interface design
+- `tyvi-mcp/docs/DESIGN.md` — MCP server design

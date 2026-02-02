@@ -1,30 +1,59 @@
 # tyvi
 
-Config-driven workspace orchestration for multi-repo development environments.
+Core library for devspace orchestration, people computation, and context management.
 
 The name comes from Finnish "tyvi" meaning "base" or "trunk"; the foundational part from which branches grow.
 
 ## What is this?
 
-`tyvi` manages multi-repo workspaces through declarative config files. Define your repositories in `inventory.toml` files, organize them by namespace, and use simple commands to clone, sync, and track status across all of them.
+`tyvi` is the **core library** that manages multi-repo devspaces through declarative config files. It provides the types, logic, and functionality for devspace operations, people computation, memory systems, and context resolution.
+
+**Note:** Command-line access is provided by [`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli). The examples below show CLI commands for illustration.
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      tyvi (this package)                        │
+│                                                                 │
+│   Core library: types, computation, people, memory, devspace    │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+        ▲                                       ▲
+        │ imports                               │ imports
+        │                                       │
+┌───────┴───────────┐                ┌─────────┴─────────┐
+│     tyvi-cli      │                │     tyvi-mcp      │
+│                   │                │                   │
+│  CLI for humans   │                │  MCP for AI agents│
+└───────────────────┘                └───────────────────┘
+```
 
 ## Installation
 
+### As a library
+
+```typescript
+import { loadDevspace, load, unload } from "@hiisi/tyvi";
+```
+
+### CLI (via tyvi-cli)
+
 ```bash
-deno install -A jsr:@hiisi/tyvi
+deno install -A jsr:@hiisi/tyvi-cli
 ```
 
 ## Quick Start
 
-### 1. Initialize a workspace
+### 1. Initialize a devspace
 
 ```bash
-mkdir my-workspace && cd my-workspace
+mkdir my-devspace && cd my-devspace
 tyvi init
 ```
 
 This creates:
-- `tyvi.toml` with workspace settings
+- `tyvi.toml` with devspace settings
 - `@default/inventory.toml` as a starting point
 
 ### 2. Add repositories to inventory
@@ -76,33 +105,37 @@ Output:
 Summary: 2 cloned, 1 dirty
 ```
 
-## Commands
+## CLI Commands (via tyvi-cli)
 
 | Command | Description |
 |---------|-------------|
-| `tyvi init` | Initialize a new workspace |
+| `tyvi init` | Initialize a new devspace |
 | `tyvi status` | Show status of all managed repos |
+| `tyvi load <pattern>` | Load repos to active lab |
+| `tyvi unload <pattern>` | Unload repos from lab to staging |
 | `tyvi clone <pattern>` | Clone repos matching pattern |
-| `tyvi sync` | Sync workspace structure with inventory |
+| `tyvi sync` | Sync devspace structure with inventory |
 | `tyvi list` | List repos from inventory |
 | `tyvi add <url>` | Add a repo to inventory |
 | `tyvi remove <name>` | Remove a repo from inventory |
 
-## Workspace Structure
+See [`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli) for full command documentation.
+
+## Devspace Structure
 
 ```
-workspace/
-├── tyvi.toml              # Workspace config
+devspace/
+├── tyvi.toml              # Devspace config
 ├── @myorg/
-│   ├── inventory.toml     # Namespace inventory
-│   ├── apps/
-│   │   └── my-app/        # Cloned repo
-│   └── libs/
-│       └── shared-lib/    # Cloned repo
-└── @another-org/
-    ├── inventory.toml
-    └── tools/
-        └── some-tool/
+│   └── inventory.toml     # Namespace inventory
+├── .staging/              # Cold repos (organized by namespace)
+│   └── @myorg/
+│       └── my-app/
+├── .state/                # Runtime state
+│   └── lab.toml
+└── .lab/                  # Active repos (flat, git allowed)
+    ├── my-app/
+    └── shared-lib/
 ```
 
 ## Configuration
@@ -110,15 +143,17 @@ workspace/
 ### tyvi.toml
 
 ```toml
-[workspace]
-name = "my-workspace"
+[devspace]
+name = "my-devspace"
 
-[workspace.namespaces]
+# Paths (relative to tyvi.toml)
+staging_path = ".staging"
+lab_path = ".lab"
+state_path = ".state"
+
+[devspace.namespaces]
 default = "@myorg"
 paths = ["@myorg", "@another-org"]
-
-[defaults]
-clone_method = "ssh"
 ```
 
 ### inventory.toml
@@ -166,10 +201,16 @@ tyvi status --dirty         # Only repos with uncommitted changes
 
 ## Design Philosophy
 
+- **Core library**: All logic in tyvi, interfaces are thin wrappers
 - **Config-driven**: All behavior defined in config files
 - **No hidden state**: Everything in config or git
 - **Clear errors**: Always tell what went wrong and how to fix it
 - **Offline-first**: Works without network except clone/fetch
+
+## Related Packages
+
+- [`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli) — CLI interface for human interaction
+- [`tyvi-mcp`](https://github.com/hiisi-digital/tyvi-mcp) — MCP server for AI agent interaction
 
 ## Support
 
