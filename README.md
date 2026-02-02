@@ -8,6 +8,8 @@ The name comes from Finnish "tyvi" meaning "base" or "trunk"; the foundational p
 
 `tyvi` is the **core library** that manages multi-repo devspaces through declarative config files. It provides the types, logic, and functionality for devspace operations, people computation, memory systems, and context resolution.
 
+**tyvi ships no built-in data.** All atoms, people, memories, and content come from your devspace project (like `.ctl/`).
+
 **Note:** Command-line access is provided by [`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli). The examples below show CLI commands for illustration.
 
 ## Architecture
