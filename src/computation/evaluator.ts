@@ -39,7 +39,7 @@ export interface EvaluationContext {
  */
 export function evaluate(
   expr: Expression,
-  context: EvaluationContext
+  context: EvaluationContext,
 ): number {
   switch (expr.type) {
     case "number":
@@ -66,20 +66,20 @@ export function evaluate(
           break;
         default:
           throw new Error(
-            `Unknown category '${category}' in reference ${category}.${name}`
+            `Unknown category '${category}' in reference ${category}.${name}`,
           );
       }
 
       if (!(name in values)) {
         throw new Error(
-          `Reference ${category}.${name} not found in context`
+          `Reference ${category}.${name} not found in context`,
         );
       }
 
       const value = values[name];
       if (value === undefined) {
         throw new Error(
-          `Reference ${category}.${name} has undefined value`
+          `Reference ${category}.${name} has undefined value`,
         );
       }
 
@@ -155,7 +155,7 @@ export function evaluate(
         case "clamp": {
           if (args.length !== 3) {
             throw new Error(
-              "clamp() requires exactly 3 arguments: value, min, max"
+              "clamp() requires exactly 3 arguments: value, min, max",
             );
           }
           const value = args[0];

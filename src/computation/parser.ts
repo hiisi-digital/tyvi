@@ -53,7 +53,7 @@ class Parser {
     const expr = this.expression();
     if (this.peek().type !== "eof") {
       throw new Error(
-        `Unexpected token '${this.peek().value}' at position ${this.peek().position}`
+        `Unexpected token '${this.peek().value}' at position ${this.peek().position}`,
       );
     }
     return expr;
@@ -180,7 +180,7 @@ class Parser {
 
         if (!this.match("rparen")) {
           throw new Error(
-            `Expected ')' after function arguments at position ${this.peek().position}`
+            `Expected ')' after function arguments at position ${this.peek().position}`,
           );
         }
 
@@ -195,7 +195,7 @@ class Parser {
       if (this.match("dot")) {
         if (!this.match("identifier")) {
           throw new Error(
-            `Expected identifier after '.' at position ${this.peek().position}`
+            `Expected identifier after '.' at position ${this.peek().position}`,
           );
         }
         const second = this.previous().value as string;
@@ -209,7 +209,7 @@ class Parser {
 
       // Just an identifier - treat as a reference with no category (shouldn't happen in valid expressions)
       throw new Error(
-        `Invalid reference '${first}' at position ${this.previous().position}. Expected format: category.name`
+        `Invalid reference '${first}' at position ${this.previous().position}. Expected format: category.name`,
       );
     }
 
@@ -218,14 +218,14 @@ class Parser {
       const expr = this.expression();
       if (!this.match("rparen")) {
         throw new Error(
-          `Expected ')' at position ${this.peek().position}`
+          `Expected ')' at position ${this.peek().position}`,
         );
       }
       return expr;
     }
 
     throw new Error(
-      `Unexpected token '${this.peek().value}' at position ${this.peek().position}`
+      `Unexpected token '${this.peek().value}' at position ${this.peek().position}`,
     );
   }
 

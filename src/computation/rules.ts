@@ -48,7 +48,7 @@ export interface RuleResult {
  */
 export function applyRule(
   rule: CompositionRule,
-  context: EvaluationContext
+  context: EvaluationContext,
 ): RuleResult {
   const ast = parse(rule.expression);
   const rawResult = evaluate(ast, context);
@@ -83,7 +83,7 @@ export function applyRule(
  */
 export function applyRules(
   rules: CompositionRule[],
-  context: EvaluationContext
+  context: EvaluationContext,
 ): {
   finalValue: number;
   ruleResults: RuleResult[];
@@ -127,7 +127,7 @@ export function computeValue(
   target: string,
   anchor: number | undefined,
   rules: CompositionRule[] | undefined,
-  context: EvaluationContext
+  context: EvaluationContext,
 ): number {
   // If anchor is defined, use it
   if (anchor !== undefined) {
@@ -137,7 +137,7 @@ export function computeValue(
   // Otherwise, apply composition rules
   if (!rules || rules.length === 0) {
     throw new Error(
-      `No anchor or composition rules found for ${target}`
+      `No anchor or composition rules found for ${target}`,
     );
   }
 

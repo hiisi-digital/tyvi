@@ -164,7 +164,7 @@ export function tokenize(input: string): Token[] {
           i += 2;
         } else {
           throw new Error(
-            `Unexpected character '${char}' at position ${start} in expression: ${input}. Did you mean '=='?`
+            `Unexpected character '${char}' at position ${start} in expression: ${input}. Did you mean '=='?`,
           );
         }
         break;
@@ -174,13 +174,13 @@ export function tokenize(input: string): Token[] {
           i += 2;
         } else {
           throw new Error(
-            `Unexpected character '${char}' at position ${start} in expression: ${input}`
+            `Unexpected character '${char}' at position ${start} in expression: ${input}`,
           );
         }
         break;
       default:
         throw new Error(
-          `Unexpected character '${char}' at position ${start} in expression: ${input}`
+          `Unexpected character '${char}' at position ${start} in expression: ${input}`,
         );
     }
   }

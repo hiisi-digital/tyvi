@@ -4,7 +4,8 @@ Expression evaluation engine for tyvi's composition system.
 
 ## Overview
 
-The computation engine evaluates expressions used in composition rules to derive trait, skill, experience, and stack values from anchor values.
+The computation engine evaluates expressions used in composition rules to derive trait, skill,
+experience, and stack values from anchor values.
 
 ## Components
 
@@ -51,6 +52,7 @@ const ast = parse("trait.caution * 0.5 + 10");
 Type definitions for AST nodes.
 
 Supported node types:
+
 - `NumberLiteral` - Numeric constants
 - `Reference` - References to values (e.g., `trait.caution`, `skill.api-design`)
 - `BinaryOp` - Binary operations (`+`, `-`, `*`, `/`)
@@ -69,7 +71,7 @@ const context = {
   traits: { caution: 60 },
   skills: { "api-design": 75 },
   experience: {},
-  stacks: {}
+  stacks: {},
 };
 
 const ast = parse("trait.caution * 0.5 + skill.api-design * 0.3");
@@ -78,6 +80,7 @@ const result = evaluate(ast, context);
 ```
 
 Supported functions:
+
 - `avg(...)` - Average of arguments
 - `max(...)` - Maximum of arguments
 - `min(...)` - Minimum of arguments
@@ -99,7 +102,7 @@ const deps = extractDependencies(ast);
 // Topologically sort rules
 const rules = {
   "trait.detail-focus": "trait.caution * 0.8",
-  "trait.caution": "50"
+  "trait.caution": "50",
 };
 const order = topologicalSort(rules);
 // ["trait.caution", "trait.detail-focus"]
@@ -114,14 +117,14 @@ import { applyRules } from "./rules.ts";
 
 const rules = [
   { description: "Base", expression: "50", weight: 0.5 },
-  { description: "From caution", expression: "trait.caution", weight: 0.5 }
+  { description: "From caution", expression: "trait.caution", weight: 0.5 },
 ];
 
 const context = {
   traits: { caution: 60 },
   skills: {},
   experience: {},
-  stacks: {}
+  stacks: {},
 };
 
 const result = applyRules(rules, context);
@@ -142,18 +145,18 @@ const quirks = [
     description: "Obsessed with corner cases",
     auto_assign: {
       conditions: [
-        { expression: "trait.detail-focus > 70", weight: 1.0 }
+        { expression: "trait.detail-focus > 70", weight: 1.0 },
       ],
-      threshold: 1.0
-    }
-  }
+      threshold: 1.0,
+    },
+  },
 ];
 
 const context = {
   traits: { "detail-focus": 80 },
   skills: {},
   experience: {},
-  stacks: {}
+  stacks: {},
 };
 
 const assigned = autoAssignQuirks(quirks, [], context);
@@ -173,18 +176,18 @@ const phrases = [
     text: "one might say",
     conditions: {
       expressions: [
-        { expression: "trait.formality > 60", weight: 1.0 }
+        { expression: "trait.formality > 60", weight: 1.0 },
       ],
-      threshold: 1.0
-    }
-  }
+      threshold: 1.0,
+    },
+  },
 ];
 
 const context = {
   traits: { formality: 70 },
   skills: {},
   experience: {},
-  stacks: {}
+  stacks: {},
 };
 
 const matching = matchPhrases(phrases, context);
@@ -237,7 +240,8 @@ skill.api-design >= 80
 trait.caution != 50
 ```
 
-Comparison operators return 1 for true, 0 for false. This allows them to be used in conditions for quirks and phrases.
+Comparison operators return 1 for true, 0 for false. This allows them to be used in conditions for
+quirks and phrases.
 
 ## Error Handling
 

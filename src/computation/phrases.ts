@@ -40,7 +40,7 @@ import { evaluate } from "./evaluator.ts";
  */
 export function matchesPhrase(
   phrase: Phrase,
-  context: EvaluationContext
+  context: EvaluationContext,
 ): boolean {
   if (!phrase.conditions) {
     // No conditions means always matches
@@ -105,7 +105,7 @@ export function matchesPhrase(
  */
 export function matchPhrases(
   phrases: Phrase[],
-  context: EvaluationContext
+  context: EvaluationContext,
 ): string[] {
   const matching: string[] = [];
 

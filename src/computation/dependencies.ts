@@ -69,7 +69,7 @@ export function extractDependencies(expr: Expression): string[] {
  * ```
  */
 export function topologicalSort(
-  rules: Record<string, string>
+  rules: Record<string, string>,
 ): string[] {
   // Build dependency graph
   const graph = new Map<string, Set<string>>();
@@ -130,10 +130,10 @@ export function topologicalSort(
   // Check for cycles
   if (result.length !== graph.size) {
     const remaining = Array.from(graph.keys()).filter(
-      (node) => !result.includes(node)
+      (node) => !result.includes(node),
     );
     throw new Error(
-      `Circular dependency detected involving: ${remaining.join(", ")}`
+      `Circular dependency detected involving: ${remaining.join(", ")}`,
     );
   }
 
@@ -157,7 +157,7 @@ export function topologicalSort(
  * ```
  */
 export function detectCycles(
-  rules: Record<string, string>
+  rules: Record<string, string>,
 ): string[][] {
   const graph = new Map<string, string[]>();
 

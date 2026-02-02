@@ -40,7 +40,7 @@ import { evaluate } from "./evaluator.ts";
  */
 export function shouldAutoAssignQuirk(
   quirk: Quirk,
-  context: EvaluationContext
+  context: EvaluationContext,
 ): boolean {
   if (!quirk.auto_assign) {
     return false;
@@ -106,7 +106,7 @@ export function shouldAutoAssignQuirk(
 export function autoAssignQuirks(
   quirks: Quirk[],
   explicitQuirks: string[],
-  context: EvaluationContext
+  context: EvaluationContext,
 ): string[] {
   const result = new Set<string>(explicitQuirks);
 

@@ -35,11 +35,7 @@ export type { EvaluationContext } from "./evaluator.ts";
 export { evaluate } from "./evaluator.ts";
 
 // Export dependencies
-export {
-  detectCycles,
-  extractDependencies,
-  topologicalSort,
-} from "./dependencies.ts";
+export { detectCycles, extractDependencies, topologicalSort } from "./dependencies.ts";
 
 // Export rules
 export type { RuleResult } from "./rules.ts";
