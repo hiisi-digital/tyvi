@@ -8,7 +8,7 @@ export { loadWorkspaceConfig, parseWorkspaceConfig } from "./workspace.ts";
 
 export type { InventoryConfig, WorkspaceConfig } from "../types.ts";
 
-import { join } from "@std/path";
+import { dirname, join } from "@std/path";
 import { exists } from "@std/fs";
 import type { InventoryConfig, Workspace } from "../types.ts";
 import { loadWorkspaceConfig } from "./workspace.ts";
@@ -34,7 +34,7 @@ export async function findWorkspaceRoot(startDir: string): Promise<string | null
       break;
     }
 
-    const parentDir = join(currentDir, "..");
+    const parentDir = dirname(currentDir);
     if (parentDir === currentDir) {
       break;
     }
