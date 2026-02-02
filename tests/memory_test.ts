@@ -216,8 +216,8 @@ Deno.test("query - sort by strength", async () => {
   
   // Check descending order
   for (let i = 0; i < memories.length - 1; i++) {
-    const strength1 = getMemoryStrength(memories[i]);
-    const strength2 = getMemoryStrength(memories[i + 1]);
+    const strength1 = getMemoryStrength(memories[i]!);
+    const strength2 = getMemoryStrength(memories[i + 1]!);
     assert(strength1 >= strength2);
   }
 });
@@ -240,11 +240,11 @@ Deno.test("list - returns summaries", async () => {
   assert(summaries.length >= 3);
   
   const summary = summaries[0];
-  assertExists(summary.id);
-  assertExists(summary.person);
-  assertExists(summary.summary);
-  assertExists(summary.strength);
-  assertExists(summary.topics);
+  assertExists(summary!.id);
+  assertExists(summary!.person);
+  assertExists(summary!.summary);
+  assertExists(summary!.strength);
+  assertExists(summary!.topics);
 });
 
 Deno.test("list - filter by topic", async () => {

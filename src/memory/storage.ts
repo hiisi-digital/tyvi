@@ -22,7 +22,7 @@ export async function readMemory(dataPath: string, memoryId: string): Promise<Me
   
   try {
     const content = await Deno.readTextFile(filePath);
-    const parsed = parse(content) as MemoryFile;
+    const parsed = parse(content) as unknown as MemoryFile;
     
     if (!parsed.memory) {
       throw new Error(`Missing [memory] section in ${filePath}`);
@@ -49,7 +49,7 @@ export async function writeMemory(dataPath: string, memory: Memory): Promise<voi
   
   const filePath = getMemoryFilePath(dataPath, memory.id);
   const memoryFile: MemoryFile = { memory };
-  const content = stringify(memoryFile);
+  const content = stringify(memoryFile as unknown as Record<string, unknown>);
   
   await Deno.writeTextFile(filePath, content);
 }
