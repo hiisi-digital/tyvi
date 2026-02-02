@@ -2,7 +2,7 @@
  * Tests for config parsing.
  */
 
-import { assertEquals, assertExists, assertRejects } from "@std/assert";
+import { assertEquals, assertExists, assertRejects, assertThrows } from "@std/assert";
 import { join } from "@std/path";
 import { loadWorkspace, parseInventoryConfig, parseWorkspaceConfig } from "../src/config/mod.ts";
 
@@ -33,8 +33,8 @@ Deno.test("parseWorkspaceConfig - missing workspace section", () => {
 clone_method = "ssh"
 `;
 
-  assertRejects(
-    () => Promise.resolve(parseWorkspaceConfig(content)),
+  assertThrows(
+    () => parseWorkspaceConfig(content),
     Error,
     "missing [workspace] section",
   );
@@ -48,8 +48,8 @@ default = "@default"
 paths = ["@default"]
 `;
 
-  assertRejects(
-    () => Promise.resolve(parseWorkspaceConfig(content)),
+  assertThrows(
+    () => parseWorkspaceConfig(content),
     Error,
     "missing required 'name' field",
   );
@@ -87,8 +87,8 @@ Deno.test("parseInventoryConfig - missing required fields", () => {
 remotes = [{ name = "origin", url = "git@github.com:test/repo.git" }]
 `;
 
-  assertRejects(
-    () => Promise.resolve(parseInventoryConfig(content)),
+  assertThrows(
+    () => parseInventoryConfig(content),
     Error,
     "missing required 'name' field",
   );
