@@ -153,6 +153,57 @@ export {
 // export { checkGitAllowed, getDevspaceHint, findDevspaceRoot } from "./src/devspace/restrictions.ts";
 
 // ============================================================================
+// Computation Engine
+// ============================================================================
+
+// Re-export computation module
+export {
+    // Dependencies
+    analyzeDependencies,
+    // AST constructors
+    binaryOp, buildDependencyGraph,
+    // Rules
+    buildRuleCollection,
+    combineResults, comparisonOp,
+    // Evaluator
+    createContext, createRule, evaluate,
+    EvaluationError,
+    Evaluator, extractDependencies,
+    formatCycle, functionCall, getBaseValue,
+    getRuleEvaluationOrder,
+    getTargetType, identifier, isCircular,
+    // Lexer
+    Lexer,
+    LexerError, logCircularDependency,
+    normalizeValue, numberLiteral,
+    // Parser
+    parse,
+    ParseError,
+    Parser, RuleEngineError, specialValue, tokenize,
+    TokenType, wildcard
+} from "./src/computation/mod.ts";
+
+export type {
+    // AST types
+    BinaryOp,
+    ComparisonOp,
+    // Rule types
+    CompositionRule as ComputationRule,
+    // Dependency types
+    Dependency,
+    DependencyAnalysis,
+    // Evaluator types
+    EvaluationContext, Expression,
+    ExpressionNode,
+    FunctionCall,
+    Identifier,
+    NumberLiteral, RuleCollection,
+    RuleResult, SpecialValue,
+    // Lexer types
+    Token, ValueType, Wildcard
+} from "./src/computation/mod.ts";
+
+// ============================================================================
 // People Operations (to be migrated from tyvi-mcp)
 // ============================================================================
 

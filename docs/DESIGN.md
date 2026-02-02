@@ -139,11 +139,6 @@ tyvi/
 │   ├── devspace.schema.json
 │   └── inventory.schema.json
 │
-├── data/                       # Example/default data
-│   ├── atoms/
-│   ├── people/
-│   └── config.toml
-│
 ├── docs/
 │   ├── DESIGN.md               # This file
 │   ├── TODO.md                 # Implementation tasks
