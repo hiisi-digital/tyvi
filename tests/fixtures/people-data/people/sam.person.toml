@@ -1,0 +1,9 @@
+[identity]
+id = "sam"
+name = "Sam"
+
+[traits]
+caution = 50
+
+[skills]
+rust = 70
