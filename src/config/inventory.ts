@@ -4,7 +4,7 @@
  */
 
 import { parse } from "@std/toml";
-import type { InventoryConfig, RemoteDefinition, RepoDefinition } from "../types.ts";
+import type { InventoryConfig, RemoteDefinition, RepoDefinition } from "../types/mod.ts";
 
 /**
  * Parse inventory.toml content into InventoryConfig.

@@ -1,39 +1,39 @@
 /**
- * Workspace operations for repository management.
+ * Devspace operations for repository management.
  * @module
  */
 
-import { join } from "@std/path";
 import { exists } from "@std/fs";
-import type { CloneStatus, RepoWithStatus, Workspace } from "../types.ts";
+import { join } from "@std/path";
 import {
-  getAheadBehind,
-  getCurrentBranch,
-  getGitStatus,
-  getLastCommitDate,
-  isGitRepo,
+    cloneRepo, cloneRepoWithProgress,
+    getAheadBehind,
+    getCurrentBranch,
+    getGitStatus,
+    getLastCommitDate,
+    isGitRepo,
 } from "../git/mod.ts";
-import { cloneRepo, cloneRepoWithProgress } from "../git/mod.ts";
+import type { CloneStatus, Devspace, RepoWithStatus } from "../types/mod.ts";
 
 /**
- * Get status of all repositories in workspace.
+ * Get status of all repositories in devspace.
  *
- * @param workspace - Workspace model
+ * @param devspace - Devspace model
  * @returns Array of repositories with status information
  *
  * @example
  * ```ts
- * const workspace = await loadWorkspace(".");
- * const status = await getStatus(workspace);
+ * const devspace = await loadDevspace(".");
+ * const status = await getStatus(devspace);
  * for (const repo of status) {
  *   console.log(`${repo.name}: ${repo.cloneStatus} ${repo.gitStatus}`);
  * }
  * ```
  */
-export async function getStatus(workspace: Workspace): Promise<RepoWithStatus[]> {
+export async function getStatus(devspace: Devspace): Promise<RepoWithStatus[]> {
   const repos: RepoWithStatus[] = [];
 
-  for (const [namespace, inventory] of workspace.namespaces) {
+  for (const [namespace, inventory] of devspace.namespaces) {
     for (const repo of inventory.repos) {
       // Skip repos with local_path = false
       if (repo.local_path === false) {
@@ -41,7 +41,7 @@ export async function getStatus(workspace: Workspace): Promise<RepoWithStatus[]>
       }
 
       const localPath = repo.local_path || repo.name;
-      const absolutePath = join(workspace.rootPath, namespace, localPath);
+      const absolutePath = join(devspace.rootPath, namespace, localPath);
 
       let cloneStatus: CloneStatus;
       const repoExists = await exists(absolutePath);
@@ -83,18 +83,18 @@ export async function getStatus(workspace: Workspace): Promise<RepoWithStatus[]>
 /**
  * Clone repositories matching criteria.
  *
- * @param workspace - Workspace model
+ * @param devspace - Devspace model
  * @param options - Clone options
  * @returns Result with cloned and skipped repositories
  *
  * @example
  * ```ts
- * const result = await clone(workspace, { pattern: "viola", showProgress: true });
+ * const result = await clone(devspace, { pattern: "viola", showProgress: true });
  * console.log(`Cloned ${result.cloned.length} repos`);
  * ```
  */
 export async function clone(
-  workspace: Workspace,
+  devspace: Devspace,
   options: {
     pattern?: string;
     namespace?: string;
@@ -108,7 +108,7 @@ export async function clone(
   const skipped: string[] = [];
   const failed: string[] = [];
 
-  const repos = await getStatus(workspace);
+  const repos = await getStatus(devspace);
 
   for (const repo of repos) {
     // Skip already cloned repos
@@ -160,14 +160,14 @@ export async function clone(
 }
 
 /**
- * Synchronize workspace structure with inventory definitions.
+ * Synchronize devspace structure with inventory definitions.
  *
- * @param workspace - Workspace model
+ * @param devspace - Devspace model
  * @param options - Sync options
  * @returns Result with created directories and orphaned repos
  */
 export async function sync(
-  workspace: Workspace,
+  devspace: Devspace,
   options: {
     fetch?: boolean;
     prune?: boolean;
@@ -183,8 +183,8 @@ export async function sync(
   const fetched: string[] = [];
 
   // Create missing directories for namespace inventories
-  for (const [namespace] of workspace.namespaces) {
-    const namespacePath = join(workspace.rootPath, namespace);
+  for (const [namespace] of devspace.namespaces) {
+    const namespacePath = join(devspace.rootPath, namespace);
     if (!await exists(namespacePath)) {
       if (!options.dryRun) {
         await Deno.mkdir(namespacePath, { recursive: true });
@@ -195,7 +195,7 @@ export async function sync(
 
   // Fetch remotes if requested
   if (options.fetch) {
-    const repos = await getStatus(workspace);
+    const repos = await getStatus(devspace);
     for (const repo of repos) {
       if (repo.cloneStatus === "cloned" && repo.keep_in_sync) {
         const { fetchAllRemotes } = await import("../git/mod.ts");
@@ -245,12 +245,12 @@ function appendToInventory(content: string, newContent: string): string {
 /**
  * Add a repository to inventory.
  *
- * @param workspace - Workspace model
+ * @param devspace - Devspace model
  * @param url - Git repository URL
  * @param options - Repository options
  */
 export async function addRepo(
-  workspace: Workspace,
+  devspace: Devspace,
   url: string,
   options: {
     namespace?: string;
@@ -265,8 +265,8 @@ export async function addRepo(
   // Validate repo name for TOML safety
   validateRepoName(repoName);
 
-  const namespace = options.namespace || workspace.config.workspace.namespaces.default;
-  const inventoryPath = join(workspace.rootPath, namespace, "inventory.toml");
+  const namespace = options.namespace || devspace.config.devspace.namespaces?.default || "@default";
+  const inventoryPath = join(devspace.rootPath, namespace, "inventory.toml");
 
   // Read existing inventory
   const content = await Deno.readTextFile(inventoryPath);
@@ -292,19 +292,19 @@ export async function addRepo(
 /**
  * Remove a repository from inventory.
  *
- * @param workspace - Workspace model
+ * @param devspace - Devspace model
  * @param repoName - Repository name to remove
  * @param options - Remove options
  */
 export async function removeRepo(
-  workspace: Workspace,
+  devspace: Devspace,
   repoName: string,
   options: {
     deleteFiles?: boolean;
   } = {},
 ): Promise<boolean> {
   // Find the repo
-  for (const [namespace, inventory] of workspace.namespaces) {
+  for (const [namespace, inventory] of devspace.namespaces) {
     const repoIndex = inventory.repos.findIndex((r) => r.name === repoName);
     if (repoIndex === -1) continue;
 
@@ -314,7 +314,7 @@ export async function removeRepo(
     // Delete files if requested
     if (options.deleteFiles && repo.local_path !== false) {
       const localPath = repo.local_path || repo.name;
-      const absolutePath = join(workspace.rootPath, namespace, localPath);
+      const absolutePath = join(devspace.rootPath, namespace, localPath);
 
       if (await exists(absolutePath)) {
         await Deno.remove(absolutePath, { recursive: true });
@@ -325,7 +325,7 @@ export async function removeRepo(
     // Note: This is a simple text-based removal. The repo name validation
     // ensures names contain only safe characters (alphanumeric, hyphens, underscores),
     // so we can safely use string matching without worrying about escaped quotes.
-    const inventoryPath = join(workspace.rootPath, namespace, "inventory.toml");
+    const inventoryPath = join(devspace.rootPath, namespace, "inventory.toml");
     const content = await Deno.readTextFile(inventoryPath);
 
     // Simple removal - find the [[repos]] section for this repo and remove it
