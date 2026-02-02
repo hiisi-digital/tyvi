@@ -67,7 +67,7 @@ export async function loadStacks(dataPath: string): Promise<Map<string, Stack>> 
         const filePath = join(stacksDir, entry.name);
         try {
           const content = await Deno.readTextFile(filePath);
-          const parsed = parse(content) as StackAtom;
+          const parsed = parse(content) as unknown as StackAtom;
 
           if (!parsed.stack) {
             console.warn(`Skipping ${entry.name}: missing [stack] section`);

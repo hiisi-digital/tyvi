@@ -67,7 +67,7 @@ export async function loadSkills(dataPath: string): Promise<Map<string, Skill>> 
         const filePath = join(skillsDir, entry.name);
         try {
           const content = await Deno.readTextFile(filePath);
-          const parsed = parse(content) as SkillAtom;
+          const parsed = parse(content) as unknown as SkillAtom;
 
           if (!parsed.skill) {
             console.warn(`Skipping ${entry.name}: missing [skill] section`);

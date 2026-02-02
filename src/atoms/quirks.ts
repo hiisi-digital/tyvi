@@ -61,7 +61,7 @@ export async function loadQuirks(dataPath: string): Promise<Map<string, Quirk>> 
         const filePath = join(quirksDir, entry.name);
         try {
           const content = await Deno.readTextFile(filePath);
-          const parsed = parse(content) as QuirkAtom;
+          const parsed = parse(content) as unknown as QuirkAtom;
 
           if (!parsed.quirk) {
             console.warn(`Skipping ${entry.name}: missing [quirk] section`);
