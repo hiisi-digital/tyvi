@@ -118,7 +118,7 @@ function buildFilePath(
   const fileName = path.endsWith(".toml") ? path : `${path}.toml`;
   parts.push(fileName);
 
-  return join(...parts);
+  return parts.join("/");
 }
 
 /**

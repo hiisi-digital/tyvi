@@ -268,7 +268,7 @@ function buildScopePath(dataPath: string, scope: Scope): string {
     parts.push(`~${scope.team}`);
   }
 
-  return join(...parts);
+  return parts.join("/");
 }
 
 /**
