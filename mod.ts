@@ -232,11 +232,23 @@ export { loadAtoms, loadExperience, loadPhrases, loadQuirks, loadSkills, loadSta
 export { loadPerson, computePerson, listPeople } from "./src/people/mod.ts";
 
 // ============================================================================
-// Memory Operations (to be migrated from tyvi-mcp)
+// Memory Operations
 // ============================================================================
 
-// TODO: These will be implemented after migration
-// export { recallMemories, listMemories, recordMemory, reinforceMemory, pruneMemories } from "./src/memory/mod.ts";
+export {
+  recallMemories,
+  listMemories,
+  recordMemory,
+  reinforceMemory,
+  pruneMemories,
+  // Utility exports for advanced usage
+  getMemoryStrength,
+  calculateStrength,
+  getDefaultHalfLife,
+  calculateSimilarity,
+  findSimilarMemories,
+  toMemorySummary
+} from "./src/memory/mod.ts";
 
 // ============================================================================
 // Context Operations (to be migrated from tyvi-mcp)

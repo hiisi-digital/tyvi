@@ -1,0 +1,29 @@
+[memory]
+id = "alex-api-design-2025-01"
+person = "ctx://person/alex"
+created = "2025-01-15T10:00:00Z"
+
+[memory.content]
+summary = "Designed new REST API structure"
+significance = "medium"
+
+[memory.tags]
+topics = ["api", "architecture"]
+people = ["ctx://person/sarah"]
+outcome = "positive"
+
+[memory.strength]
+initial = 1.0
+current = 0.8
+last_reinforced = "2025-01-15T10:00:00Z"
+reinforcement_count = 0
+
+[memory.fade]
+half_life_days = 90
+min_strength = 0.1
+
+[[memory.log]]
+timestamp = "2025-01-15T10:00:00Z"
+event = "created"
+note = "Memory created"
+strength_delta = 1.0

@@ -1,0 +1,30 @@
+[memory]
+id = "alex-oauth-2025-02"
+person = "ctx://person/alex"
+created = "2025-02-01T14:30:00Z"
+
+[memory.content]
+summary = "Led OAuth2 design review"
+detail = "Discovered missing PKCE in mobile flow"
+significance = "high"
+
+[memory.tags]
+topics = ["oauth", "security"]
+people = ["ctx://person/viktor"]
+outcome = "positive"
+
+[memory.strength]
+initial = 1.0
+current = 1.0
+last_reinforced = "2025-02-01T14:30:00Z"
+reinforcement_count = 0
+
+[memory.fade]
+half_life_days = 180
+min_strength = 0.1
+
+[[memory.log]]
+timestamp = "2025-02-01T14:30:00Z"
+event = "created"
+note = "Memory created"
+strength_delta = 1.0
