@@ -1,0 +1,15 @@
+[skill]
+id = "skill.type-system-design"
+category = "architecture"
+
+[skill.description]
+name = "Type System Design"
+summary = "Ability to design clear, maintainable type systems"
+
+[skill.levels]
+0 = "No knowledge of type systems"
+20 = "Uses basic types (string, number, boolean)"
+40 = "Creates interfaces and type aliases"
+60 = "Designs complex generic types"
+80 = "Creates advanced type utilities and patterns"
+100 = "Pioneers new type system paradigms"

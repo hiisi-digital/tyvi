@@ -1,0 +1,15 @@
+[stack]
+id = "stack.typescript"
+category = "language"
+
+[stack.description]
+name = "TypeScript"
+summary = "TypeScript language and tooling proficiency"
+
+[stack.levels]
+0 = "No TypeScript experience"
+20 = "Basic TypeScript usage with simple types"
+40 = "Comfortable with generics and utilities"
+60 = "Advanced type patterns and conditional types"
+80 = "Expert in TypeScript compiler internals"
+100 = "TypeScript core team contributor"
