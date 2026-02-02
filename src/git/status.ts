@@ -3,7 +3,7 @@
  * @module
  */
 
-import type { GitStatus } from "../types.ts";
+import type { GitStatus } from "../types/mod.ts";
 
 /**
  * Check if a directory is a git repository.
