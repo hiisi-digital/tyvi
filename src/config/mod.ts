@@ -10,7 +10,7 @@ export type { InventoryConfig, WorkspaceConfig } from "../types.ts";
 
 import { join } from "@std/path";
 import { exists } from "@std/fs";
-import type { Workspace } from "../types.ts";
+import type { InventoryConfig, Workspace } from "../types.ts";
 import { loadWorkspaceConfig } from "./workspace.ts";
 import { loadInventoryConfig } from "./inventory.ts";
 
@@ -74,7 +74,7 @@ export async function loadWorkspace(startDir: string = Deno.cwd()): Promise<Work
   const configPath = join(rootPath, "tyvi.toml");
   const config = await loadWorkspaceConfig(configPath);
 
-  const namespaces = new Map<string, typeof import("../types.ts").InventoryConfig>();
+  const namespaces = new Map<string, InventoryConfig>();
 
   for (const namespacePath of config.workspace.namespaces.paths) {
     const inventoryPath = join(rootPath, namespacePath, "inventory.toml");
@@ -106,7 +106,7 @@ export async function loadWorkspace(startDir: string = Deno.cwd()): Promise<Work
 export async function loadInventory(
   workspaceRoot: string,
   namespace: string,
-): Promise<typeof import("../types.ts").InventoryConfig> {
+): Promise<InventoryConfig> {
   const inventoryPath = join(workspaceRoot, namespace, "inventory.toml");
   return await loadInventoryConfig(inventoryPath);
 }

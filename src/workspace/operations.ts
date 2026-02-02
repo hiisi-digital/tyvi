@@ -309,6 +309,7 @@ export async function removeRepo(
     if (repoIndex === -1) continue;
 
     const repo = inventory.repos[repoIndex];
+    if (!repo) continue; // Type guard for TypeScript
 
     // Delete files if requested
     if (options.deleteFiles && repo.local_path !== false) {
