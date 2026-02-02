@@ -1,0 +1,16 @@
+[trait.axis]
+id = "trait.caution"
+
+[trait.axis.negative]
+term = "bold"
+extreme = "reckless"
+description = "Acts quickly with minimal hesitation"
+
+[trait.axis.neutral]
+term = "balanced"
+description = "Weighs risks and opportunities appropriately"
+
+[trait.axis.positive]
+term = "prudent"
+extreme = "paralyzed"
+description = "Carefully evaluates risks before acting"

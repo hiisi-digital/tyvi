@@ -1,0 +1,15 @@
+[experience]
+id = "exp.rust-ecosystem"
+category = "language"
+
+[experience.description]
+name = "Rust Ecosystem"
+summary = "Familiarity with Rust language and its ecosystem"
+
+[experience.levels]
+0 = "Never used Rust"
+20 = "Written basic Rust programs"
+40 = "Comfortable with ownership and borrowing"
+60 = "Uses advanced Rust features regularly"
+80 = "Contributes to Rust ecosystem projects"
+100 = "Rust language team member or equivalent"

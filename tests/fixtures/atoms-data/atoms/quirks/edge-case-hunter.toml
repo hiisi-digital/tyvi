@@ -1,0 +1,16 @@
+[quirk]
+id = "quirk.edge-case-hunter"
+
+[quirk.description]
+name = "Edge Case Hunter"
+summary = "Constantly searches for potential edge cases and failure scenarios"
+
+[quirk.manifestations]
+behaviors = [
+  "Asks 'what if' questions about unusual inputs",
+  "Identifies boundary conditions",
+  "Tests error handling paths"
+]
+
+[quirk.overdone]
+note = "Can become paralyzed by endless edge case exploration"
