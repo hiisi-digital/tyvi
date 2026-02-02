@@ -4,15 +4,21 @@
  */
 
 export { loadInventoryConfig, parseInventoryConfig } from "./inventory.ts";
-export { loadWorkspaceConfig, parseWorkspaceConfig } from "./workspace.ts";
+export {
+    loadDevspaceConfig,
+    loadWorkspaceConfig,
+    parseDevspaceConfig,
+    parseWorkspaceConfig
+} from "./workspace.ts";
 
-export type { InventoryConfig, WorkspaceConfig } from "../types.ts";
-
-import { dirname, join } from "@std/path";
 import { exists } from "@std/fs";
-import type { InventoryConfig, Workspace } from "../types.ts";
-import { loadWorkspaceConfig } from "./workspace.ts";
+import { dirname, join } from "@std/path";
+import type { Devspace, InventoryConfig } from "../types/mod.ts";
 import { loadInventoryConfig } from "./inventory.ts";
+import { loadWorkspaceConfig } from "./workspace.ts";
+
+// Re-export types
+export type { Devspace, DevspaceConfig, InventoryConfig } from "../types/mod.ts";
 
 /**
  * Find tyvi.toml by walking up from the given directory.
@@ -20,7 +26,7 @@ import { loadInventoryConfig } from "./inventory.ts";
  * @param startDir - Directory to start searching from
  * @returns Path to tyvi.toml or null if not found
  */
-export async function findWorkspaceRoot(startDir: string): Promise<string | null> {
+export async function findDevspaceRoot(startDir: string): Promise<string | null> {
   let currentDir = startDir;
   const root = "/";
 
@@ -45,29 +51,32 @@ export async function findWorkspaceRoot(startDir: string): Promise<string | null
   return null;
 }
 
+/** @deprecated Use findDevspaceRoot instead */
+export const findWorkspaceRoot = findDevspaceRoot;
+
 /**
- * Load complete workspace with all inventories.
+ * Load complete devspace with all inventories.
  *
  * @param startDir - Directory to start searching from (default: cwd)
- * @returns Complete workspace model
- * @throws Error if workspace not found or config is invalid
+ * @returns Complete devspace model
+ * @throws Error if devspace not found or config is invalid
  *
  * @example
  * ```ts
- * const workspace = await loadWorkspace(".");
- * console.log(workspace.config.workspace.name);
- * for (const [namespace, inventory] of workspace.namespaces) {
+ * const devspace = await loadDevspace(".");
+ * console.log(devspace.config.devspace.name);
+ * for (const [namespace, inventory] of devspace.namespaces) {
  *   console.log(`${namespace}: ${inventory.repos.length} repos`);
  * }
  * ```
  */
-export async function loadWorkspace(startDir: string = Deno.cwd()): Promise<Workspace> {
-  const rootPath = await findWorkspaceRoot(startDir);
+export async function loadDevspace(startDir: string = Deno.cwd()): Promise<Devspace> {
+  const rootPath = await findDevspaceRoot(startDir);
 
   if (!rootPath) {
     throw new Error(
       `No tyvi.toml found in ${startDir} or parent directories.\n` +
-        "Run 'tyvi init' to create a workspace.",
+        "Run 'tyvi init' to create a devspace.",
     );
   }
 
@@ -76,7 +85,7 @@ export async function loadWorkspace(startDir: string = Deno.cwd()): Promise<Work
 
   const namespaces = new Map<string, InventoryConfig>();
 
-  for (const namespacePath of config.workspace.namespaces.paths) {
+  for (const namespacePath of config.devspace.namespaces?.paths ?? []) {
     const inventoryPath = join(rootPath, namespacePath, "inventory.toml");
 
     if (await exists(inventoryPath)) {
@@ -96,17 +105,20 @@ export async function loadWorkspace(startDir: string = Deno.cwd()): Promise<Work
   };
 }
 
+/** @deprecated Use loadDevspace instead */
+export const loadWorkspace = loadDevspace;
+
 /**
  * Load a single inventory from a namespace.
  *
- * @param workspaceRoot - Path to workspace root
+ * @param devspaceRoot - Path to devspace root
  * @param namespace - Namespace path (e.g., "@hiisi")
  * @returns Parsed inventory configuration
  */
 export async function loadInventory(
-  workspaceRoot: string,
+  devspaceRoot: string,
   namespace: string,
 ): Promise<InventoryConfig> {
-  const inventoryPath = join(workspaceRoot, namespace, "inventory.toml");
+  const inventoryPath = join(devspaceRoot, namespace, "inventory.toml");
   return await loadInventoryConfig(inventoryPath);
 }

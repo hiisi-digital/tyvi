@@ -1,94 +1,141 @@
 /**
- * Workspace configuration parsing.
+ * Workspace/Devspace configuration parsing.
+ *
+ * Note: "workspace" is being renamed to "devspace" for clarity.
+ * This file handles both formats for backwards compatibility.
+ *
  * @module
  */
 
 import { parse } from "@std/toml";
-import type { WorkspaceConfig } from "../types.ts";
+import type { DevspaceConfig, DevspaceSection, GitPolicy } from "../types/mod.ts";
 
 /**
- * Parse tyvi.toml content into WorkspaceConfig.
+ * Parse tyvi.toml content into DevspaceConfig.
+ *
+ * Supports both old [workspace] and new [devspace] section names.
  *
  * @param content - TOML file content
- * @returns Parsed workspace configuration
+ * @returns Parsed devspace configuration
  * @throws Error if config is malformed or missing required fields
  *
  * @example
  * ```ts
  * const content = await Deno.readTextFile("tyvi.toml");
  * const config = parseWorkspaceConfig(content);
- * console.log(config.workspace.name);
+ * console.log(config.devspace.name);
  * ```
  */
-export function parseWorkspaceConfig(content: string): WorkspaceConfig {
+export function parseWorkspaceConfig(content: string): DevspaceConfig {
   const parsed = parse(content) as Record<string, unknown>;
 
-  if (!parsed.workspace || typeof parsed.workspace !== "object") {
+  // Support both [devspace] and legacy [workspace] section names
+  const devspaceRaw = parsed.devspace ?? parsed.workspace;
+
+  if (!devspaceRaw || typeof devspaceRaw !== "object") {
     throw new Error(
-      "Invalid tyvi.toml: missing [workspace] section.\n" +
+      "Invalid tyvi.toml: missing [devspace] section.\n" +
         "Expected format:\n" +
-        "[workspace]\n" +
-        'name = "my-workspace"\n' +
-        "[workspace.namespaces]\n" +
+        "[devspace]\n" +
+        'name = "my-devspace"\n' +
+        "[devspace.namespaces]\n" +
         'default = "@default"\n' +
         'paths = ["@default"]',
     );
   }
 
-  const workspace = parsed.workspace as Record<string, unknown>;
+  const devspace = devspaceRaw as Record<string, unknown>;
 
-  if (!workspace.name || typeof workspace.name !== "string") {
+  if (!devspace.name || typeof devspace.name !== "string") {
     throw new Error(
-      "Invalid tyvi.toml: [workspace] section missing required 'name' field.\n" +
-        "Add: name = \"my-workspace\"",
+      "Invalid tyvi.toml: [devspace] section missing required 'name' field.\n" +
+        'Add: name = "my-devspace"',
     );
   }
 
-  if (!workspace.namespaces || typeof workspace.namespaces !== "object") {
+  // Parse namespaces (required)
+  const namespacesRaw = devspace.namespaces as Record<string, unknown> | undefined;
+  let namespaces: DevspaceSection["namespaces"];
+
+  if (namespacesRaw && typeof namespacesRaw === "object") {
+    if (!namespacesRaw.default || typeof namespacesRaw.default !== "string") {
+      throw new Error(
+        "Invalid tyvi.toml: [devspace.namespaces] missing 'default' field.\n" +
+          'Add: default = "@default"',
+      );
+    }
+
+    if (!Array.isArray(namespacesRaw.paths)) {
+      throw new Error(
+        "Invalid tyvi.toml: [devspace.namespaces] missing 'paths' array.\n" +
+          'Add: paths = ["@default"]',
+      );
+    }
+
+    namespaces = {
+      default: namespacesRaw.default,
+      paths: namespacesRaw.paths as string[],
+    };
+  } else {
     throw new Error(
-      "Invalid tyvi.toml: [workspace] section missing [workspace.namespaces] subsection.\n" +
+      "Invalid tyvi.toml: [devspace] section missing [devspace.namespaces] subsection.\n" +
         "Add:\n" +
-        "[workspace.namespaces]\n" +
+        "[devspace.namespaces]\n" +
         'default = "@default"\n' +
         'paths = ["@default"]',
     );
   }
 
-  const namespaces = workspace.namespaces as Record<string, unknown>;
-
-  if (!namespaces.default || typeof namespaces.default !== "string") {
-    throw new Error(
-      "Invalid tyvi.toml: [workspace.namespaces] missing 'default' field.\n" +
-        'Add: default = "@default"',
-    );
+  // Parse git_policy (optional)
+  let gitPolicy: GitPolicy | undefined;
+  const gitPolicyRaw = devspace.git_policy as Record<string, unknown> | undefined;
+  if (gitPolicyRaw && typeof gitPolicyRaw === "object") {
+    gitPolicy = {
+      enabled: typeof gitPolicyRaw.enabled === "boolean" ? gitPolicyRaw.enabled : true,
+      allowed_paths: Array.isArray(gitPolicyRaw.allowed_paths)
+        ? gitPolicyRaw.allowed_paths as string[]
+        : [],
+    };
   }
 
-  if (!Array.isArray(namespaces.paths)) {
-    throw new Error(
-      "Invalid tyvi.toml: [workspace.namespaces] missing 'paths' array.\n" +
-        'Add: paths = ["@default"]',
-    );
-  }
-
+  // Parse defaults (optional)
   const defaults = parsed.defaults as Record<string, unknown> | undefined;
 
+  // Build the devspace section
+  const devspaceSection: DevspaceSection = {
+    name: devspace.name,
+    staging_path: typeof devspace.staging_path === "string"
+      ? devspace.staging_path
+      : ".staging",
+    lab_path: typeof devspace.lab_path === "string"
+      ? devspace.lab_path
+      : ".lab",
+    state_path: typeof devspace.state_path === "string"
+      ? devspace.state_path
+      : ".state",
+    tmp_path: typeof devspace.tmp_path === "string"
+      ? devspace.tmp_path
+      : ".tmp",
+    ext_path: typeof devspace.ext_path === "string"
+      ? devspace.ext_path
+      : ".tmp/ext",
+    trusted_orgs: Array.isArray(devspace.trusted_orgs)
+      ? devspace.trusted_orgs as string[]
+      : undefined,
+    namespaces,
+    git_policy: gitPolicy,
+  };
+
   return {
-    workspace: {
-      name: workspace.name,
-      root: typeof workspace.root === "string" ? workspace.root : ".",
-      namespaces: {
-        default: namespaces.default,
-        paths: namespaces.paths as string[],
-      },
-    },
+    devspace: devspaceSection,
     defaults: defaults
       ? {
-        host: typeof defaults.host === "string" ? defaults.host : undefined,
-        clone_method: defaults.clone_method === "https" ? "https" : "ssh",
-        fetch_on_status: typeof defaults.fetch_on_status === "boolean"
-          ? defaults.fetch_on_status
-          : false,
-      }
+          host: typeof defaults.host === "string" ? defaults.host : undefined,
+          clone_method: defaults.clone_method === "https" ? "https" : "ssh",
+          fetch_on_status: typeof defaults.fetch_on_status === "boolean"
+            ? defaults.fetch_on_status
+            : false,
+        }
       : undefined,
   };
 }
@@ -97,10 +144,10 @@ export function parseWorkspaceConfig(content: string): WorkspaceConfig {
  * Load and parse tyvi.toml from a file.
  *
  * @param path - Path to tyvi.toml
- * @returns Parsed workspace configuration
+ * @returns Parsed devspace configuration
  * @throws Error if file cannot be read or config is invalid
  */
-export async function loadWorkspaceConfig(path: string): Promise<WorkspaceConfig> {
+export async function loadWorkspaceConfig(path: string): Promise<DevspaceConfig> {
   try {
     const content = await Deno.readTextFile(path);
     return parseWorkspaceConfig(content);
@@ -108,9 +155,13 @@ export async function loadWorkspaceConfig(path: string): Promise<WorkspaceConfig
     if (error instanceof Deno.errors.NotFound) {
       throw new Error(
         `tyvi.toml not found at: ${path}\n` +
-          "Run 'tyvi init' to create a workspace.",
+          "Run 'tyvi init' to create a devspace.",
       );
     }
     throw error;
   }
 }
+
+// Aliases for backwards compatibility
+export { loadWorkspaceConfig as loadDevspaceConfig, parseWorkspaceConfig as parseDevspaceConfig };
+
