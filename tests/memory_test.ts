@@ -133,7 +133,8 @@ Deno.test("reinforcement - increases memory strength", async () => {
       tags: {
         topics: ["test"],
         people: []
-      }
+      },
+      initial: 0.5
     };
     
     const memory = await recordMemory(tempDir, input);
@@ -235,7 +236,7 @@ Deno.test("query - limit results", async () => {
 // ============================================================================
 
 Deno.test("list - returns summaries", async () => {
-  const summaries = await listMemories(FIXTURES_PATH);
+  const summaries = await listMemories(MEMORIES_PATH);
   
   assert(summaries.length >= 3);
   
@@ -248,7 +249,7 @@ Deno.test("list - returns summaries", async () => {
 });
 
 Deno.test("list - filter by topic", async () => {
-  const summaries = await listMemories(FIXTURES_PATH, {
+  const summaries = await listMemories(MEMORIES_PATH, {
     topic: "security"
   });
   
