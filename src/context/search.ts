@@ -19,6 +19,14 @@ import type {
 import { buildUri } from "./uri.ts";
 import { getVisibleScopes } from "./scope.ts";
 
+// Search scoring constants
+const SCORE_PER_OCCURRENCE = 0.5; // Weight for each query match
+const SCORE_EARLY_POSITION = 0.3; // Bonus for matches in first 100 chars
+const SCORE_VERY_EARLY = 0.2; // Additional bonus for matches in first 50 chars
+const EARLY_POSITION_THRESHOLD = 100; // Character position for early match
+const VERY_EARLY_POSITION_THRESHOLD = 50; // Character position for very early match
+const SNIPPET_LENGTH = 150; // Length of extracted snippet in characters
+
 /**
  * Search context by query.
  *
@@ -166,9 +174,9 @@ async function checkMatch(
     const firstIndex = contentLower.indexOf(queryLower);
 
     // Higher score for more occurrences and earlier position
-    let score = occurrences * 0.5;
-    if (firstIndex < 100) score += 0.3;
-    if (firstIndex < 50) score += 0.2;
+    let score = occurrences * SCORE_PER_OCCURRENCE;
+    if (firstIndex < EARLY_POSITION_THRESHOLD) score += SCORE_EARLY_POSITION;
+    if (firstIndex < VERY_EARLY_POSITION_THRESHOLD) score += SCORE_VERY_EARLY;
 
     // Try to parse as TOML to get title
     let title: string | undefined;
@@ -234,9 +242,8 @@ function extractTitle(data: Record<string, unknown>): string | undefined {
  * Extract a snippet around the match location.
  */
 function extractSnippet(content: string, query: string, position: number): string {
-  const snippetLength = 150;
   const start = Math.max(0, position - 50);
-  const end = Math.min(content.length, position + query.length + snippetLength);
+  const end = Math.min(content.length, position + query.length + SNIPPET_LENGTH);
 
   let snippet = content.slice(start, end);
 

@@ -335,7 +335,9 @@ Deno.test("searchContext - find matching content", async () => {
   assertExists(results);
   assertEquals(results.query, "alex");
   // Should find at least one result
-  assertEquals(results.totalCount >= 1, true);
+  if (results.totalCount < 1) {
+    throw new Error(`Expected at least 1 result, got ${results.totalCount}`);
+  }
 });
 
 Deno.test("searchContext - with type filter", async () => {
@@ -363,7 +365,9 @@ Deno.test("searchContext - with limit", async () => {
 
   assertExists(results);
   // totalCount should be at most the limit
-  assertEquals(results.totalCount <= 2, true);
+  if (results.totalCount > 2) {
+    throw new Error(`Expected at most 2 results, got ${results.totalCount}`);
+  }
   // results array length should match totalCount
   assertEquals(results.results.length, results.totalCount);
 });
