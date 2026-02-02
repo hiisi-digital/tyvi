@@ -13,7 +13,7 @@ Implementation tasks for the core library.
 
 ---
 
-## Phase 1: Foundation (Partial)
+## Phase 1: Foundation ✓
 
 ### Project Setup
 - [x] Initialize deno.json with dependencies
@@ -23,13 +23,18 @@ Implementation tasks for the core library.
 - [ ] Set up test infrastructure
 - [ ] Configure CI workflow
 
-### Core Types (from tyvi-mcp)
-- [ ] Move types.ts from tyvi-mcp
-- [ ] Organize into src/types/ directory
-- [ ] Split into atoms.ts, people.ts, memory.ts, devspace.ts, context.ts
-- [ ] Export all from types/mod.ts
+### Core Types
+- [x] Create src/types/ directory structure
+- [x] atoms.ts — Traits, skills, quirks, phrases, composition rules
+- [x] people.ts — Person, ComputedPerson, computation trace
+- [x] memory.ts — Memory, fading, reinforcement, queries
+- [x] context.ts — URI scheme, scope hierarchy, resolution
+- [x] relationship.ts — Relationship entries and dynamics
+- [x] config.ts — Global config, caching, validation
+- [x] devspace.ts — Repos, inventory, devspace config, operations
+- [x] mod.ts — Re-export all types
 
-### JSON Schemas (from tyvi-mcp)
+### JSON Schemas
 - [ ] Move schemas/ from tyvi-mcp
 - [ ] Ensure all schemas are complete
 - [ ] Add devspace.schema.json
@@ -37,214 +42,188 @@ Implementation tasks for the core library.
 
 ---
 
-## Phase 2: Computation Engine (from tyvi-mcp)
+## Phase 2: Computation Engine
 
-### Move from tyvi-mcp
-- [ ] Move src/computation/ directory
-- [ ] Move src/parsing/ directory (if separate)
-- [ ] Update imports
+**Source:** Copy from `tyvi-mcp/src/computation/`
 
-### Computation Components
-- [x] Lexer (tokenize expressions)
-- [x] Parser (build AST)
-- [x] AST node types
-- [x] Evaluator (compute values)
-- [x] Dependency analysis
-- [x] Rule application engine
-- [x] Quirk auto-assignment
-- [x] Phrase matching
+### Files to Move
+- [ ] `lexer.ts` — Expression tokenizer
+- [ ] `parser.ts` — Expression parser  
+- [ ] `ast.ts` — AST node types
+- [ ] `evaluator.ts` — Expression evaluator
+- [ ] `dependencies.ts` — Dependency analysis
+- [ ] `rules.ts` — Rule application
+- [ ] `quirks.ts` — Quirk auto-assignment
+- [ ] `phrases.ts` — Phrase matching
+- [ ] `mod.ts` — Module exports
+- [ ] `README.md` — Documentation
 
-### Tests
-- [ ] Move computation tests from tyvi-mcp
-- [ ] Ensure all pass after move
-
----
-
-## Phase 3: People System (from tyvi-mcp)
-
-### Move from tyvi-mcp
-- [ ] Move src/people/ directory
-- [ ] Move src/atoms/ directory
-- [ ] Update imports
-
-### People Components
-- [x] Person TOML loading
-- [x] Full computation pipeline
-- [ ] Person listing
-- [ ] Computed value caching
-
-### Atom Loading
-- [ ] Trait axis loading
-- [ ] Skill definition loading
-- [ ] Quirk definition loading
-- [ ] Phrase atom loading
-- [ ] Experience loading
-- [ ] Stack loading
-
-### Tests
-- [ ] Move people tests from tyvi-mcp
-- [ ] Ensure all pass after move
+### After Move
+- [ ] Update imports to use `../types/mod.ts`
+- [ ] Export from main `mod.ts`
+- [ ] Move computation tests from tyvi-mcp/tests/computation/
+- [ ] Ensure all tests pass
 
 ---
 
-## Phase 4: Memory System (from tyvi-mcp)
+## Phase 3: Atoms System
 
-### Move from tyvi-mcp
-- [ ] Move src/memory/ directory
-- [ ] Update imports
+**Source:** Copy from `tyvi-mcp/src/atoms/`
 
-### Memory Components
-- [x] Storage (read/write)
-- [x] Strength calculation
-- [x] Reinforcement logic
-- [x] Similarity detection
-- [x] Query system
-- [x] Lifecycle (create, update, prune)
-- [x] Log management
+### Files to Create/Move
+- [ ] `traits.ts` — Load trait axis definitions
+- [ ] `skills.ts` — Load skill definitions
+- [ ] `quirks.ts` — Load quirk definitions
+- [ ] `phrases.ts` — Load phrase definitions
+- [ ] `experience.ts` — Load experience definitions
+- [ ] `stacks.ts` — Load stack definitions
+- [ ] `mod.ts` — Module exports with `loadAtoms()` function
 
-### Tests
-- [ ] Move memory tests from tyvi-mcp
-- [ ] Ensure all pass after move
-
----
-
-## Phase 5: Context Resolution (from tyvi-mcp)
-
-### Move from tyvi-mcp
-- [ ] Move src/context/ directory
-- [ ] Update imports
-
-### Context Components
-- [ ] URI parsing (ctx://, model://, etc.)
-- [ ] Scope hierarchy (global → org → team)
-- [ ] Reference resolution
-- [ ] Fallback behavior
-- [ ] Provenance annotation
-
-### Tests
-- [ ] Move context tests from tyvi-mcp
-- [ ] Ensure all pass after move
+### Implementation
+- [ ] Parse TOML files from data/atoms/ directories
+- [ ] Return `Atoms` type from types/atoms.ts
+- [ ] Handle missing files gracefully
+- [ ] Cache loaded atoms
 
 ---
 
-## Phase 6: Devspace System (existing + new)
+## Phase 4: People System
 
-### Config Parsing (existing)
-- [x] tyvi.toml parsing
-- [x] inventory.toml parsing
-- [ ] Add [devspace] section support
-- [ ] Add [devspace.git_policy] support
-- [ ] Add trusted_orgs parsing
+**Source:** Copy from `tyvi-mcp/src/people/`
 
-### Git Operations (existing)
-- [x] Check if directory is git repo
-- [x] Get repository status
-- [x] Get current branch
-- [x] Clone operations
-- [x] Fetch operations
+### Files to Move
+- [ ] `computation.ts` — Full person computation pipeline
+- [ ] `loading.ts` — Load person TOML files
+- [ ] `mod.ts` — Module exports
 
-### State Management (new)
-- [ ] Create .state/ directory structure
-- [ ] Implement .state/lab.toml read/write
-- [ ] Implement .state/ext.toml read/write
+### Public API
+- [ ] `loadPerson(dataPath, id)` — Load raw person definition
+- [ ] `computePerson(dataPath, id)` — Compute all derived values
+- [ ] `listPeople(dataPath)` — List all people summaries
+
+### After Move
+- [ ] Update imports
+- [ ] Export from main mod.ts
+- [ ] Move tests from tyvi-mcp/tests/people/
+
+---
+
+## Phase 5: Memory System
+
+**Source:** Copy from `tyvi-mcp/src/memory/`
+
+### Files to Move
+- [ ] `storage.ts` — Memory read/write
+- [ ] `strength.ts` — Strength calculation with decay
+- [ ] `reinforcement.ts` — Memory reinforcement logic
+- [ ] `similarity.ts` — Similarity detection between memories
+- [ ] `query.ts` — Memory queries
+- [ ] `lifecycle.ts` — Create, update, prune operations
+- [ ] `logs.ts` — Log entry management
+- [ ] `paths.ts` — Path utilities for memory files
+- [ ] `mod.ts` — Module exports
+
+### Public API
+- [ ] `recallMemories(dataPath, query)` — Query memories
+- [ ] `listMemories(dataPath, filters)` — List memory summaries
+- [ ] `recordMemory(dataPath, input)` — Create new memory
+- [ ] `reinforceMemory(dataPath, id, reason)` — Reinforce existing
+- [ ] `pruneMemories(dataPath)` — Remove weak memories
+
+### After Move
+- [ ] Update imports
+- [ ] Export from main mod.ts
+- [ ] Move tests from tyvi-mcp/tests/memory/
+
+---
+
+## Phase 6: Context Resolution
+
+**Source:** Copy from `tyvi-mcp/src/context/`
+
+### Files to Move/Create
+- [ ] `uri.ts` — Parse ctx:// URIs
+- [ ] `scope.ts` — Scope hierarchy and chain building
+- [ ] `resolution.ts` — Resolve references with fallback
+- [ ] `search.ts` — Search context by query
+- [ ] `mod.ts` — Module exports
+
+### Public API
+- [ ] `parseUri(uri)` — Parse ctx:// URI into components
+- [ ] `resolveContext(dataPath, uri)` — Resolve with fallback
+- [ ] `searchContext(dataPath, query)` — Search all context
+
+### After Move
+- [ ] Update imports
+- [ ] Export from main mod.ts
+- [ ] Write tests for URI parsing and resolution
+
+---
+
+## Phase 7: Devspace Operations
+
+**Enhance existing:** `src/workspace/` → rename to `src/devspace/`
+
+### Rename and Restructure
+- [ ] Rename src/workspace/ to src/devspace/
+- [ ] Update all imports
+- [ ] Rename functions to use "devspace" terminology
+
+### New Operations
+- [ ] `load(devspace, pattern)` — Move repos from staging to lab
+- [ ] `unload(devspace, pattern)` — Move repos from lab to staging
+- [ ] `checkGitAllowed(devspace, path)` — Check git policy
+- [ ] `getDevspaceHint(devspace)` — Get guidance message
+- [ ] `findDevspaceRoot(from)` — Find devspace root directory
+
+### State Management
+- [ ] Create .state/ directory handling
+- [ ] Implement lab.toml read/write
+- [ ] Implement ext.toml read/write
 - [ ] Track loaded repos with timestamps
 
-### Load/Unload Operations (new)
-- [ ] Implement load operation
-- [ ] Clone to staging if missing
-- [ ] Move from staging to lab
-- [ ] Handle naming collisions
-- [ ] Update lab state
-- [ ] Implement unload operation
-- [ ] Check for uncommitted changes
-- [ ] Check for unpushed commits
-- [ ] Move from lab to staging
-- [ ] Update lab state
-
-### Git Restrictions (new)
-- [ ] Implement checkGitAllowed
-- [ ] Parse allowed_paths from config
-- [ ] Check path against allowed list
-- [ ] Implement getDevspaceHint
-- [ ] Implement findDevspaceRoot
-
-### External Repos (new)
-- [ ] Implement ext operation
-- [ ] Check trusted_orgs
-- [ ] Prompt for inventory addition (delegate to CLI)
-- [ ] Clone to .tmp/ext/
-- [ ] Track in .state/ext.toml
-
 ---
 
-## Phase 7: Caching System
+## Phase 8: Data Migration
 
-### Cache Infrastructure
-- [ ] Create .cache/ directory structure
-- [ ] Binary serialization format (MessagePack?)
-- [ ] Cache file read/write
-- [ ] Cache metadata storage
+### Move Example Data
+- [ ] Copy data/atoms/ from tyvi-mcp
+- [ ] Copy data/people/ from tyvi-mcp
+- [ ] Copy data/config.toml from tyvi-mcp
+- [ ] Create data/memories/ structure
+- [ ] Create data/relationships/ structure
 
-### Hash-Based Invalidation
-- [ ] File hashing utilities
-- [ ] Section-level hashing for TOML
-- [ ] Source hash storage
-- [ ] Hash comparison on access
-
-### Validation Schedule
-- [ ] Daily section hash check
-- [ ] Weekly full hash check
-- [ ] Monthly deep validation
-
-### Summary Caching
-- [ ] Person summary generation
-- [ ] Memory summary generation
-- [ ] Fast binary storage
-
----
-
-## Phase 8: Public API
-
-### Export Design
-- [ ] Design clean public API surface
-- [ ] Export from mod.ts
-- [ ] Ensure internal modules not exposed
-- [ ] Document all exports with JSDoc
-
-### API Functions
-- [ ] Devspace: loadDevspace, load, unload, clone, sync
-- [ ] Devspace: checkGitAllowed, getDevspaceHint, findDevspaceRoot
-- [ ] People: loadPerson, computePerson, listPeople, loadAtoms
-- [ ] Memory: recallMemories, listMemories, recordMemory, reinforceMemory
-- [ ] Context: parseUri, resolveContext, searchContext
+### Schemas
+- [ ] Copy schemas/ from tyvi-mcp
+- [ ] Add devspace.schema.json
+- [ ] Add inventory.schema.json
 
 ---
 
 ## Phase 9: Testing
 
-### Unit Tests
-- [ ] Types validation tests
-- [ ] Config parsing tests
+### Test Infrastructure
+- [ ] Create tests/ directory structure
+- [ ] Set up test utilities and fixtures
+- [ ] Configure test tasks in deno.json
+
+### Test Suites
 - [ ] Computation engine tests
+- [ ] Atoms loading tests
+- [ ] People computation tests
 - [ ] Memory system tests
 - [ ] Context resolution tests
 - [ ] Devspace operation tests
 
 ### Integration Tests
-- [ ] Full person computation
-- [ ] Memory lifecycle
-- [ ] Context fallback
+- [ ] Full person computation pipeline
+- [ ] Memory lifecycle (create, reinforce, prune)
+- [ ] Context fallback chain
 - [ ] Load/unload workflow
-
-### Test Fixtures
-- [ ] Example devspace
-- [ ] Example atoms
-- [ ] Example people
-- [ ] Example memories
 
 ---
 
-## Phase 10: Documentation
+## Phase 10: Documentation & Polish
 
 ### Code Documentation
 - [ ] JSDoc for all public functions
@@ -252,20 +231,14 @@ Implementation tasks for the core library.
 - [ ] Type documentation
 
 ### README
-- [ ] Installation instructions
-- [ ] Quick start guide
-- [ ] API overview
-- [ ] Link to detailed docs
+- [ ] Update with new API
+- [ ] Add quick start examples
+- [ ] Document all exports
 
----
-
-## Blocked
-
-These require completing the migration first:
-
-- [!] Remove CLI from tyvi (after tyvi-cli works)
-- [!] Public API finalization (after all modules moved)
-- [!] Full test suite (after all code moved)
+### CI/CD
+- [ ] GitHub Actions workflow
+- [ ] Test on PR
+- [ ] Publish to JSR
 
 ---
 
@@ -273,13 +246,14 @@ These require completing the migration first:
 
 ### Migration Order
 
-1. Types and schemas (foundation)
-2. Computation engine (no deps on other tyvi-mcp code)
-3. Atoms loading (depends on types)
-4. People system (depends on computation, atoms)
-5. Memory system (depends on types)
-6. Context resolution (depends on types)
-7. Wire up devspace to use all systems
+The recommended order for migration is:
+
+1. **Computation engine** — No dependencies on other tyvi-mcp code
+2. **Atoms loading** — Depends only on types
+3. **People system** — Depends on computation, atoms
+4. **Memory system** — Depends only on types
+5. **Context resolution** — Depends only on types
+6. **Wire up devspace** — Uses all systems
 
 ### Design Principles
 
