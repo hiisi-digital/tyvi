@@ -1,0 +1,30 @@
+[memory]
+id = "viktor-bug-fix-2024-12"
+person = "ctx://person/viktor"
+created = "2024-12-10T16:45:00Z"
+
+[memory.content]
+summary = "Fixed critical security vulnerability"
+detail = "SQL injection in user query endpoint"
+significance = "high"
+
+[memory.tags]
+topics = ["security", "bug-fix"]
+people = []
+outcome = "positive"
+
+[memory.strength]
+initial = 1.0
+current = 0.5
+last_reinforced = "2024-12-10T16:45:00Z"
+reinforcement_count = 0
+
+[memory.fade]
+half_life_days = 180
+min_strength = 0.1
+
+[[memory.log]]
+timestamp = "2024-12-10T16:45:00Z"
+event = "created"
+note = "Memory created"
+strength_delta = 1.0
