@@ -21,13 +21,13 @@ clone_method = "ssh"
 
   const config = parseWorkspaceConfig(content);
 
-  assertEquals(config.workspace.name, "test-workspace");
-  assertEquals(config.workspace.namespaces.default, "@default");
-  assertEquals(config.workspace.namespaces.paths, ["@default", "@other"]);
+  assertEquals(config.devspace.name, "test-workspace");
+  assertEquals(config.devspace.namespaces?.default, "@default");
+  assertEquals(config.devspace.namespaces?.paths, ["@default", "@other"]);
   assertEquals(config.defaults?.clone_method, "ssh");
 });
 
-Deno.test("parseWorkspaceConfig - missing workspace section", () => {
+Deno.test("parseWorkspaceConfig - missing devspace section", () => {
   const content = `
 [defaults]
 clone_method = "ssh"
@@ -36,7 +36,7 @@ clone_method = "ssh"
   assertThrows(
     () => parseWorkspaceConfig(content),
     Error,
-    "missing [workspace] section",
+    "missing [devspace] section",
   );
 });
 
@@ -118,7 +118,7 @@ Deno.test("loadWorkspace - valid workspace", async () => {
   const workspace = await loadWorkspace(fixturePath);
 
   assertExists(workspace);
-  assertEquals(workspace.config.workspace.name, "test-workspace");
+  assertEquals(workspace.config.devspace.name, "test-workspace");
   assertEquals(workspace.namespaces.size, 1);
 
   const inventory = workspace.namespaces.get("@default");
@@ -131,7 +131,7 @@ Deno.test("loadWorkspace - minimal workspace", async () => {
   const workspace = await loadWorkspace(fixturePath);
 
   assertExists(workspace);
-  assertEquals(workspace.config.workspace.name, "minimal");
+  assertEquals(workspace.config.devspace.name, "minimal");
 
   const inventory = workspace.namespaces.get("@default");
   assertExists(inventory);
