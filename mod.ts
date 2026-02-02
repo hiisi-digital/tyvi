@@ -154,8 +154,8 @@ export type {
 // Re-export config parsing
 export { loadInventory } from "./src/config/mod.ts";
 
-// Re-export workspace operations (TODO: rename to devspace internally)
-export { addRepo, clone, getStatus, removeRepo, sync } from "./src/workspace/mod.ts";
+// Re-export devspace operations
+export { addRepo, clone, getStatus, removeRepo, sync } from "./src/devspace/mod.ts";
 
 // Re-export git utilities
 export { getCurrentBranch, getGitStatus, isGitRepo } from "./src/git/mod.ts";
@@ -170,7 +170,6 @@ export { getCurrentBranch, getGitStatus, isGitRepo } from "./src/git/mod.ts";
 // export { checkGitAllowed, getDevspaceHint, findDevspaceRoot } from "./src/devspace/restrictions.ts";
 
 // ============================================================================
-<<<<<<< HEAD
 // Computation Engine
 // ============================================================================
 

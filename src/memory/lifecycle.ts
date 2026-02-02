@@ -65,11 +65,12 @@ export async function createMemory(
   // Determine half-life
   const halfLife = input.half_life_days || getDefaultHalfLife(input.content.significance);
   const minStrength = input.min_strength || 0.1;
+  const initialStrength = input.initial ?? 1.0;
   
   // Create strength tracking
   const strength: MemoryStrength = {
-    initial: 1.0,
-    current: 1.0,
+    initial: initialStrength,
+    current: initialStrength,
     last_reinforced: now.toISOString(),
     reinforcement_count: 0
   };

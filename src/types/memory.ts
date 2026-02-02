@@ -166,6 +166,8 @@ export interface MemoryInput {
   content: MemoryContent;
   /** Tags */
   tags: MemoryTags;
+  /** Optional: override initial strength (defaults to 1.0) */
+  initial?: number;
   /** Optional: override half-life (uses default based on significance otherwise) */
   half_life_days?: number;
   /** Optional: override min strength */

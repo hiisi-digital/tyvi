@@ -5,7 +5,7 @@
 import { assertEquals, assertExists } from "@std/assert";
 import { join } from "@std/path";
 import { loadWorkspace } from "../src/config/mod.ts";
-import { getStatus } from "../src/workspace/mod.ts";
+import { getStatus } from "../src/devspace/mod.ts";
 
 Deno.test("getStatus - lists all repos from inventory", async () => {
   const fixturePath = join(Deno.cwd(), "tests", "fixtures", "valid-workspace");

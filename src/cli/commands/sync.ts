@@ -4,7 +4,7 @@
  */
 
 import { loadWorkspace } from "../../config/mod.ts";
-import { sync } from "../../workspace/mod.ts";
+import { sync } from "../../devspace/mod.ts";
 import { formatSyncResult } from "../output.ts";
 
 /**
