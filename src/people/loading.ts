@@ -81,8 +81,9 @@ export async function listPeople(dataPath: string): Promise<PersonSummary[]> {
           skillCount: Object.keys(person.skills || {}).length,
           quirkCount: person.quirks?.explicit?.length || 0,
         });
-      } catch {
-        // Skip invalid person files
+      } catch (error) {
+        // Skip invalid person files, but log the error for debugging
+        console.error(`Skipping invalid person file ${entry.name}:`, error);
         continue;
       }
     }

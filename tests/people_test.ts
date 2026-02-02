@@ -6,7 +6,9 @@ import { assertEquals, assertExists, assertRejects } from "@std/assert";
 import { join } from "@std/path";
 import { loadPerson, computePerson, listPeople } from "../src/people/mod.ts";
 
-const testDataPath = join(import.meta.dirname!, "fixtures", "people-data");
+const testDataPath = import.meta.dirname
+  ? join(import.meta.dirname, "fixtures", "people-data")
+  : join(Deno.cwd(), "tests", "fixtures", "people-data");
 
 Deno.test("loadPerson - valid person file", async () => {
   const person = await loadPerson(testDataPath, "alex");
@@ -103,7 +105,9 @@ Deno.test("listPeople - lists all people", async () => {
 });
 
 Deno.test("listPeople - empty directory returns empty array", async () => {
-  const emptyPath = join(import.meta.dirname!, "fixtures", "nonexistent");
+  const emptyPath = import.meta.dirname
+    ? join(import.meta.dirname, "fixtures", "nonexistent")
+    : join(Deno.cwd(), "tests", "fixtures", "nonexistent");
   const people = await listPeople(emptyPath);
 
   assertEquals(people.length, 0);
