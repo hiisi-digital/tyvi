@@ -40,11 +40,7 @@ export {
 } from "./scope.ts";
 
 // Resolution
-export {
-  canResolve,
-  resolveContext,
-  resolveContextBatch,
-} from "./resolution.ts";
+export { canResolve, resolveContext, resolveContextBatch } from "./resolution.ts";
 
 // Search
 export { searchContext } from "./search.ts";

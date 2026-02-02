@@ -17,7 +17,7 @@ import type {
   Scope,
 } from "../types/mod.ts";
 import { buildUri } from "./uri.ts";
-import { formatScope, getVisibleScopes } from "./scope.ts";
+import { getVisibleScopes } from "./scope.ts";
 
 /**
  * Search context by query.
@@ -44,9 +44,7 @@ export async function searchContext(
   query: ContextSearchQuery,
 ): Promise<ContextSearchResults> {
   // Determine which scopes to search
-  const scopes = query.scope
-    ? getVisibleScopes(query.scope)
-    : [{ level: "global" }] as Scope[];
+  const scopes = query.scope ? getVisibleScopes(query.scope) : [{ level: "global" }] as Scope[];
 
   const results: ContextSearchResult[] = [];
 
