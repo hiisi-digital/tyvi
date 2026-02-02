@@ -4,7 +4,7 @@
  */
 
 import { loadWorkspace } from "../../config/mod.ts";
-import { removeRepo } from "../../workspace/mod.ts";
+import { removeRepo } from "../../devspace/mod.ts";
 
 /**
  * Remove a repository from inventory.

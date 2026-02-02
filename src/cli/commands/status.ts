@@ -4,7 +4,7 @@
  */
 
 import { loadWorkspace } from "../../config/mod.ts";
-import { getStatus } from "../../workspace/mod.ts";
+import { getStatus } from "../../devspace/mod.ts";
 import { formatStatus } from "../output.ts";
 
 /**

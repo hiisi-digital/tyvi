@@ -4,7 +4,7 @@
  */
 
 import { loadWorkspace } from "../../config/mod.ts";
-import { addRepo } from "../../workspace/mod.ts";
+import { addRepo } from "../../devspace/mod.ts";
 
 /**
  * Add a repository to inventory.

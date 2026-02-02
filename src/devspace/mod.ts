@@ -1,5 +1,5 @@
 /**
- * Workspace management operations.
+ * Devspace management operations.
  * @module
  */
 
