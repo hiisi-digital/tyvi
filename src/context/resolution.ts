@@ -12,7 +12,6 @@ import { parse as parseToml } from "@std/toml";
 import type {
   ContextContent,
   ContextContentType,
-  ContextProvenance,
   ResolvedContext,
   Scope,
 } from "../types/mod.ts";
