@@ -1,0 +1,19 @@
+[meta]
+name = "Commit Style Guidelines"
+description = "Commit message conventions for Hiisi projects"
+
+[rules]
+format = "type: lowercase message"
+types = ["feat", "fix", "refactor", "docs", "test", "chore"]
+
+[examples]
+good = [
+  "feat: add clone command with pattern matching",
+  "fix: handle missing inventory.toml gracefully"
+]
+
+bad = [
+  "Added feature",
+  "WIP",
+  "fix stuff"
+]

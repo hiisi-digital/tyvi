@@ -30,94 +30,121 @@
 
 // Re-export all types from the types module
 export type {
-
-    // Atom types
-    Atoms,
-    AxisPoint,
-    // Config types
-    CacheEntry,
-    CacheMeta,
-    CacheStorage,
-    // Devspace types
-    CloneResult,
-    CloneStatus, Composition,
-    CompositionRule,
-    // People types
-    ComputationTrace,
-    ComputedPerson, Config,
-    ConfigDefaults,
-    ConfigMeta,
-    ConfigPaths,
-    // Context types
-    ContextContent,
-    ContextContentType,
-    ContextProvenance,
-    ContextRef,
-    ContextSearchQuery,
-    ContextSearchResult,
-    ContextSearchResults, Devspace,
-    DevspaceConfig,
-    DevspaceDefaults,
-    DevspaceNamespaces,
-    DevspaceSection, Experience,
-    ExperienceLevels, ExtState,
-    ExtStateEntry,
-    GitPolicy,
-    GitStatus,
-    InventoryConfig,
-    InventoryMeta,
-    LabState,
-    LabStateEntry,
-    LoadResult,
-    // Memory types
-    Memory,
-    MemoryContent,
-    MemoryEventType,
-    MemoryFade,
-    MemoryFile,
-    MemoryFilters,
-    MemoryInput,
-    MemoryLogEntry,
-    MemoryOutcome,
-    MemoryQuery,
-    MemorySignificance,
-    MemoryStrength,
-    MemorySummary,
-    MemoryTags, OrgAliases,
-    OrgEmails, ParsedUri, Person,
-    PersonCustom,
-    PersonIdentity,
-    PersonOrgs,
-    PersonQuirks,
-    PersonSummary,
-    PersonTools, Phrase,
-    PhraseAtom,
-    PhraseConditions, PruneResult, Quirk,
-    QuirkAtom,
-    QuirkAutoAssign,
-    QuirkOverdone, RefBatch,
-    RefBatchResult, ReinforcementResult,
-    // Relationship types
-    RelationshipCollection,
-    RelationshipDynamic,
-    RelationshipEntry,
-    RelationshipEventType,
-    RelationshipFile,
-    RelationshipLogEntry,
-    RelationshipQuery,
-    RelationshipStatus,
-    RelationshipSummary,
-    RelationshipType, RemoteDefinition,
-    RepoDefinition,
-    RepoStatus,
-    RepoWithStatus, ResolvedContext, RuleApplication, Scope,
-    ScopeChain,
-    ScopeLevel, SimilarityResult, Skill,
-    SkillLevels, SourceHash, Stack,
-    StackLevels, SyncOptions,
-    SyncResult, Trait,
-    TraitAxis, UnloadResult, UriScheme, ValidationSchedule, ValueTrace, VisibilityGrant,
-    VisibilityRules
+  // Atom types
+  Atoms,
+  AxisPoint,
+  // Config types
+  CacheEntry,
+  CacheMeta,
+  CacheStorage,
+  // Devspace types
+  CloneResult,
+  CloneStatus,
+  Composition,
+  CompositionRule,
+  // People types
+  ComputationTrace,
+  ComputedPerson,
+  Config,
+  ConfigDefaults,
+  ConfigMeta,
+  ConfigPaths,
+  // Context types
+  ContextContent,
+  ContextContentType,
+  ContextProvenance,
+  ContextRef,
+  ContextSearchQuery,
+  ContextSearchResult,
+  ContextSearchResults,
+  Devspace,
+  DevspaceConfig,
+  DevspaceDefaults,
+  DevspaceNamespaces,
+  DevspaceSection,
+  Experience,
+  ExperienceLevels,
+  ExtState,
+  ExtStateEntry,
+  GitPolicy,
+  GitStatus,
+  InventoryConfig,
+  InventoryMeta,
+  LabState,
+  LabStateEntry,
+  LoadResult,
+  // Memory types
+  Memory,
+  MemoryContent,
+  MemoryEventType,
+  MemoryFade,
+  MemoryFile,
+  MemoryFilters,
+  MemoryInput,
+  MemoryLogEntry,
+  MemoryOutcome,
+  MemoryQuery,
+  MemorySignificance,
+  MemoryStrength,
+  MemorySummary,
+  MemoryTags,
+  OrgAliases,
+  OrgEmails,
+  ParsedUri,
+  Person,
+  PersonCustom,
+  PersonIdentity,
+  PersonOrgs,
+  PersonQuirks,
+  PersonSummary,
+  PersonTools,
+  Phrase,
+  PhraseAtom,
+  PhraseConditions,
+  PruneResult,
+  Quirk,
+  QuirkAtom,
+  QuirkAutoAssign,
+  QuirkOverdone,
+  RefBatch,
+  RefBatchResult,
+  ReinforcementResult,
+  // Relationship types
+  RelationshipCollection,
+  RelationshipDynamic,
+  RelationshipEntry,
+  RelationshipEventType,
+  RelationshipFile,
+  RelationshipLogEntry,
+  RelationshipQuery,
+  RelationshipStatus,
+  RelationshipSummary,
+  RelationshipType,
+  RemoteDefinition,
+  RepoDefinition,
+  RepoStatus,
+  RepoWithStatus,
+  ResolvedContext,
+  RuleApplication,
+  Scope,
+  ScopeChain,
+  ScopeLevel,
+  SimilarityResult,
+  Skill,
+  SkillLevels,
+  SourceHash,
+  Stack,
+  StackLevels,
+  SyncOptions,
+  SyncResult,
+  Trait,
+  TraitAxis,
+  UnloadResult,
+  UriScheme,
+  ValidationSchedule,
+  ValueTrace,
+  VisibilityGrant,
+  VisibilityRules,
 } from "./src/types/mod.ts";
 
 // ============================================================================
@@ -128,20 +155,10 @@ export type {
 export { loadInventory } from "./src/config/mod.ts";
 
 // Re-export workspace operations (TODO: rename to devspace internally)
-export {
-    addRepo,
-    clone,
-    getStatus,
-    removeRepo,
-    sync
-} from "./src/workspace/mod.ts";
+export { addRepo, clone, getStatus, removeRepo, sync } from "./src/workspace/mod.ts";
 
 // Re-export git utilities
-export {
-    getCurrentBranch,
-    getGitStatus,
-    isGitRepo
-} from "./src/git/mod.ts";
+export { getCurrentBranch, getGitStatus, isGitRepo } from "./src/git/mod.ts";
 
 // ============================================================================
 // Devspace Operations (new API - to be implemented)
@@ -251,8 +268,20 @@ export {
 } from "./src/memory/mod.ts";
 
 // ============================================================================
-// Context Operations (to be migrated from tyvi-mcp)
+// Context Operations
 // ============================================================================
 
-// TODO: These will be implemented after migration
-// export { parseUri, resolveContext, searchContext } from "./src/context/mod.ts";
+export {
+  buildScopeChain,
+  buildUri,
+  canResolve,
+  createScope,
+  formatScope,
+  getVisibleScopes,
+  parseUri,
+  resolveContext,
+  resolveContextBatch,
+  scopeMatches,
+  searchContext,
+  validateUri,
+} from "./src/context/mod.ts";

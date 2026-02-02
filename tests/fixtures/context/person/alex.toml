@@ -1,0 +1,17 @@
+[identity]
+id = "alex"
+name = "Alex"
+pronouns = "they/them"
+github_username = "alex-dev"
+
+[orgs]
+primary = "hiisi"
+teams = ["correctness", "core"]
+
+[traits]
+detail-focus = 75
+perfectionism = 60
+
+[skills]
+type-system-design = 85
+api-design = 75
