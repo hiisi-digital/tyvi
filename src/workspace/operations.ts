@@ -235,6 +235,14 @@ function validateRepoName(name: string): void {
 }
 
 /**
+ * Ensure content ends with a newline and append new content.
+ */
+function appendToInventory(content: string, newContent: string): string {
+  const contentWithNewline = content.endsWith("\n") ? content : content + "\n";
+  return contentWithNewline + newContent;
+}
+
+/**
  * Add a repository to inventory.
  *
  * @param workspace - Workspace model
@@ -267,22 +275,17 @@ export async function addRepo(
   const escapedName = escapeTOMLString(repoName);
   const escapedUrl = escapeTOMLString(url);
 
-  // Ensure content ends with newline before appending
-  const contentWithNewline = content.endsWith("\n") ? content : content + "\n";
-
-  // Append new repo entry
+  // Build new repo entry
   const newEntry = `\n[[repos]]\nname = "${escapedName}"\nremotes = [{ name = "origin", url = "${escapedUrl}" }]\n`;
 
   if (options.category) {
     const localPath = options.localPath || `${options.category}/${repoName}`;
     const escapedLocalPath = escapeTOMLString(localPath);
     const escapedCategory = escapeTOMLString(options.category);
-    await Deno.writeTextFile(
-      inventoryPath,
-      contentWithNewline + newEntry + `local_path = "${escapedLocalPath}"\ncategory = "${escapedCategory}"\n`,
-    );
+    const fullEntry = newEntry + `local_path = "${escapedLocalPath}"\ncategory = "${escapedCategory}"\n`;
+    await Deno.writeTextFile(inventoryPath, appendToInventory(content, fullEntry));
   } else {
-    await Deno.writeTextFile(inventoryPath, contentWithNewline + newEntry);
+    await Deno.writeTextFile(inventoryPath, appendToInventory(content, newEntry));
   }
 }
 

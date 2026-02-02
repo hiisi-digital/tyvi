@@ -125,7 +125,14 @@ export function formatStatus(
 
 /**
  * Format a date as relative time.
- * Note: Month calculation uses 30-day approximation for simplicity.
+ * 
+ * @param date - The date to format
+ * @returns Human-readable relative time string
+ * 
+ * @remarks
+ * Month calculations use a 30-day approximation for simplicity.
+ * This may be slightly inaccurate for specific month boundaries
+ * but is sufficient for displaying approximate activity times.
  */
 function formatTimeAgo(date: Date): string {
   const now = new Date();
