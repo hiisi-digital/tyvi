@@ -7,7 +7,9 @@
     "jsr:@std/internal@^1.0.12": "1.0.12",
     "jsr:@std/path@1": "1.1.4",
     "jsr:@std/path@^1.1.4": "1.1.4",
-    "jsr:@std/toml@1": "1.0.11"
+    "jsr:@std/toml@1": "1.0.11",
+    "npm:moo@*": "0.5.2",
+    "npm:moo@~0.5.2": "0.5.2"
   },
   "jsr": {
     "@std/assert@1.0.17": {
@@ -42,13 +44,19 @@
       ]
     }
   },
+  "npm": {
+    "moo@0.5.2": {
+      "integrity": "sha512-iSAJLHYKnX41mKcJKjqvnAN9sf0LMDTXDEvFv+ffuRR9a1MIuXLjMNL6EsnDHSkKLTWNqQQ5uo61P4EbU4NU+Q=="
+    }
+  },
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@1",
       "jsr:@std/fmt@1",
       "jsr:@std/fs@1",
       "jsr:@std/path@1",
-      "jsr:@std/toml@1"
+      "jsr:@std/toml@1",
+      "npm:moo@~0.5.2"
     ]
   }
 }
