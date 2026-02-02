@@ -153,6 +153,39 @@ export {
 // export { checkGitAllowed, getDevspaceHint, findDevspaceRoot } from "./src/devspace/restrictions.ts";
 
 // ============================================================================
+// Computation Engine (migrated from tyvi-mcp)
+// ============================================================================
+
+export type {
+  BinaryOp,
+  EvaluationContext,
+  Expression,
+  FunctionCall,
+  NumberLiteral,
+  Reference,
+  RuleResult,
+  Token,
+  TokenType,
+  UnaryOp,
+} from "./src/computation/mod.ts";
+
+export {
+  applyRule,
+  applyRules,
+  autoAssignQuirks,
+  computeValue,
+  detectCycles,
+  evaluate,
+  extractDependencies,
+  matchesPhrase,
+  matchPhrases,
+  parse,
+  shouldAutoAssignQuirk,
+  tokenize,
+  topologicalSort,
+} from "./src/computation/mod.ts";
+
+// ============================================================================
 // People Operations (to be migrated from tyvi-mcp)
 // ============================================================================
 
