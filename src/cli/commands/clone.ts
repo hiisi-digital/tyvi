@@ -4,7 +4,7 @@
  */
 
 import { loadWorkspace } from "../../config/mod.ts";
-import { clone } from "../../workspace/mod.ts";
+import { clone } from "../../devspace/mod.ts";
 import { formatCloneResult } from "../output.ts";
 
 /**
