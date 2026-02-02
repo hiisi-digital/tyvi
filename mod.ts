@@ -153,12 +153,11 @@ export {
 // export { checkGitAllowed, getDevspaceHint, findDevspaceRoot } from "./src/devspace/restrictions.ts";
 
 // ============================================================================
-// People Operations (to be migrated from tyvi-mcp)
+// People Operations
 // ============================================================================
 
-// TODO: These will be implemented after migration
-// export { loadPerson, computePerson, listPeople } from "./src/people/mod.ts";
-// export { loadAtoms } from "./src/atoms/mod.ts";
+export { loadPerson, computePerson, listPeople } from "./src/people/mod.ts";
+export { loadAtoms } from "./src/atoms/mod.ts";
 
 // ============================================================================
 // Memory Operations (to be migrated from tyvi-mcp)
