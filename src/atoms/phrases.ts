@@ -61,7 +61,7 @@ export async function loadPhrases(dataPath: string): Promise<Map<string, Phrase>
         const filePath = join(phrasesDir, entry.name);
         try {
           const content = await Deno.readTextFile(filePath);
-          const parsed = parse(content) as PhraseAtom;
+          const parsed = parse(content) as unknown as PhraseAtom;
 
           if (!parsed.phrase) {
             console.warn(`Skipping ${entry.name}: missing [phrase] section`);

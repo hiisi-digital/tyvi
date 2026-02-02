@@ -1,295 +1,116 @@
-# Copilot Instructions for tyvi
+# Copilot Instructions - tyvi
 
-Config-driven workspace orchestration for multi-repo development environments. Runtime: Deno (TypeScript).
+> **Core library for devspace orchestration and computation engine.**
 
-## Project Context
+## What is tyvi?
 
-This tool manages multi-repo workspaces through config files:
-- `tyvi.toml` at workspace root defines global settings
-- `inventory.toml` in each namespace directory defines repos
-- Commands operate on the workspace: init, status, clone, sync, list, add, remove
+**Framework only**. No built-in data, atoms, people, or content.
 
-## Before Starting Work
+Provides:
+- Types and schemas
+- Computation engine (expressions, rules, dependency analysis)
+- Loading systems (atoms, people, memory, context)
+- Devspace operations (load, unload, clone, sync)
+- Context resolution (URI-based, scoped with fallback)
+- Config parsing (tyvi.toml, inventory.toml)
 
-- **Check current branch**: If not main, you are likely working on a PR
-- **Check for branch TODO**: Look for `TODO.{branch-name}.md`, use it instead of main `TODO.md`
-- **Read docs/DESIGN.md**: Understand the architecture before making changes
-- **Read docs/TODO.md**: Know what tasks need implementation
-- **Search for existing code**: Grep codebase for similar functions before writing new ones
+Data lives in user projects (like devspace data repos).
 
-## Core Principles
+## Key Files
 
-### 1. Config-Driven Operation
+- `docs/DESIGN.md` — Architecture decisions (**READ FIRST**)
+- `docs/TODO.md` — Implementation tasks
+- `src/types/` — All type definitions
+- `src/computation/` — Expression evaluation engine (lexer, parser, evaluator)
+- `src/config/` — TOML parsing (devspace, inventory)
 
-All behavior is driven by config files. No magic directory detection or implicit behavior.
+## Development Rules
 
-**Implications:**
-- Parse config first, operate on the result
-- Missing config is an error, not a fallback to defaults
-- Every operation should trace back to config
+**Tests Required**: Run `deno test --allow-read --allow-write` before committing.
 
-### 2. Clear Error Messages
+**No Built-In Data**: Never add `data/`, `atoms/`, `people/` directories.
 
-Every error must tell the user what went wrong and suggest recovery.
+**Types First**: Define in `src/types/` before implementation.
 
-**Implications:**
-- Include context in errors (what file, what field, what was expected)
-- Suggest how to fix the problem
-- Never just say "error" or "failed"
+**Schema-Driven**: User-facing config MUST have JSON schema in `schemas/`.
 
-```typescript
-// good
-throw new Error(
-  `Repository 'viola' not found in inventory.\n` +
-  `Searched: @hiisi/inventory.toml\n` +
-  `Did you mean: viola-cli, viola-default-lints?\n` +
-  `To add: tyvi add git@github.com:hiisi-digital/viola.git`
-);
+**Backward Compat**: Support both `[workspace]` and `[devspace]` in tyvi.toml.
 
-// bad
-throw new Error("repo not found");
-```
-
-### 3. No Hidden State
-
-All state lives in config files or git repos. No hidden databases, caches, or lock files.
-
-**Implications:**
-- Operations are idempotent
-- Users can inspect and edit config directly
-- Tool works offline except for clone/fetch
-
-### 4. Graceful Degradation
-
-Never crash on missing files or partial config. Degrade gracefully and report.
-
-**Implications:**
-- Missing optional fields get defaults
-- Missing repos are reported, not errors
-- Orphaned repos are warned about, not deleted
-
-### 5. Design Before Code
-
-Order: Design -> Types -> Tests -> Implementation
-
-**Implications:**
-- DESIGN.md must be accurate before coding
-- Write tests first when possible
-- Never modify tests to make them pass; fix the code
-
-### 6. Reuse First
-
-Search for existing code before writing anything new.
-
-**Implications:**
-- Check what exists before implementing
-- Extract shared logic to utilities
-- Check Deno std library before writing helpers
-
-## File Structure
-
-```
-tyvi/
-├── mod.ts                    # Main export
-├── deno.json                 # Package manifest
-├── src/
-│   ├── cli/
-│   │   ├── mod.ts            # CLI entry point
-│   │   ├── commands/         # Individual commands
-│   │   └── output.ts         # Terminal output formatting
-│   ├── config/
-│   │   ├── mod.ts
-│   │   ├── workspace.ts      # tyvi.toml parsing
-│   │   ├── inventory.ts      # inventory.toml parsing
-│   │   └── types.ts          # Config type definitions
-│   ├── workspace/
-│   │   ├── mod.ts
-│   │   ├── operations.ts     # Workspace operations
-│   │   └── discovery.ts      # Find workspaces/inventories
-│   ├── git/
-│   │   ├── mod.ts
-│   │   ├── clone.ts
-│   │   ├── status.ts
-│   │   └── remote.ts
-│   └── types.ts              # Shared types
-└── tests/
-    └── fixtures/
-```
-
-## Coding Standards
-
-### TypeScript
-
-- Strict mode enabled (noImplicitAny, strictNullChecks)
-- No `any` types; use `unknown` and narrow
-- Prefer `interface` for object shapes, `type` for unions
-- Use `readonly` for immutable data
-- Explicit return types on exported functions
-
-### Naming
-
-- Files: `kebab-case.ts`
-- Functions: `camelCase`
-- Types/Interfaces: `PascalCase`
-- Constants: `SCREAMING_SNAKE_CASE`
-
-### Error Handling
-
-Always provide context and recovery suggestions:
-
-```typescript
-// good
-if (!workspace) {
-  console.error(`No tyvi.toml found in ${cwd} or parent directories.`);
-  console.error(`Run 'tyvi init' to create a workspace.`);
-  Deno.exit(1);
-}
-
-// bad
-if (!workspace) {
-  throw new Error("workspace not found");
-}
-```
-
-### Documentation
-
-- All exported functions must have JSDoc
-- Include `@example` for complex functions
-- Keep descriptions concise
-
-## Workflow
-
-### Before Starting
-
-1. Read docs/DESIGN.md to understand architecture
-2. Read docs/TODO.md for current tasks
-3. Check existing code for patterns to follow
-
-### Implementation Process
-
-1. Write types first
-2. Write tests (TDD preferred)
-3. Implement the minimal solution
-4. Refactor for clarity
-5. Add documentation
-
-### Before Marking Done
-
-1. All tests pass (`deno test`)
-2. Type checking passes (`deno check mod.ts`)
-3. Error messages are helpful
-4. Output is readable
-
-## Commits
+## Commit Style
 
 Format: `type: lowercase message`
 
 Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`
 
-### Good Examples
-
-- `feat: add clone command with pattern matching`
-- `fix: handle missing inventory.toml gracefully`
-- `refactor: extract git operations to separate module`
-- `test: add workspace discovery tests`
-
-### Bad Examples
-
-- `Added feature` (no type)
-- `WIP` (not descriptive)
-- `fix stuff` (not specific)
-
-## Don't
-
-- Add external dependencies (only Deno std allowed)
-- Mix types and logic in same file
-- Modify tests to make them pass
-- Use magic strings or numbers
-- Write helper functions inline; extract to shared modules
-- Skip reading DESIGN.md before implementing
-- Leave TODO comments without issue reference
-- Use emojis in code or docs (except status indicators like checkmarks)
-- Crash on missing optional config
+Examples:
+- `feat: add memory fading calculation`
+- `fix: handle missing trait definitions`
+- `refactor: extract uri parsing logic`
 
 ## Dependencies
 
-Only Deno std library is allowed:
+**Only Deno std library**: `@std/path`, `@std/fs`, `@std/toml`
 
-- `@std/path` - Path utilities
-- `@std/fs` - File system utilities
-- `@std/toml` - TOML parsing
-- `@std/fmt` - Terminal formatting
-- `@std/assert` - Testing
+No external dependencies allowed.
 
-Do not add external dependencies without explicit approval.
+## Design Principles
 
-## Code Constraints
+1. **No opinions** — config drives all behavior
+2. **No hidden state** — everything in files or explicit state  
+3. **Testable** — all modules independently testable
+4. **Clean exports** — only public API in mod.ts
+5. **Everything computed** — no fixed defaults, values derive from rules
 
-| Rule | Limit | Reason |
-|------|-------|--------|
-| Max file size | 500 LOC (prefer <300) | Maintainability |
-| Max exports per file | ~5 | Single responsibility |
-| Function length | <50 LOC | Readability |
-
-## Output Guidelines
-
-Status output should be scannable:
+## Architecture
 
 ```
-@hiisi
-  viola/
-    viola ............... ✓ clean (main) 3 days ago
-    viola-cli ........... ✓ clean (main ↑2) 1 day ago
-
-Summary: 2 cloned, 0 dirty
+src/
+├── types/            # All type definitions (atoms, people, memory, etc.)
+├── computation/      # Expression language (lexer, parser, evaluator, rules)
+├── atoms/            # Atom loading from TOML files
+├── people/           # Person computation pipeline
+├── memory/           # Memory system (storage, fading, reinforcement)
+├── context/          # Context resolution (URI parsing, scope, fallback)
+├── devspace/         # Devspace operations (load, unload, restrictions)
+├── config/           # Config parsing (tyvi.toml, inventory.toml)
+├── git/              # Git operations (clone, status, remote)
+└── cache/            # Caching system
 ```
 
-Guidelines:
-- Align columns for easy scanning
-- Use symbols for status (✓, !, -, ?)
-- Include summary at end
-- Support --quiet for minimal output
-- Support --json for machine-readable output
+## When Blocked
 
-## Testing Guidelines
+- Missing dependencies? Stop, report to user
+- Architectural change needed? Check DESIGN.md, ask user
+- Test failures? Fix tests or implementation, never skip
+- Merge conflicts? Stop, do not attempt resolution
 
-### Unit Tests
+## Error Messages
 
-Test config parsing and individual operations:
+Always provide context and recovery suggestions:
 
 ```typescript
-Deno.test("parseInventory - handles missing optional fields", () => {
-  const toml = `
-[[repos]]
-name = "my-repo"
-remotes = [{ name = "origin", url = "git@github.com:org/repo.git" }]
-`;
-  const config = parseInventory(toml);
-  assertEquals(config.repos[0].status, "active"); // default
-  assertEquals(config.repos[0].keep_in_sync, true); // default
-});
+// Good
+throw new Error(
+  `Invalid tyvi.toml: missing [devspace] section.\n` +
+  `Expected format:\n` +
+  `[devspace]\n` +
+  `name = "my-devspace"`
+);
+
+// Bad
+throw new Error("config invalid");
 ```
 
-### Integration Tests
+## Code Style
 
-Test full workflows with fixture directories:
+- **TypeScript strict mode** — no `any`, use `unknown` and narrow
+- **Explicit return types** on exported functions
+- **JSDoc required** on all public API functions
+- **Small files** — prefer <300 LOC, max 500 LOC
+- **Extract helpers** — don't inline, create shared utilities
 
-```typescript
-Deno.test("clone - clones matching repos", async () => {
-  const workspace = await loadWorkspace("tests/fixtures/valid-workspace");
-  const result = await clone(workspace, { pattern: "viola" });
-  assertEquals(result.cloned.length, 2);
-});
-```
+## Related Repos
 
-## Review Checklist
-
-Before marking work complete:
-
-- [ ] All tests pass (`deno test`)
-- [ ] Type checking passes (`deno check mod.ts`)
-- [ ] Error messages are clear and actionable
-- [ ] Output is readable and aligned
-- [ ] No TODO comments without issue reference
-- [ ] Code follows project conventions
-- [ ] DESIGN.md matches implementation
+- **tyvi-cli** — Human interface (terminal commands)
+- **tyvi-mcp** — AI agent interface (MCP protocol)
+- Example: User's devspace data repo (dogfoods tyvi)

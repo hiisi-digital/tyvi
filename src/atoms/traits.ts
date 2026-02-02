@@ -76,7 +76,7 @@ export async function loadTraits(dataPath: string): Promise<Map<string, Trait>> 
         const filePath = join(traitsDir, entry.name);
         try {
           const content = await Deno.readTextFile(filePath);
-          const parsed = parse(content) as TraitAtom;
+          const parsed = parse(content) as unknown as TraitAtom;
 
           if (!parsed.trait || !parsed.trait.axis) {
             console.warn(`Skipping ${entry.name}: missing [trait.axis] section`);

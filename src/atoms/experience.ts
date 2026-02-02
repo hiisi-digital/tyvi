@@ -67,7 +67,7 @@ export async function loadExperience(dataPath: string): Promise<Map<string, Expe
         const filePath = join(experienceDir, entry.name);
         try {
           const content = await Deno.readTextFile(filePath);
-          const parsed = parse(content) as ExperienceAtom;
+          const parsed = parse(content) as unknown as ExperienceAtom;
 
           if (!parsed.experience) {
             console.warn(`Skipping ${entry.name}: missing [experience] section`);
