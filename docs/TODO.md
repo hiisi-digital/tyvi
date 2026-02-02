@@ -4,6 +4,16 @@ Implementation tasks for the core library.
 
 ---
 
+## Active Branches
+
+| Branch | Focus | Status |
+|--------|-------|--------|
+| `feat/test-refactor-devspace` | Test fixes, workspace→devspace rename, devspace ops | [~] In progress |
+
+See `docs/TODO.feat-test-refactor-devspace.md` for branch-specific tasks.
+
+---
+
 ## Legend
 
 - `[ ]` - Not started
