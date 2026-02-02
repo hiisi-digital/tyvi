@@ -211,6 +211,30 @@ export async function sync(
 }
 
 /**
+ * Escape a string for safe use in TOML.
+ */
+function escapeTOMLString(str: string): string {
+  return str
+    .replace(/\\/g, "\\\\")
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, "\\n")
+    .replace(/\r/g, "\\r")
+    .replace(/\t/g, "\\t");
+}
+
+/**
+ * Validate repository name for TOML safety.
+ */
+function validateRepoName(name: string): void {
+  if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
+    throw new Error(
+      `Invalid repository name: '${name}'.\n` +
+        "Repository names must contain only letters, numbers, hyphens, and underscores.",
+    );
+  }
+}
+
+/**
  * Add a repository to inventory.
  *
  * @param workspace - Workspace model
@@ -230,20 +254,29 @@ export async function addRepo(
   // Extract repo name from URL if not provided
   const repoName = options.name || url.split("/").pop()?.replace(/\.git$/, "") || "repo";
 
+  // Validate repo name for TOML safety
+  validateRepoName(repoName);
+
   const namespace = options.namespace || workspace.config.workspace.namespaces.default;
   const inventoryPath = join(workspace.rootPath, namespace, "inventory.toml");
 
   // Read existing inventory
   const content = await Deno.readTextFile(inventoryPath);
 
+  // Escape values for TOML
+  const escapedName = escapeTOMLString(repoName);
+  const escapedUrl = escapeTOMLString(url);
+
   // Append new repo entry
-  const newEntry = `\n[[repos]]\nname = "${repoName}"\nremotes = [{ name = "origin", url = "${url}" }]\n`;
+  const newEntry = `\n[[repos]]\nname = "${escapedName}"\nremotes = [{ name = "origin", url = "${escapedUrl}" }]\n`;
 
   if (options.category) {
     const localPath = options.localPath || `${options.category}/${repoName}`;
+    const escapedLocalPath = escapeTOMLString(localPath);
+    const escapedCategory = escapeTOMLString(options.category);
     await Deno.writeTextFile(
       inventoryPath,
-      content + newEntry + `local_path = "${localPath}"\ncategory = "${options.category}"\n`,
+      content + newEntry + `local_path = "${escapedLocalPath}"\ncategory = "${escapedCategory}"\n`,
     );
   } else {
     await Deno.writeTextFile(inventoryPath, content + newEntry);
