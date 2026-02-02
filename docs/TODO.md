@@ -184,14 +184,7 @@ Implementation tasks for the core library.
 
 ---
 
-## Phase 8: Data Migration
-
-### Move Example Data
-- [ ] Copy data/atoms/ from tyvi-mcp
-- [ ] Copy data/people/ from tyvi-mcp
-- [ ] Copy data/config.toml from tyvi-mcp
-- [ ] Create data/memories/ structure
-- [ ] Create data/relationships/ structure
+## Phase 8: Schemas & Testing Prep
 
 ### Schemas
 - [ ] Copy schemas/ from tyvi-mcp
