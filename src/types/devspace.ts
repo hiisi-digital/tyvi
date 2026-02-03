@@ -120,6 +120,10 @@ export interface GitPolicy {
   enabled: boolean;
   /** Paths where git operations are allowed */
   allowed_paths: string[];
+  /** Allow git submodule operations in tyvi root */
+  allowSubmodules?: boolean;
+  /** Show tip to use tyvi git even when allowed */
+  suggestTyviGit?: boolean;
 }
 
 /**

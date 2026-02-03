@@ -13,6 +13,11 @@ export type {
     RepoDefinition, RepoStatus, RepoWithStatus, SyncOptions, SyncResult, UnloadResult
 } from "./devspace.ts";
 
+// Git restriction and shell integration types
+export type {
+    GitCheckResult, InitOptions, InitResult, ShellIntegration, ValidationIssue, ValidationResult
+} from "./git.ts";
+
 // Atom types (traits, skills, quirks, phrases)
 export type {
     Atoms, AxisPoint, Composition, CompositionRule, Experience, ExperienceLevels, Phrase,
