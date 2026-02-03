@@ -95,6 +95,12 @@ export function parseWorkspaceConfig(content: string): DevspaceConfig {
       allowed_paths: Array.isArray(gitPolicyRaw.allowed_paths)
         ? gitPolicyRaw.allowed_paths as string[]
         : [],
+      allowSubmodules: typeof gitPolicyRaw.allowSubmodules === "boolean"
+        ? gitPolicyRaw.allowSubmodules
+        : false,
+      suggestTyviGit: typeof gitPolicyRaw.suggestTyviGit === "boolean"
+        ? gitPolicyRaw.suggestTyviGit
+        : true,
     };
   }
 

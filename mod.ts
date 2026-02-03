@@ -66,8 +66,12 @@ export type {
   ExperienceLevels,
   ExtState,
   ExtStateEntry,
+  // Git types
+  GitCheckResult,
   GitPolicy,
   GitStatus,
+  InitOptions,
+  InitResult,
   InventoryConfig,
   InventoryMeta,
   LabState,
@@ -129,6 +133,7 @@ export type {
   Scope,
   ScopeChain,
   ScopeLevel,
+  ShellIntegration,
   SimilarityResult,
   Skill,
   SkillLevels,
@@ -141,6 +146,8 @@ export type {
   TraitAxis,
   UnloadResult,
   UriScheme,
+  ValidationIssue,
+  ValidationResult,
   ValidationSchedule,
   ValueTrace,
   VisibilityGrant,
@@ -161,13 +168,45 @@ export { addRepo, clone, getStatus, removeRepo, sync } from "./src/devspace/mod.
 export { getCurrentBranch, getGitStatus, isGitRepo } from "./src/git/mod.ts";
 
 // ============================================================================
+// Git Restrictions and Shell Integration
+// ============================================================================
+
+// Git restriction checking
+export {
+  checkGitAllowed,
+  findDevspaceRoot,
+  getBlockedMessage,
+  isInLab,
+  isInWhitelist,
+} from "./src/devspace/git.ts";
+
+// Shell integration
+export {
+  detectShell,
+  generateShellInit,
+  hasDirenv,
+  generateEnvrc,
+} from "./src/devspace/shell.ts";
+
+// Git hooks
+export {
+  installHooks,
+  hasHooks,
+  generatePreCommitHook,
+} from "./src/devspace/hooks.ts";
+
+// Validation
+export {
+  validateGuards,
+} from "./src/devspace/validation.ts";
+
+// ============================================================================
 // Devspace Operations (new API - to be implemented)
 // ============================================================================
 
 // TODO: These will be implemented as part of the migration
 // export { loadDevspace } from "./src/devspace/mod.ts";
 // export { load, unload } from "./src/devspace/operations.ts";
-// export { checkGitAllowed, getDevspaceHint, findDevspaceRoot } from "./src/devspace/restrictions.ts";
 
 // ============================================================================
 // Computation Engine
