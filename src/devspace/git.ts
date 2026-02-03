@@ -7,7 +7,7 @@
  * @module
  */
 
-import { dirname, join, resolve } from "@std/path";
+import { dirname, join, resolve, SEPARATOR } from "@std/path";
 import { exists } from "@std/fs";
 import type { Devspace } from "../types/devspace.ts";
 import type { GitCheckResult } from "../types/git.ts";
@@ -185,7 +185,10 @@ export function isInLab(devspace: Devspace, path: string): boolean {
   );
 
   const absolutePath = resolve(path);
-  return absolutePath.startsWith(labPath);
+  
+  // Check exact match or subdirectory (with proper separator)
+  return absolutePath === labPath || 
+         absolutePath.startsWith(labPath + SEPARATOR);
 }
 
 /**
@@ -205,7 +208,9 @@ export function isInWhitelist(devspace: Devspace, path: string): boolean {
 
   for (const whitelistPath of whitelist) {
     const absoluteWhitelistPath = resolve(rootPath, whitelistPath);
-    if (absolutePath.startsWith(absoluteWhitelistPath)) {
+    // Check exact match or subdirectory (with proper separator)
+    if (absolutePath === absoluteWhitelistPath || 
+        absolutePath.startsWith(absoluteWhitelistPath + SEPARATOR)) {
       return true;
     }
   }

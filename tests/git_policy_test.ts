@@ -240,3 +240,29 @@ Deno.test("checkGitAllowed - can disable tyvi git suggestion", () => {
   assertEquals(result.allowed, true);
   assertEquals(result.suggestion, undefined);
 });
+
+Deno.test("isInLab - does not match similar path names", () => {
+  const rootPath = "/home/user/.ctl";
+  const devspace = createTestDevspace(rootPath);
+
+  // Should not match paths that start with lab name but aren't subdirectories
+  const similarPath = join(rootPath, ".laboratory");
+  assertEquals(isInLab(devspace, similarPath), false);
+
+  const similarPath2 = join(rootPath, ".lab-old");
+  assertEquals(isInLab(devspace, similarPath2), false);
+});
+
+Deno.test("isInWhitelist - does not match similar path names", () => {
+  const rootPath = "/home/user/.ctl";
+  const devspace = createTestDevspace(rootPath);
+  devspace.config.devspace.git_policy!.allowed_paths = [".special"];
+
+  // Should not match paths that start with whitelist name but aren't subdirectories
+  assertEquals(isInWhitelist(devspace, join(rootPath, ".special-other")), false);
+  assertEquals(isInWhitelist(devspace, join(rootPath, ".special2")), false);
+
+  // But should match exact and subdirectory
+  assertEquals(isInWhitelist(devspace, join(rootPath, ".special")), true);
+  assertEquals(isInWhitelist(devspace, join(rootPath, ".special", "subdir")), true);
+});

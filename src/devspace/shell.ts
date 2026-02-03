@@ -180,6 +180,7 @@ end
 # This function wraps git to prevent commits in the wrong places
 
 git() {
+    # Note: \$(pwd) is escaped in this template and will expand at runtime
     local pwd_path="\$(pwd)"
     
     # Fast path: if not in devspace, use regular git
