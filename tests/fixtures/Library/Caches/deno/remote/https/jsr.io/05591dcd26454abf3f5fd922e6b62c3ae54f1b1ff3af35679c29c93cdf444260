@@ -1,0 +1,27 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+// This module is browser compatible.
+
+import { assertPath } from "../_common/assert_path.ts";
+import { isPosixPathSeparator } from "./_util.ts";
+
+/**
+ * Verifies whether provided path is absolute.
+ *
+ * @example Usage
+ * ```ts
+ * import { isAbsolute } from "@std/path/posix/is-absolute";
+ * import { assert, assertFalse } from "@std/assert";
+ *
+ * assert(isAbsolute("/home/user/Documents/"));
+ * assertFalse(isAbsolute("home/user/Documents/"));
+ * ```
+ *
+ * @param path The path to verify.
+ * @returns Whether the path is absolute.
+ */
+export function isAbsolute(path: string): boolean {
+  assertPath(path);
+  return path.length > 0 && isPosixPathSeparator(path.charCodeAt(0));
+}
+
+// denoCacheMetadata={"headers":{"vary":"Origin, accept-encoding","cache-control":"public, max-age=31536000, immutable","server":"cloudflare","alt-svc":"h3=\":443\"; ma=86400","x-goog-metageneration":"1","x-robots-tag":"noindex","expires":"Wed, 03 Feb 2027 07:31:23 GMT","x-goog-hash":"crc32c=aLmN/A==,md5=Rq55ssPamMrojULZoF7Q3Q==","access-control-expose-headers":"*","x-goog-generation":"1766560711091110","x-goog-stored-content-length":"735","nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","cf-ray":"9c803a78fdd9c4ef-HEL","x-jsr-backend":"modules","content-length":"735","x-content-type-options":"nosniff","age":"0","x-goog-storage-class":"STANDARD","cf-cache-status":"DYNAMIC","cross-origin-resource-policy":"cross-origin","content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","content-type":"text/typescript","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=ASXCnrDpn0Qj0SdtLtzlSr9ZW9VTkzkVuYz4YHvVjJQlsccU3AcwmvsPkpxX3UQxQUhhHYC0n6dHeEe8mjtd%2B0eXDOvJCw%3D%3D\"}]}","etag":"\"46ae79b2c3da98cae88d42d9a05ed0dd\"","last-modified":"Wed, 24 Dec 2025 07:18:31 GMT","date":"Tue, 03 Feb 2026 07:31:23 GMT","accept-ranges":"bytes","x-goog-stored-content-encoding":"identity","x-guploader-uploadid":"AJRbA5XJjfiQM9sBimsEYyOz-v4AW_K9P7m_B4pXe8z2m7eLsyzbSPDGJmjtL8bEvwsjMCXS","access-control-allow-origin":"*"},"url":"https://jsr.io/@std/path/1.1.4/posix/is_absolute.ts","time":1770103884}

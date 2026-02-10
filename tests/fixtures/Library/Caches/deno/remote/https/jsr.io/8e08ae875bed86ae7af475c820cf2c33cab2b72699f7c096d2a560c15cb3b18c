@@ -1,0 +1,23 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+// This module is browser compatible.
+
+/**
+ * Converts a path to a namespaced path. This function returns the path as is on posix.
+ *
+ * @example Usage
+ * ```ts
+ * import { toNamespacedPath } from "@std/path/posix/to-namespaced-path";
+ * import { assertEquals } from "@std/assert";
+ *
+ * assertEquals(toNamespacedPath("/home/foo"), "/home/foo");
+ * ```
+ *
+ * @param path The path.
+ * @returns The namespaced path.
+ */
+export function toNamespacedPath(path: string): string {
+  // Non-op on posix systems
+  return path;
+}
+
+// denoCacheMetadata={"headers":{"last-modified":"Wed, 24 Dec 2025 07:18:31 GMT","cf-cache-status":"DYNAMIC","cf-ray":"9c803a78fdeac4ef-HEL","server":"cloudflare","vary":"Origin, accept-encoding","alt-svc":"h3=\":443\"; ma=86400","x-goog-generation":"1766560711184954","expires":"Wed, 03 Feb 2027 07:31:23 GMT","cache-control":"public, max-age=31536000, immutable","x-goog-storage-class":"STANDARD","access-control-allow-origin":"*","age":"0","x-jsr-backend":"modules","x-robots-tag":"noindex","etag":"\"d210f6bd34040d0b8762dc9ac747d111\"","content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","content-length":"575","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=E8LJYqSB08x%2B28X9HzWybFLDHFr6QT9kp6ChZt8ATcAVktIl8abgkixPU9XUbLuXLy4t7P9d%2Bz7%2Bl3aitloAq1jIegTGQg%3D%3D\"}]}","x-goog-metageneration":"1","nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","accept-ranges":"bytes","date":"Tue, 03 Feb 2026 07:31:23 GMT","x-guploader-uploadid":"AJRbA5X-RK72CDuNvHymcQv6RrOVH_Zqv3dDwRnk6yFuj6CHxCNmdFnRPvFairN8_x_lUzKqsOFC45Y","x-goog-hash":"crc32c=sUIEdg==,md5=0hD2vTQEDQuHYtyax0fREQ==","x-goog-stored-content-encoding":"identity","content-type":"text/typescript","x-content-type-options":"nosniff","access-control-expose-headers":"*","x-goog-stored-content-length":"575","cross-origin-resource-policy":"cross-origin"},"url":"https://jsr.io/@std/path/1.1.4/posix/to_namespaced_path.ts","time":1770103884}

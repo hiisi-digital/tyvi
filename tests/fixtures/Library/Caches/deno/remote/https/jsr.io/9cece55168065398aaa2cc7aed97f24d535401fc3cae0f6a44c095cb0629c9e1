@@ -1,0 +1,28 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+// This module is browser compatible.
+
+export function common(paths: string[], sep: string): string {
+  const [first = "", ...remaining] = paths;
+  const parts = first.split(sep);
+
+  let endOfPrefix = parts.length;
+  let append = "";
+  for (const path of remaining) {
+    const compare = path.split(sep);
+    if (compare.length <= endOfPrefix) {
+      endOfPrefix = compare.length;
+      append = "";
+    }
+
+    for (let i = 0; i < endOfPrefix; i++) {
+      if (compare[i] !== parts[i]) {
+        endOfPrefix = i;
+        append = i === 0 ? "" : sep;
+        break;
+      }
+    }
+  }
+  return parts.slice(0, endOfPrefix).join(sep) + append;
+}
+
+// denoCacheMetadata={"headers":{"content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","date":"Tue, 03 Feb 2026 07:31:23 GMT","cache-control":"public, max-age=31536000, immutable","x-goog-generation":"1766560710985809","server":"cloudflare","x-goog-stored-content-length":"697","nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","cf-ray":"9c803a78fdedc4ef-HEL","x-goog-storage-class":"STANDARD","x-guploader-uploadid":"AJRbA5XOUumdm4IRSxFMUrQXy8ujuGC7w-Pe-riwSwr8uLii86Wfb7DcbhmdFfjxyla5XWxkohTsv6U","alt-svc":"h3=\":443\"; ma=86400","age":"0","access-control-expose-headers":"*","cf-cache-status":"DYNAMIC","x-robots-tag":"noindex","x-goog-stored-content-encoding":"identity","x-goog-hash":"crc32c=ei81Mw==,md5=STnLOtsoU5lMAPIy9eRoNg==","content-length":"697","vary":"Origin, accept-encoding","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=SP6frWCFWQtZmQZzA%2B4WAkpucyyTVXb3yHCOupfu%2BSUUKZymcIMif95DneURXWZJJrDc5WQSUTdALhlq6735yVTo2Ooh7A%3D%3D\"}]}","x-jsr-backend":"modules","access-control-allow-origin":"*","x-goog-metageneration":"1","cross-origin-resource-policy":"cross-origin","content-type":"text/typescript","accept-ranges":"bytes","etag":"\"4939cb3adb2853994c00f232f5e46836\"","last-modified":"Wed, 24 Dec 2025 07:18:31 GMT","x-content-type-options":"nosniff","expires":"Wed, 03 Feb 2027 07:31:23 GMT"},"url":"https://jsr.io/@std/path/1.1.4/_common/common.ts","time":1770103884}

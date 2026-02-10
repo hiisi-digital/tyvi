@@ -1,0 +1,25 @@
+// Copyright 2018-2026 the Deno authors. MIT license.
+// Copyright the Browserify authors. MIT License.
+
+export type PathType = "file" | "dir" | "symlink";
+
+/**
+ * Get a human readable file type string.
+ *
+ * @param file File information, as returned by {@linkcode Deno.stat} or
+ * {@linkcode Deno.lstat}.
+ *
+ * @returns The file type as a string, or `undefined` if the file type is
+ * unknown.
+ */
+export function getFileInfoType(fileInfo: Deno.FileInfo): PathType | undefined {
+  return fileInfo.isFile
+    ? "file"
+    : fileInfo.isDirectory
+    ? "dir"
+    : fileInfo.isSymlink
+    ? "symlink"
+    : undefined;
+}
+
+// denoCacheMetadata={"headers":{"content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","last-modified":"Tue, 20 Jan 2026 07:57:52 GMT","x-goog-generation":"1768895872289692","server":"cloudflare","x-guploader-uploadid":"AJRbA5U4YiZK4jFQwBen3Ya5PY-9mlstNkwHZAtT-xeoxrXwJlAETjSSZ_RC6ShyweerwGWe","content-length":"617","accept-ranges":"bytes","etag":"\"1d1876ef619f0fd3ff25cb0f712302a9\"","x-goog-hash":"crc32c=ovLFDA==,md5=HRh272GfD9P/JcsPcSMCqQ==","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=ykqNkDiTv%2BG5weE5bv4Luc98p7yvvaFKW2yPPuyiqoKG90ZLRA6ahBmmpJG6YMhhIRyy3cYvQWaE4unWrGNoP87D3TDuTw%3D%3D\"}]}","expires":"Wed, 03 Feb 2027 07:31:23 GMT","x-goog-stored-content-length":"617","x-goog-metageneration":"1","cross-origin-resource-policy":"cross-origin","x-jsr-backend":"modules","cf-ray":"9c803a78fdc9c4ef-HEL","x-robots-tag":"noindex","alt-svc":"h3=\":443\"; ma=86400","x-goog-stored-content-encoding":"identity","cf-cache-status":"DYNAMIC","access-control-expose-headers":"*","access-control-allow-origin":"*","date":"Tue, 03 Feb 2026 07:31:23 GMT","x-content-type-options":"nosniff","nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","age":"0","content-type":"text/typescript","cache-control":"public, max-age=31536000, immutable","x-goog-storage-class":"STANDARD","vary":"Origin, accept-encoding"},"url":"https://jsr.io/@std/fs/1.0.22/_get_file_info_type.ts","time":1770103884}

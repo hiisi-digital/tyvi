@@ -1,0 +1,18 @@
+// Copyright 2018-2026 the Deno authors. MIT license.
+// Copyright the Browserify authors. MIT License.
+import { resolve } from "jsr:@std/path@^1.1.4/resolve";
+import { toPathString } from "./_to_path_string.ts";
+/**
+ * Checks if two paths are the same.
+ *
+ * @param src Source file path as a string or URL.
+ * @param dest Destination file path as a string or URL.
+ *
+ * @returns `true` if the paths are the same, `false` otherwise.
+ */ export function isSamePath(src, dest) {
+  src = toPathString(src);
+  dest = toPathString(dest);
+  return resolve(src) === resolve(dest);
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImh0dHBzOi8vanNyLmlvL0BzdGQvZnMvMS4wLjIyL19pc19zYW1lX3BhdGgudHMiXSwic291cmNlc0NvbnRlbnQiOlsiLy8gQ29weXJpZ2h0IDIwMTgtMjAyNiB0aGUgRGVubyBhdXRob3JzLiBNSVQgbGljZW5zZS5cbi8vIENvcHlyaWdodCB0aGUgQnJvd3NlcmlmeSBhdXRob3JzLiBNSVQgTGljZW5zZS5cblxuaW1wb3J0IHsgcmVzb2x2ZSB9IGZyb20gXCJqc3I6QHN0ZC9wYXRoQF4xLjEuNC9yZXNvbHZlXCI7XG5pbXBvcnQgeyB0b1BhdGhTdHJpbmcgfSBmcm9tIFwiLi9fdG9fcGF0aF9zdHJpbmcudHNcIjtcblxuLyoqXG4gKiBDaGVja3MgaWYgdHdvIHBhdGhzIGFyZSB0aGUgc2FtZS5cbiAqXG4gKiBAcGFyYW0gc3JjIFNvdXJjZSBmaWxlIHBhdGggYXMgYSBzdHJpbmcgb3IgVVJMLlxuICogQHBhcmFtIGRlc3QgRGVzdGluYXRpb24gZmlsZSBwYXRoIGFzIGEgc3RyaW5nIG9yIFVSTC5cbiAqXG4gKiBAcmV0dXJucyBgdHJ1ZWAgaWYgdGhlIHBhdGhzIGFyZSB0aGUgc2FtZSwgYGZhbHNlYCBvdGhlcndpc2UuXG4gKi9cbmV4cG9ydCBmdW5jdGlvbiBpc1NhbWVQYXRoKFxuICBzcmM6IHN0cmluZyB8IFVSTCxcbiAgZGVzdDogc3RyaW5nIHwgVVJMLFxuKTogYm9vbGVhbiB7XG4gIHNyYyA9IHRvUGF0aFN0cmluZyhzcmMpO1xuICBkZXN0ID0gdG9QYXRoU3RyaW5nKGRlc3QpO1xuXG4gIHJldHVybiByZXNvbHZlKHNyYykgPT09IHJlc29sdmUoZGVzdCk7XG59XG4iXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEscURBQXFEO0FBQ3JELGlEQUFpRDtBQUVqRCxTQUFTLE9BQU8sUUFBUSwrQkFBK0I7QUFDdkQsU0FBUyxZQUFZLFFBQVEsdUJBQXVCO0FBRXBEOzs7Ozs7O0NBT0MsR0FDRCxPQUFPLFNBQVMsV0FDZCxHQUFpQixFQUNqQixJQUFrQjtFQUVsQixNQUFNLGFBQWE7RUFDbkIsT0FBTyxhQUFhO0VBRXBCLE9BQU8sUUFBUSxTQUFTLFFBQVE7QUFDbEMifQ==
+// denoCacheMetadata=13544901937638712836,3779915744279613924

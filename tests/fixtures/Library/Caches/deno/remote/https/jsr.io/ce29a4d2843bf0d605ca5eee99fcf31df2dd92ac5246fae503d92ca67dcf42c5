@@ -1,0 +1,30 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+// Copyright the Browserify authors. MIT License.
+// Ported from https://github.com/browserify/path-browserify/
+// This module is browser compatible.
+
+import {
+  CHAR_BACKWARD_SLASH,
+  CHAR_FORWARD_SLASH,
+  CHAR_LOWERCASE_A,
+  CHAR_LOWERCASE_Z,
+  CHAR_UPPERCASE_A,
+  CHAR_UPPERCASE_Z,
+} from "../_common/constants.ts";
+
+export function isPosixPathSeparator(code: number): boolean {
+  return code === CHAR_FORWARD_SLASH;
+}
+
+export function isPathSeparator(code: number): boolean {
+  return code === CHAR_FORWARD_SLASH || code === CHAR_BACKWARD_SLASH;
+}
+
+export function isWindowsDeviceRoot(code: number): boolean {
+  return (
+    (code >= CHAR_LOWERCASE_A && code <= CHAR_LOWERCASE_Z) ||
+    (code >= CHAR_UPPERCASE_A && code <= CHAR_UPPERCASE_Z)
+  );
+}
+
+// denoCacheMetadata={"headers":{"accept-ranges":"bytes","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=50OT2poBdy36H7B%2BryzRCikofCU%2BlcWINVERT6w%2Fi8e1LAsWDCrKUv6Sk6KFr2MlEfss0vgA%2BG0MVeq8Zlap2s5Q8Ns5LQ%3D%3D\"}]}","content-type":"text/typescript","cf-ray":"9c803a78fdfdc4ef-HEL","x-content-type-options":"nosniff","vary":"Origin, accept-encoding","alt-svc":"h3=\":443\"; ma=86400","last-modified":"Wed, 24 Dec 2025 07:18:31 GMT","x-goog-stored-content-length":"807","cross-origin-resource-policy":"cross-origin","nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","etag":"\"a746ed5ee4b4157c2cb41b7b842e156d\"","date":"Tue, 03 Feb 2026 07:31:23 GMT","x-goog-storage-class":"STANDARD","x-goog-generation":"1766560711124244","access-control-expose-headers":"*","x-robots-tag":"noindex","x-guploader-uploadid":"AJRbA5VS5pjWQA0nN5cN3SjJMortBbxOushCS1yXAarR_ke1mRj66JTKCe5R9uCH7usBiiEU","cache-control":"public, max-age=31536000, immutable","content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","x-goog-metageneration":"1","content-length":"807","x-goog-hash":"crc32c=OPG2uA==,md5=p0btXuS0FXwstBt7hC4VbQ==","expires":"Wed, 03 Feb 2027 07:31:23 GMT","x-goog-stored-content-encoding":"identity","cf-cache-status":"DYNAMIC","x-jsr-backend":"modules","server":"cloudflare","age":"0","access-control-allow-origin":"*"},"url":"https://jsr.io/@std/path/1.1.4/windows/_util.ts","time":1770103884}

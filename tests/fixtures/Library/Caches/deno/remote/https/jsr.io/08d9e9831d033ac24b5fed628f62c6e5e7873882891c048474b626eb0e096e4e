@@ -1,0 +1,34 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+// This module is browser compatible.
+
+import { encodeWhitespace } from "../_common/to_file_url.ts";
+import { isAbsolute } from "./is_absolute.ts";
+
+/**
+ * Converts a path string to a file URL.
+ *
+ * @example Usage
+ * ```ts
+ * import { toFileUrl } from "@std/path/posix/to-file-url";
+ * import { assertEquals } from "@std/assert";
+ *
+ * assertEquals(toFileUrl("/home/foo"), new URL("file:///home/foo"));
+ * assertEquals(toFileUrl("/home/foo bar"), new URL("file:///home/foo%20bar"));
+ * ```
+ *
+ * @param path The path to convert.
+ * @returns The file URL.
+ */
+export function toFileUrl(path: string): URL {
+  if (!isAbsolute(path)) {
+    throw new TypeError(`Path must be absolute: received "${path}"`);
+  }
+
+  const url = new URL("file:///");
+  url.pathname = encodeWhitespace(
+    path.replace(/%/g, "%25").replace(/\\/g, "%5C"),
+  );
+  return url;
+}
+
+// denoCacheMetadata={"headers":{"access-control-allow-origin":"*","cf-cache-status":"DYNAMIC","x-goog-storage-class":"STANDARD","cache-control":"public, max-age=31536000, immutable","date":"Tue, 03 Feb 2026 07:31:23 GMT","x-goog-stored-content-length":"907","vary":"Origin, accept-encoding","alt-svc":"h3=\":443\"; ma=86400","x-goog-hash":"crc32c=fqhlqw==,md5=ySM1FX3bAd4c5A7xvN295Q==","x-guploader-uploadid":"AJRbA5UCW5dUmPOP0AnilACr-OcY245v1YgW-uxS8H3hTS-SjlUJ279LwCHQT3dmAwhIzCckvY9fI5Y","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=H9hvYxD3wcrEc4WX2xm2zZt9AdEbpiWNYrPzE4NS3kRnOWuPNhS1C7DdsJ6P%2B8kZt8tYpwHm1BaLjUikWH1xCCRyDG%2FT1A%3D%3D\"}]}","server":"cloudflare","x-goog-generation":"1766560711158924","content-length":"907","cf-ray":"9c803a78fde7c4ef-HEL","accept-ranges":"bytes","access-control-expose-headers":"*","cross-origin-resource-policy":"cross-origin","x-robots-tag":"noindex","x-goog-metageneration":"1","x-goog-stored-content-encoding":"identity","nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","expires":"Wed, 03 Feb 2027 07:31:23 GMT","x-content-type-options":"nosniff","x-jsr-backend":"modules","content-type":"text/typescript","etag":"\"c92335157ddb01de1ce40ef1bcddbde5\"","content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","age":"0","last-modified":"Wed, 24 Dec 2025 07:18:31 GMT"},"url":"https://jsr.io/@std/path/1.1.4/posix/to_file_url.ts","time":1770103884}

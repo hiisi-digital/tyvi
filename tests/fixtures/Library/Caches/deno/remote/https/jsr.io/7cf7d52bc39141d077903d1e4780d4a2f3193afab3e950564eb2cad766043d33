@@ -1,0 +1,36 @@
+// Copyright 2018-2026 the Deno authors. MIT license.
+// Copyright the Browserify authors. MIT License.
+
+import { resolve } from "jsr:@std/path@^1.1.4/resolve";
+import { SEPARATOR } from "jsr:@std/path@^1.1.4/constants";
+import { toPathString } from "./_to_path_string.ts";
+
+/**
+ * Checks whether `src` is a sub-directory of `dest`.
+ *
+ * @param src Source file path as a string or URL.
+ * @param dest Destination file path as a string or URL.
+ * @param sep Path separator. Defaults to `\\` for Windows and `/` for other
+ * platforms.
+ *
+ * @returns `true` if `src` is a sub-directory of `dest`, `false` otherwise.
+ */
+export function isSubdir(
+  src: string | URL,
+  dest: string | URL,
+  sep = SEPARATOR,
+): boolean {
+  src = toPathString(src);
+  dest = toPathString(dest);
+
+  if (resolve(src) === resolve(dest)) {
+    return false;
+  }
+
+  const srcArray = src.split(sep);
+  const destArray = dest.split(sep);
+
+  return srcArray.every((current, i) => destArray[i] === current);
+}
+
+// denoCacheMetadata={"headers":{"cross-origin-resource-policy":"cross-origin","last-modified":"Tue, 20 Jan 2026 07:57:52 GMT","x-guploader-uploadid":"AJRbA5Xs_zEdbsM6engrcMLpLU9jCWmEaDNqQxQWzfkCLcUW7tyWbadwvGKkvsn7sWBibySK","access-control-allow-origin":"*","server":"cloudflare","age":"0","expires":"Wed, 03 Feb 2027 07:31:23 GMT","content-type":"text/typescript","x-goog-storage-class":"STANDARD","cache-control":"public, max-age=31536000, immutable","cf-cache-status":"DYNAMIC","vary":"Origin, accept-encoding","content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","access-control-expose-headers":"*","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=yk0e4h3slKZs1i5dEqyrUraD7H3Y%2Bg13xm%2BLpUcnqk2NSG52ewknNeAs5IsrrFDhB21fEQYGkGuzbkEnQyp%2FS2Xv0FwH7A%3D%3D\"}]}","nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","x-robots-tag":"noindex","x-jsr-backend":"modules","x-goog-hash":"crc32c=h6IQGA==,md5=opNfXclHjaDd5nDsqBJ0aQ==","date":"Tue, 03 Feb 2026 07:31:23 GMT","alt-svc":"h3=\":443\"; ma=86400","x-content-type-options":"nosniff","content-length":"982","etag":"\"a2935f5dc9478da0dde670eca8127469\"","x-goog-stored-content-encoding":"identity","x-goog-stored-content-length":"982","accept-ranges":"bytes","cf-ray":"9c803a78fdccc4ef-HEL","x-goog-metageneration":"1","x-goog-generation":"1768895872225998"},"url":"https://jsr.io/@std/fs/1.0.22/_is_subdir.ts","time":1770103884}

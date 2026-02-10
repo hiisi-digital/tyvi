@@ -16,6 +16,7 @@ Implementation tasks for the core library.
 ## Phase 1: Foundation ✓
 
 ### Project Setup
+
 - [x] Initialize deno.json with dependencies
 - [x] Set up TypeScript strict mode
 - [x] Create mod.ts entry point
@@ -24,6 +25,7 @@ Implementation tasks for the core library.
 - [ ] Configure CI workflow
 
 ### Core Types
+
 - [x] Create src/types/ directory structure
 - [x] atoms.ts — Traits, skills, quirks, phrases, composition rules
 - [x] people.ts — Person, ComputedPerson, computation trace
@@ -35,6 +37,7 @@ Implementation tasks for the core library.
 - [x] mod.ts — Re-export all types
 
 ### JSON Schemas
+
 - [ ] Move schemas/ from tyvi-mcp
 - [ ] Ensure all schemas are complete
 - [ ] Add devspace.schema.json
@@ -45,6 +48,7 @@ Implementation tasks for the core library.
 ## Phase 2: Computation Engine ✓
 
 ### Files Implemented
+
 - [x] `lexer.ts` — Expression tokenizer (Moo-based)
 - [x] `parser.ts` — Recursive descent parser
 - [x] `ast.ts` — AST node types
@@ -55,6 +59,7 @@ Implementation tasks for the core library.
 - [x] `README.md` — Documentation
 
 ### Tests
+
 - [x] Lexer tests (19 tests)
 - [x] Parser tests (36 tests)
 - [x] Evaluator tests (78 tests)
@@ -65,6 +70,7 @@ Implementation tasks for the core library.
 ## Phase 3: Atoms System ✓
 
 ### Files Implemented
+
 - [x] `traits.ts` — Load trait axis definitions
 - [x] `skills.ts` — Load skill definitions
 - [x] `quirks.ts` — Load quirk definitions
@@ -74,6 +80,7 @@ Implementation tasks for the core library.
 - [x] `mod.ts` — Module exports with `loadAtoms()` function
 
 ### Tests
+
 - [x] Atoms loading tests (14 tests)
 
 ---
@@ -81,16 +88,19 @@ Implementation tasks for the core library.
 ## Phase 4: People System ✓
 
 ### Files Implemented
+
 - [x] `computation.ts` — Person computation pipeline
 - [x] `loading.ts` — Load person TOML files
 - [x] `mod.ts` — Module exports
 
 ### Public API
+
 - [x] `loadPerson(dataPath, id)` — Load raw person definition
 - [x] `computePerson(dataPath, id)` — Compute all derived values
 - [x] `listPeople(dataPath)` — List all people summaries
 
 ### Tests
+
 - [x] People system tests (7 tests)
 
 ---
@@ -98,6 +108,7 @@ Implementation tasks for the core library.
 ## Phase 5: Memory System ✓
 
 ### Files Implemented
+
 - [x] `storage.ts` — Memory read/write with TOML
 - [x] `strength.ts` — Strength calculation with exponential decay
 - [x] `reinforcement.ts` — Memory reinforcement logic
@@ -109,6 +120,7 @@ Implementation tasks for the core library.
 - [x] `mod.ts` — Module exports
 
 ### Public API
+
 - [x] `recallMemories(dataPath, query)` — Query memories
 - [x] `listMemories(dataPath, filters)` — List memory summaries
 - [x] `recordMemory(dataPath, input)` — Create new memory
@@ -116,6 +128,7 @@ Implementation tasks for the core library.
 - [x] `pruneMemories(dataPath)` — Remove weak memories
 
 ### Tests
+
 - [x] Memory system tests (15+ tests)
 - [x] Manual decay formula verification
 
@@ -124,6 +137,7 @@ Implementation tasks for the core library.
 ## Phase 6: Context Resolution ✓
 
 ### Files Implemented
+
 - [x] `uri.ts` — Parse ctx:// URIs
 - [x] `scope.ts` — Scope hierarchy and chain building
 - [x] `resolution.ts` — Resolve references with fallback
@@ -131,11 +145,13 @@ Implementation tasks for the core library.
 - [x] `mod.ts` — Module exports
 
 ### Public API
+
 - [x] `parseUri(uri)` — Parse ctx:// URI into components
 - [x] `resolveContext(dataPath, uri)` — Resolve with fallback
 - [x] `searchContext(dataPath, query)` — Search all context
 
 ### Tests
+
 - [x] Context resolution tests (40 tests)
 
 ---
@@ -145,11 +161,13 @@ Implementation tasks for the core library.
 **Enhance existing:** `src/workspace/` → rename to `src/devspace/`
 
 ### Rename and Restructure
+
 - [ ] Rename src/workspace/ to src/devspace/
 - [ ] Update all imports
 - [ ] Rename functions to use "devspace" terminology
 
 ### New Operations
+
 - [ ] `load(devspace, pattern)` — Move repos from staging to lab
 - [ ] `unload(devspace, pattern)` — Move repos from lab to staging
 - [ ] `checkGitAllowed(devspace, path)` — Check git policy
@@ -157,6 +175,7 @@ Implementation tasks for the core library.
 - [ ] `findDevspaceRoot(from)` — Find devspace root directory
 
 ### State Management
+
 - [ ] Create .state/ directory handling
 - [ ] Implement lab.toml read/write
 - [ ] Implement ext.toml read/write
@@ -184,16 +203,19 @@ Implementation tasks for the core library.
 ## Phase 10: Documentation & Polish
 
 ### Code Documentation
+
 - [ ] JSDoc for all public functions
 - [ ] Examples in doc comments
 - [ ] Type documentation
 
 ### README
+
 - [ ] Update with new API
 - [ ] Add quick start examples
 - [ ] Document all exports
 
 ### CI/CD
+
 - [ ] GitHub Actions workflow
 - [ ] Test on PR
 - [ ] Publish to JSR
@@ -204,18 +226,18 @@ Implementation tasks for the core library.
 
 **Total: 247 passing tests**
 
-| Module | Tests |
-|--------|-------|
-| Computation (lexer) | 19 |
-| Computation (parser) | 36 |
-| Computation (evaluator) | 78 |
-| Computation (dependencies) | 27 |
-| Atoms | 14 |
-| People | 7 |
-| Memory | 15 |
-| Context | 40 |
-| Config | 9 |
-| Workspace | 2 |
+| Module                     | Tests |
+| -------------------------- | ----- |
+| Computation (lexer)        | 19    |
+| Computation (parser)       | 36    |
+| Computation (evaluator)    | 78    |
+| Computation (dependencies) | 27    |
+| Atoms                      | 14    |
+| People                     | 7     |
+| Memory                     | 15    |
+| Context                    | 40    |
+| Config                     | 9     |
+| Workspace                  | 2     |
 
 ---
 
@@ -232,6 +254,7 @@ Implementation tasks for the core library.
 ### Dependencies
 
 Only Deno std library:
+
 - `@std/path` — Path utilities
 - `@std/fs` — File system utilities
 - `@std/toml` — TOML parsing

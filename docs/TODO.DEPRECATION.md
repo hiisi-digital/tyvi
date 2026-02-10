@@ -16,84 +16,84 @@ The following code should be moved **from tyvi-mcp to tyvi**:
 
 ### Types (src/types.ts → src/types/)
 
-| Item | Status | Notes |
-|------|--------|-------|
-| CompositionRule | [ ] Move | Core computation type |
-| TraitAxis, Trait | [ ] Move | Trait definitions |
-| Skill, SkillLevels | [ ] Move | Skill definitions |
+| Item                         | Status   | Notes                  |
+| ---------------------------- | -------- | ---------------------- |
+| CompositionRule              | [ ] Move | Core computation type  |
+| TraitAxis, Trait             | [ ] Move | Trait definitions      |
+| Skill, SkillLevels           | [ ] Move | Skill definitions      |
 | Experience, ExperienceLevels | [ ] Move | Experience definitions |
-| Stack, StackLevels | [ ] Move | Stack definitions |
-| Quirk, QuirkAutoAssign | [ ] Move | Quirk definitions |
-| Phrase, PhraseConditions | [ ] Move | Phrase definitions |
-| Person, ComputedPerson | [ ] Move | Person types |
-| PersonIdentity, PersonOrgs | [ ] Move | Identity types |
-| Memory, MemoryContent, etc. | [ ] Move | Memory types |
-| Relationship types | [ ] Move | Relationship types |
-| CacheMeta, SourceHash | [ ] Move | Cache types |
-| Config types | [ ] Move | Configuration types |
+| Stack, StackLevels           | [ ] Move | Stack definitions      |
+| Quirk, QuirkAutoAssign       | [ ] Move | Quirk definitions      |
+| Phrase, PhraseConditions     | [ ] Move | Phrase definitions     |
+| Person, ComputedPerson       | [ ] Move | Person types           |
+| PersonIdentity, PersonOrgs   | [ ] Move | Identity types         |
+| Memory, MemoryContent, etc.  | [ ] Move | Memory types           |
+| Relationship types           | [ ] Move | Relationship types     |
+| CacheMeta, SourceHash        | [ ] Move | Cache types            |
+| Config types                 | [ ] Move | Configuration types    |
 
 ### Computation Engine (src/computation/)
 
-| File | Status | Notes |
-|------|--------|-------|
-| `lexer.ts` | [ ] Move | Expression tokenizer |
-| `parser.ts` | [ ] Move | Expression parser |
-| `ast.ts` | [ ] Move | AST node types |
-| `evaluator.ts` | [ ] Move | Expression evaluator |
-| `dependencies.ts` | [ ] Move | Dependency analysis |
-| `rules.ts` | [ ] Move | Rule application |
-| `quirks.ts` | [ ] Move | Quirk auto-assignment |
-| `phrases.ts` | [ ] Move | Phrase matching |
-| `mod.ts` | [ ] Move | Module exports |
-| `README.md` | [ ] Move | Documentation |
+| File              | Status   | Notes                 |
+| ----------------- | -------- | --------------------- |
+| `lexer.ts`        | [ ] Move | Expression tokenizer  |
+| `parser.ts`       | [ ] Move | Expression parser     |
+| `ast.ts`          | [ ] Move | AST node types        |
+| `evaluator.ts`    | [ ] Move | Expression evaluator  |
+| `dependencies.ts` | [ ] Move | Dependency analysis   |
+| `rules.ts`        | [ ] Move | Rule application      |
+| `quirks.ts`       | [ ] Move | Quirk auto-assignment |
+| `phrases.ts`      | [ ] Move | Phrase matching       |
+| `mod.ts`          | [ ] Move | Module exports        |
+| `README.md`       | [ ] Move | Documentation         |
 
 ### People System (src/people/)
 
-| File | Status | Notes |
-|------|--------|-------|
+| File             | Status   | Notes                       |
+| ---------------- | -------- | --------------------------- |
 | `computation.ts` | [ ] Move | Person computation pipeline |
-| `mod.ts` | [ ] Move | Module exports |
+| `mod.ts`         | [ ] Move | Module exports              |
 
 ### Atoms System (src/atoms/)
 
-| File | Status | Notes |
-|------|--------|-------|
+| File      | Status   | Notes                    |
+| --------- | -------- | ------------------------ |
 | All files | [ ] Move | Atom loading and parsing |
 
 ### Memory System (src/memory/)
 
-| File | Status | Notes |
-|------|--------|-------|
-| `storage.ts` | [ ] Move | Memory read/write |
-| `strength.ts` | [ ] Move | Strength calculation |
-| `reinforcement.ts` | [ ] Move | Memory reinforcement |
-| `similarity.ts` | [ ] Move | Similarity detection |
-| `query.ts` | [ ] Move | Memory queries |
-| `lifecycle.ts` | [ ] Move | Create, update, prune |
-| `logs.ts` | [ ] Move | Log management |
-| `paths.ts` | [ ] Move | Path utilities |
-| `mod.ts` | [ ] Move | Module exports |
-| `README.md` | [ ] Move | Documentation |
+| File               | Status   | Notes                 |
+| ------------------ | -------- | --------------------- |
+| `storage.ts`       | [ ] Move | Memory read/write     |
+| `strength.ts`      | [ ] Move | Strength calculation  |
+| `reinforcement.ts` | [ ] Move | Memory reinforcement  |
+| `similarity.ts`    | [ ] Move | Similarity detection  |
+| `query.ts`         | [ ] Move | Memory queries        |
+| `lifecycle.ts`     | [ ] Move | Create, update, prune |
+| `logs.ts`          | [ ] Move | Log management        |
+| `paths.ts`         | [ ] Move | Path utilities        |
+| `mod.ts`           | [ ] Move | Module exports        |
+| `README.md`        | [ ] Move | Documentation         |
 
 ### Context System (src/context/)
 
-| File | Status | Notes |
-|------|--------|-------|
+| File      | Status   | Notes                             |
+| --------- | -------- | --------------------------------- |
 | All files | [ ] Move | URI parsing, resolution, fallback |
 
 ### Schemas (schemas/)
 
-| File | Status | Notes |
-|------|--------|-------|
+| File                     | Status   | Notes              |
+| ------------------------ | -------- | ------------------ |
 | All `.schema.json` files | [ ] Move | Validation schemas |
 
 ### Data (data/)
 
-| Directory | Status | Notes |
-|-----------|--------|-------|
-| `atoms/` | [ ] Move | Example atom definitions |
-| `people/` | [ ] Move | Example person definitions |
-| `config.toml` | [ ] Move | Example config |
+| Directory     | Status   | Notes                      |
+| ------------- | -------- | -------------------------- |
+| `atoms/`      | [ ] Move | Example atom definitions   |
+| `people/`     | [ ] Move | Example person definitions |
+| `config.toml` | [ ] Move | Example config             |
 
 ---
 
@@ -103,17 +103,17 @@ The following code should be moved **from tyvi to tyvi-cli**:
 
 ### CLI (src/cli/)
 
-| File | Status | Notes |
-|------|--------|-------|
-| `mod.ts` | [ ] Move | CLI entry point |
-| `output.ts` | [ ] Move | Terminal formatting |
-| `commands/init.ts` | [ ] Move | Init command |
-| `commands/status.ts` | [ ] Move | Status command |
-| `commands/clone.ts` | [ ] Move | Clone command |
-| `commands/sync.ts` | [ ] Move | Sync command |
-| `commands/list.ts` | [ ] Move | List command |
-| `commands/add.ts` | [ ] Move | Add command |
-| `commands/remove.ts` | [ ] Move | Remove command |
+| File                 | Status   | Notes               |
+| -------------------- | -------- | ------------------- |
+| `mod.ts`             | [ ] Move | CLI entry point     |
+| `output.ts`          | [ ] Move | Terminal formatting |
+| `commands/init.ts`   | [ ] Move | Init command        |
+| `commands/status.ts` | [ ] Move | Status command      |
+| `commands/clone.ts`  | [ ] Move | Clone command       |
+| `commands/sync.ts`   | [ ] Move | Sync command        |
+| `commands/list.ts`   | [ ] Move | List command        |
+| `commands/add.ts`    | [ ] Move | Add command         |
+| `commands/remove.ts` | [ ] Move | Remove command      |
 
 ### Migration Steps
 

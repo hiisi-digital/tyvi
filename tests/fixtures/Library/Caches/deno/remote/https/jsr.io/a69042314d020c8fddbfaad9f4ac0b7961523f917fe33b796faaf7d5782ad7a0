@@ -1,0 +1,100 @@
+// Copyright 2018-2026 the Deno authors. MIT license.
+import { dirname } from "jsr:@std/path@^1.1.4/dirname";
+import { ensureDir, ensureDirSync } from "./ensure_dir.ts";
+import { getFileInfoType } from "./_get_file_info_type.ts";
+import { toPathString } from "./_to_path_string.ts";
+
+/**
+ * Asynchronously ensures that the file exists.
+ *
+ * If the file already exists, this function does nothing. If the parent
+ * directories for the file do not exist, they are created.
+ *
+ * Requires `--allow-read` and `--allow-write` permissions.
+ *
+ * @see {@link https://docs.deno.com/runtime/manual/basics/permissions#file-system-access}
+ * for more information on Deno's permissions system.
+ *
+ * @param filePath The path of the file to ensure, as a string or URL.
+ *
+ * @returns A void promise that resolves once the file exists.
+ *
+ * @example Usage
+ * ```ts ignore
+ * import { ensureFile } from "@std/fs/ensure-file";
+ *
+ * await ensureFile("./folder/targetFile.dat");
+ * ```
+ */
+export async function ensureFile(filePath: string | URL): Promise<void> {
+  try {
+    // if file exists
+    const stat = await Deno.lstat(filePath);
+    if (!stat.isFile) {
+      throw new Error(
+        `Failed to ensure file exists: expected 'file', got '${
+          getFileInfoType(stat)
+        }'`,
+      );
+    }
+  } catch (err) {
+    // if file not exists
+    if (err instanceof Deno.errors.NotFound) {
+      // ensure dir exists
+      await ensureDir(dirname(toPathString(filePath)));
+      // create file
+      await Deno.writeFile(filePath, new Uint8Array());
+      return;
+    }
+
+    throw err;
+  }
+}
+
+/**
+ * Synchronously ensures that the file exists.
+ *
+ * If the file already exists, this function does nothing. If the parent
+ * directories for the file do not exist, they are created.
+ *
+ * Requires `--allow-read` and `--allow-write` permissions.
+ *
+ * @see {@link https://docs.deno.com/runtime/manual/basics/permissions#file-system-access}
+ * for more information on Deno's permissions system.
+ *
+ * @param filePath The path of the file to ensure, as a string or URL.
+ *
+ * @returns A void value that returns once the file exists.
+ *
+ * @example Usage
+ * ```ts ignore
+ * import { ensureFileSync } from "@std/fs/ensure-file";
+ *
+ * ensureFileSync("./folder/targetFile.dat");
+ * ```
+ */
+export function ensureFileSync(filePath: string | URL): void {
+  try {
+    // if file exists
+    const stat = Deno.lstatSync(filePath);
+    if (!stat.isFile) {
+      throw new Error(
+        `Failed to ensure file exists: expected 'file', got '${
+          getFileInfoType(stat)
+        }'`,
+      );
+    }
+  } catch (err) {
+    // if file not exists
+    if (err instanceof Deno.errors.NotFound) {
+      // ensure dir exists
+      ensureDirSync(dirname(toPathString(filePath)));
+      // create file
+      Deno.writeFileSync(filePath, new Uint8Array());
+      return;
+    }
+    throw err;
+  }
+}
+
+// denoCacheMetadata={"headers":{"cf-cache-status":"DYNAMIC","cache-control":"public, max-age=31536000, immutable","etag":"\"17062af0c790e6f0dc65d5d99eb91202\"","accept-ranges":"bytes","vary":"Origin, accept-encoding","x-robots-tag":"noindex","x-goog-metageneration":"1","x-guploader-uploadid":"AJRbA5V5n50Q9YsgwfAqV-J3Qxdww7u6wtpTTD6p1WNL9rkT404qJY2tqbqwAgZe-YCA7AF9osHOqhM","x-goog-generation":"1768895872443234","age":"0","date":"Tue, 03 Feb 2026 07:31:23 GMT","x-goog-hash":"crc32c=6mC5JQ==,md5=FwYq8MeQ5vDcZdXZnrkSAg==","last-modified":"Tue, 20 Jan 2026 07:57:52 GMT","x-goog-storage-class":"STANDARD","access-control-expose-headers":"*","access-control-allow-origin":"*","cross-origin-resource-policy":"cross-origin","x-goog-stored-content-encoding":"identity","nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","content-length":"2873","expires":"Wed, 03 Feb 2027 07:31:23 GMT","server":"cloudflare","content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","x-content-type-options":"nosniff","content-type":"text/typescript","x-jsr-backend":"modules","alt-svc":"h3=\":443\"; ma=86400","x-goog-stored-content-length":"2873","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=q7x3lXp1kU5iORUE8HhlL3%2BN5AkROICjBgGc5hBtWgBLNkySBVRvE1e56%2FMiUN0So90Ixj%2BLu2Gybs9Ou7RGNw%2BRLffrBA%3D%3D\"}]}","cf-ray":"9c803a78fd9bc4ef-HEL"},"url":"https://jsr.io/@std/fs/1.0.22/ensure_file.ts","time":1770103884}

@@ -7,6 +7,7 @@
 **Framework only**. No built-in data, atoms, people, or content.
 
 Provides:
+
 - Types and schemas
 - Computation engine (expressions, rules, dependency analysis)
 - Loading systems (atoms, people, memory, context)
@@ -43,6 +44,7 @@ Format: `type: lowercase message`
 Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`
 
 Examples:
+
 - `feat: add memory fading calculation`
 - `fix: handle missing trait definitions`
 - `refactor: extract uri parsing logic`
@@ -56,7 +58,7 @@ No external dependencies allowed.
 ## Design Principles
 
 1. **No opinions** — config drives all behavior
-2. **No hidden state** — everything in files or explicit state  
+2. **No hidden state** — everything in files or explicit state
 3. **Testable** — all modules independently testable
 4. **Clean exports** — only public API in mod.ts
 5. **Everything computed** — no fixed defaults, values derive from rules
@@ -92,9 +94,9 @@ Always provide context and recovery suggestions:
 // Good
 throw new Error(
   `Invalid tyvi.toml: missing [devspace] section.\n` +
-  `Expected format:\n` +
-  `[devspace]\n` +
-  `name = "my-devspace"`
+    `Expected format:\n` +
+    `[devspace]\n` +
+    `name = "my-devspace"`,
 );
 
 // Bad
