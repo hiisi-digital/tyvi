@@ -4,7 +4,9 @@ Expression parsing, evaluation, and rule engine for tyvi.
 
 ## Overview
 
-This module provides a complete expression language for computing derived values (traits, skills, etc.) from composition rules. It's designed for the "person" system where individual characteristics are computed from base values, rules, and context.
+This module provides a complete expression language for computing derived values (traits, skills,
+etc.) from composition rules. It's designed for the "person" system where individual characteristics
+are computed from base values, rules, and context.
 
 ## Architecture
 
@@ -75,12 +77,14 @@ quirk.*   # All quirk values (each as 1)
 ### Operators
 
 Arithmetic (in order of precedence):
+
 ```
 *  /      # Multiplication, division (highest)
 +  -      # Addition, subtraction
 ```
 
 Comparison (lowest precedence, returns 1 or 0):
+
 ```
 >  <      # Greater than, less than
 >= <=     # Greater/less than or equal
@@ -88,11 +92,13 @@ Comparison (lowest precedence, returns 1 or 0):
 ```
 
 Unary:
+
 ```
 -x        # Negation
 ```
 
 Grouping:
+
 ```
 (expr)    # Parentheses override precedence
 ```
@@ -109,6 +115,7 @@ clamp(v, lo, hi) # Constrain value to range [lo, hi]
 ```
 
 Functions accept wildcards:
+
 ```
 avg(trait.*)              # Average of all traits
 sum(skill.*)              # Sum of all skills
@@ -121,7 +128,7 @@ max(trait.*, skill.*)     # Max across all traits and skills
 ### Basic Evaluation
 
 ```typescript
-import { tokenize, parse, evaluate, createContext } from "./computation/mod.ts";
+import { createContext, evaluate, parse, tokenize } from "./computation/mod.ts";
 
 // Create evaluation context
 const context = createContext({
@@ -140,7 +147,7 @@ const result = evaluate(ast, context);
 ### Composition Rules
 
 ```typescript
-import { createRule, buildRuleCollection, combineResults } from "./computation/mod.ts";
+import { buildRuleCollection, combineResults, createRule } from "./computation/mod.ts";
 
 // Create rules
 const rules = [
@@ -148,13 +155,13 @@ const rules = [
     "trait.effective-caution",
     "Base caution modified by debugging skill",
     "$base + skill.debugging * 0.2",
-    1.0
+    1.0,
   ),
   createRule(
     "trait.effective-caution",
     "Quirk bonus for perfectionism",
     "$current + quirk.perfectionist * 10",
-    0.5
+    0.5,
   ),
 ];
 
@@ -168,10 +175,10 @@ const cautionRules = collection.byTarget.get("trait.effective-caution");
 ### Dependency Analysis
 
 ```typescript
-import { 
-  extractDependencies, 
+import {
   analyzeDependencies,
-  getRuleEvaluationOrder 
+  extractDependencies,
+  getRuleEvaluationOrder,
 } from "./computation/mod.ts";
 
 // Extract dependencies from an expression
@@ -197,13 +204,13 @@ Comparisons return 1 (true) or 0 (false), enabling conditional-like patterns:
 
 ```typescript
 // Add bonus if skill > 80
-"$base + (skill.debugging > 80) * 10"
+"$base + (skill.debugging > 80) * 10";
 
 // Quirk-based bonus
-"$base + quirk.perfectionist * 15"
+"$base + quirk.perfectionist * 15";
 
 // Threshold-based scaling
-"$base * (1 + (exp.rust >= 50) * 0.2)"
+"$base * (1 + (exp.rust >= 50) * 0.2)";
 ```
 
 ## Evaluation Context
@@ -212,13 +219,13 @@ The `EvaluationContext` provides all values needed for expression evaluation:
 
 ```typescript
 interface EvaluationContext {
-  traits: Map<string, number>;      // -100 to +100
-  skills: Map<string, number>;      // 0 to 100
-  experience: Map<string, number>;  // 0 to 100
-  stacks: Map<string, number>;      // 0 to 100
-  quirks: Set<string>;              // Active quirk names
-  current?: number;                 // For recursive rules
-  base: number;                     // Default/starting value
+  traits: Map<string, number>; // -100 to +100
+  skills: Map<string, number>; // 0 to 100
+  experience: Map<string, number>; // 0 to 100
+  stacks: Map<string, number>; // 0 to 100
+  quirks: Set<string>; // Active quirk names
+  current?: number; // For recursive rules
+  base: number; // Default/starting value
 }
 ```
 
@@ -235,15 +242,15 @@ All errors include position information for debugging.
 
 ## Files
 
-| File | Description |
-|------|-------------|
-| `ast.ts` | AST node types and factory functions |
-| `lexer.ts` | Moo-based tokenizer |
-| `parser.ts` | Recursive descent parser |
-| `evaluator.ts` | Expression evaluator |
+| File              | Description                             |
+| ----------------- | --------------------------------------- |
+| `ast.ts`          | AST node types and factory functions    |
+| `lexer.ts`        | Moo-based tokenizer                     |
+| `parser.ts`       | Recursive descent parser                |
+| `evaluator.ts`    | Expression evaluator                    |
 | `dependencies.ts` | Dependency analysis and cycle detection |
-| `rules.ts` | Rule engine and weighted combination |
-| `mod.ts` | Module entry point (re-exports) |
+| `rules.ts`        | Rule engine and weighted combination    |
+| `mod.ts`          | Module entry point (re-exports)         |
 
 ## Design Decisions
 
