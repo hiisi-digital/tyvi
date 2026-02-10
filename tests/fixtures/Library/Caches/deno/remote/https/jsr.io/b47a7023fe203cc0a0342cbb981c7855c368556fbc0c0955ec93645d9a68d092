@@ -1,0 +1,46 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+// This module is browser compatible.
+
+import { isWindows } from "jsr:@std/internal@^1.0.12/os";
+import type { ParsedPath } from "./types.ts";
+import { parse as posixParse } from "./posix/parse.ts";
+import { parse as windowsParse } from "./windows/parse.ts";
+
+export type { ParsedPath } from "./types.ts";
+
+/**
+ * Return an object containing the parsed components of the path.
+ *
+ * Use {@linkcode https://jsr.io/@std/path/doc/~/format | format()} to reverse
+ * the result.
+ *
+ * @example Usage
+ * ```ts
+ * import { parse } from "@std/path/parse";
+ * import { assertEquals } from "@std/assert";
+ *
+ * if (Deno.build.os === "windows") {
+ *   const parsedPathObj = parse("C:\\path\\to\\script.ts");
+ *   assertEquals(parsedPathObj.root, "C:\\");
+ *   assertEquals(parsedPathObj.dir, "C:\\path\\to");
+ *   assertEquals(parsedPathObj.base, "script.ts");
+ *   assertEquals(parsedPathObj.ext, ".ts");
+ *   assertEquals(parsedPathObj.name, "script");
+ * } else {
+ *   const parsedPathObj = parse("/path/to/dir/script.ts");
+ *   parsedPathObj.root; // "/"
+ *   parsedPathObj.dir; // "/path/to/dir"
+ *   parsedPathObj.base; // "script.ts"
+ *   parsedPathObj.ext; // ".ts"
+ *   parsedPathObj.name; // "script"
+ * }
+ * ```
+ *
+ * @param path Path to process
+ * @returns An object with the parsed path components.
+ */
+export function parse(path: string): ParsedPath {
+  return isWindows ? windowsParse(path) : posixParse(path);
+}
+
+// denoCacheMetadata={"headers":{"x-guploader-uploadid":"AJRbA5U4YK6HHXP_J8SX2nVIBQF3MWkHDUYlIjvUsKsi6N4DTbBHURcWXLh_wikdr6wdf41XIs5cZng","nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","x-robots-tag":"noindex","age":"0","cf-cache-status":"DYNAMIC","last-modified":"Wed, 24 Dec 2025 07:18:31 GMT","vary":"Origin, accept-encoding","x-content-type-options":"nosniff","x-goog-storage-class":"STANDARD","cf-ray":"9c803a78fdb3c4ef-HEL","x-goog-stored-content-encoding":"identity","expires":"Wed, 03 Feb 2027 07:31:23 GMT","x-goog-hash":"crc32c=l9pCOg==,md5=gnDq68YeQduTluk8G2F19A==","x-goog-metageneration":"1","x-goog-stored-content-length":"1471","date":"Tue, 03 Feb 2026 07:31:23 GMT","cache-control":"public, max-age=31536000, immutable","etag":"\"8270eaebc61e41db9396e93c1b6175f4\"","content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","content-type":"text/typescript","cross-origin-resource-policy":"cross-origin","x-goog-generation":"1766560711187496","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=ZhNmBZH%2FlnB43uShz%2FYy3WBlMObzO3oOM5044z8WDKz96%2FaYaDzsDM4V1BJOyKsOB21GOI89oGZa%2BIXK8Fr9dS%2BXvoCCtg%3D%3D\"}]}","accept-ranges":"bytes","alt-svc":"h3=\":443\"; ma=86400","access-control-expose-headers":"*","access-control-allow-origin":"*","x-jsr-backend":"modules","content-length":"1471","server":"cloudflare"},"url":"https://jsr.io/@std/path/1.1.4/parse.ts","time":1770103883}

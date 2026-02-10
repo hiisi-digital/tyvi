@@ -1,0 +1,51 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+// This module is browser compatible.
+
+/**
+ * Test whether the given string is a glob.
+ *
+ * @example Usage
+ * ```ts
+ * import { isGlob } from "@std/path/is-glob";
+ * import { assert } from "@std/assert";
+ *
+ * assert(!isGlob("foo/bar/../baz"));
+ * assert(isGlob("foo/*ar/../baz"));
+ * ```
+ *
+ * @param str String to test.
+ * @returns `true` if the given string is a glob, otherwise `false`
+ */
+export function isGlob(str: string): boolean {
+  const chars: Record<string, string> = { "{": "}", "(": ")", "[": "]" };
+  const regex =
+    /\\(.)|(^!|\*|\?|[\].+)]\?|\[[^[\\\]]+\]|\{[^{\\}]+\}|\(\?[:!=][^\\)]+\)|\([^(|]+\|[^\\)]+\)|@\([^)]+\))/;
+
+  if (str === "") {
+    return false;
+  }
+
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(str))) {
+    if (match[2]) return true;
+    let idx = match.index + match[0].length;
+
+    // if an open bracket/brace/paren is escaped,
+    // set the index to the next closing character
+    const open = match[1];
+    const close = open ? chars[open] : null;
+    if (open && close) {
+      const n = str.indexOf(close, idx);
+      if (n !== -1) {
+        idx = n + 1;
+      }
+    }
+
+    str = str.slice(idx);
+  }
+
+  return false;
+}
+
+// denoCacheMetadata={"headers":{"nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","x-goog-hash":"crc32c=v6J4Pw==,md5=L94RoEFyt1YPec6zERti1g==","cf-cache-status":"DYNAMIC","x-jsr-backend":"modules","accept-ranges":"bytes","access-control-allow-origin":"*","x-goog-storage-class":"STANDARD","x-goog-stored-content-encoding":"identity","age":"0","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=GfkHWxCA9mp39z59sYN0BZkPa9yuZF%2BpiY23W%2BCYvYVST3Kprafsl6vm%2F6oDY7OnMu1EV9rfPFpiVCbeCiIH10p5e6tpJA%3D%3D\"}]}","date":"Tue, 03 Feb 2026 07:31:23 GMT","last-modified":"Wed, 24 Dec 2025 07:18:31 GMT","cache-control":"public, max-age=31536000, immutable","expires":"Wed, 03 Feb 2027 07:31:23 GMT","etag":"\"2fde11a04172b7560f79ceb3111b62d6\"","cf-ray":"9c803a78fdc3c4ef-HEL","x-goog-generation":"1766560711043679","x-content-type-options":"nosniff","x-robots-tag":"noindex","access-control-expose-headers":"*","content-length":"1240","server":"cloudflare","content-type":"text/typescript","x-goog-metageneration":"1","cross-origin-resource-policy":"cross-origin","x-goog-stored-content-length":"1240","vary":"Origin, accept-encoding","x-guploader-uploadid":"AJRbA5Wy4ofE1kSyVdzfmrEei9cTfyg_m3utAm2_v8mvmu6aUt3U7CZr3wGcgEGgPBZGy9iR","alt-svc":"h3=\":443\"; ma=86400"},"url":"https://jsr.io/@std/path/1.1.4/is_glob.ts","time":1770103884}

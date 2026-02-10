@@ -1,0 +1,20 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+// This module is browser compatible.
+import { isWindows } from "jsr:@std/internal@^1.0.12/os";
+
+/**
+ * The character used to separate entries in the PATH environment variable.
+ * On Windows, this is `;`. On all other platforms, this is `:`.
+ */
+export const DELIMITER = isWindows ? ";" as const : ":" as const;
+/**
+ * The character used to separate components of a file path.
+ * On Windows, this is `\`. On all other platforms, this is `/`.
+ */
+export const SEPARATOR = isWindows ? "\\" as const : "/" as const;
+/**
+ * A regular expression that matches one or more path separators.
+ */
+export const SEPARATOR_PATTERN = isWindows ? /[\\/]+/ : /\/+/;
+
+// denoCacheMetadata={"headers":{"alt-svc":"h3=\":443\"; ma=86400","cache-control":"public, max-age=31536000, immutable","x-goog-stored-content-encoding":"identity","content-type":"text/typescript","content-length":"704","nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","server":"cloudflare","cf-ray":"9c803a78fda6c4ef-HEL","x-goog-storage-class":"STANDARD","x-jsr-backend":"modules","date":"Tue, 03 Feb 2026 07:31:23 GMT","x-goog-stored-content-length":"704","content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","age":"0","last-modified":"Wed, 24 Dec 2025 07:18:31 GMT","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=qRadhQ4%2F2FpfIh0oiX7JGL6syOaJcnyjBU%2BxTsgmAuXR6Xe24JNMsw2fR2Jvf6jMIUkfb%2FaJ359v59vyNcVnJT1SwISxoA%3D%3D\"}]}","x-content-type-options":"nosniff","expires":"Wed, 03 Feb 2027 07:31:23 GMT","access-control-expose-headers":"*","x-guploader-uploadid":"AJRbA5Wn41OycwWvpaUihhBKvmopAOUVsedBTfFS2L9J3Wjc3W1TDyHxkRBMf8rQbJtSuBxq3zInSNQ","vary":"Origin, accept-encoding","etag":"\"fa6098d2f6978886105b6dcecbdc7cce\"","cf-cache-status":"DYNAMIC","access-control-allow-origin":"*","accept-ranges":"bytes","x-robots-tag":"noindex","x-goog-generation":"1766560711059007","x-goog-hash":"crc32c=O5pNng==,md5=+mCY0vaXiIYQW23Oy9x8zg==","x-goog-metageneration":"1","cross-origin-resource-policy":"cross-origin"},"url":"https://jsr.io/@std/path/1.1.4/constants.ts","time":1770103884}

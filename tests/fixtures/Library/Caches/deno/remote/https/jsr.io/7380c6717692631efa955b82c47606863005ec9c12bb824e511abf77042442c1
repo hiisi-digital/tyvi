@@ -1,0 +1,32 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+// This module is browser compatible.
+
+import { isWindows } from "jsr:@std/internal@^1.0.12/os";
+import { dirname as posixDirname } from "./posix/dirname.ts";
+import { dirname as windowsDirname } from "./windows/dirname.ts";
+
+/**
+ * Return the directory path of a path.
+ *
+ * @example Usage
+ * ```ts
+ * import { dirname } from "@std/path/dirname";
+ * import { assertEquals } from "@std/assert";
+ *
+ * if (Deno.build.os === "windows") {
+ *   assertEquals(dirname("C:\\home\\user\\Documents\\image.png"), "C:\\home\\user\\Documents");
+ *   assertEquals(dirname(new URL("file:///C:/home/user/Documents/image.png")), "C:\\home\\user\\Documents");
+ * } else {
+ *   assertEquals(dirname("/home/user/Documents/image.png"), "/home/user/Documents");
+ *   assertEquals(dirname(new URL("file:///home/user/Documents/image.png")), "/home/user/Documents");
+ * }
+ * ```
+ *
+ * @param path Path to extract the directory from.
+ * @returns The directory path.
+ */
+export function dirname(path: string | URL): string {
+  return isWindows ? windowsDirname(path) : posixDirname(path);
+}
+
+// denoCacheMetadata={"headers":{"report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=zCqJsYikuSvlwBxw1Q5mL9zXt2GaUW%2Bf8wg4HZf4t7zx16Ez5AWRTjOMRHcSqVTBfHU05c76bM3vc6xZGxa86KiVfsVm%2Bg%3D%3D\"}]}","cache-control":"public, max-age=31536000, immutable","content-length":"1119","age":"0","vary":"Origin, accept-encoding","nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","x-goog-storage-class":"STANDARD","last-modified":"Wed, 24 Dec 2025 07:18:31 GMT","server":"cloudflare","access-control-allow-origin":"*","x-goog-generation":"1766560711045862","x-goog-metageneration":"1","cf-cache-status":"DYNAMIC","x-robots-tag":"noindex","date":"Tue, 03 Feb 2026 07:31:23 GMT","content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","x-jsr-backend":"modules","cf-ray":"9c803a78fda7c4ef-HEL","x-goog-stored-content-encoding":"identity","etag":"\"bc6782f7253bd1e9c72892a1f5f29f89\"","x-goog-stored-content-length":"1119","x-guploader-uploadid":"AJRbA5XQTuNU-Q1XGw_9qnnmj1xJcmcmFR1j0i8iLZVkLDMOA0c__4hZG-jlqIQCVYdUaq3B_6qx5UA","content-type":"text/typescript","expires":"Wed, 03 Feb 2027 07:31:23 GMT","accept-ranges":"bytes","alt-svc":"h3=\":443\"; ma=86400","x-content-type-options":"nosniff","cross-origin-resource-policy":"cross-origin","x-goog-hash":"crc32c=5YSZ6w==,md5=vGeC9yU70enHKJKh9fKfiQ==","access-control-expose-headers":"*"},"url":"https://jsr.io/@std/path/1.1.4/dirname.ts","time":1770103884}

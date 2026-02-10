@@ -1,0 +1,171 @@
+// Copyright 2018-2026 the Deno authors. MIT license.
+import { isSubdir } from "./_is_subdir.ts";
+import { isSamePath } from "./_is_same_path.ts";
+
+/** Options for {@linkcode move} and {@linkcode moveSync}. */
+export interface MoveOptions {
+  /**
+   * Whether the destination file should be overwritten if it already exists.
+   *
+   * @default {false}
+   */
+  overwrite?: boolean;
+}
+
+/**
+ * Asynchronously moves a file or directory (along with its contents).
+ *
+ * Requires `--allow-read` and `--allow-write` permissions.
+ *
+ * @see {@link https://docs.deno.com/runtime/manual/basics/permissions#file-system-access}
+ * for more information on Deno's permissions system.
+ *
+ * @param src The source file or directory as a string or URL.
+ * @param dest The destination file or directory as a string or URL.
+ * @param options Options for the move operation.
+ * @throws {Deno.errors.AlreadyExists} If `dest` already exists and
+ * `options.overwrite` is `false`.
+ * @throws {Deno.errors.NotSupported} If `src` is a sub-directory of `dest`.
+ *
+ * @returns A void promise that resolves once the operation completes.
+ *
+ * @example Basic usage
+ * ```ts ignore
+ * import { move } from "@std/fs/move";
+ *
+ * await move("./foo", "./bar");
+ * ```
+ *
+ * This will move the file or directory at `./foo` to `./bar` without
+ * overwriting.
+ *
+ * @example Overwriting
+ * ```ts ignore
+ * import { move } from "@std/fs/move";
+ *
+ * await move("./foo", "./bar", { overwrite: true });
+ * ```
+ *
+ * This will move the file or directory at `./foo` to `./bar`, overwriting
+ * `./bar` if it already exists.
+ */
+export async function move(
+  src: string | URL,
+  dest: string | URL,
+  options?: MoveOptions,
+): Promise<void> {
+  const { overwrite = false } = options ?? {};
+
+  const srcStat = await Deno.stat(src);
+
+  if (
+    srcStat.isDirectory &&
+    (isSubdir(src, dest) || isSamePath(src, dest))
+  ) {
+    throw new Deno.errors.NotSupported(
+      `Cannot move '${src}' to a subdirectory of itself, '${dest}'.`,
+    );
+  }
+
+  if (overwrite) {
+    if (isSamePath(src, dest)) return;
+    try {
+      await Deno.remove(dest, { recursive: true });
+    } catch (error) {
+      if (!(error instanceof Deno.errors.NotFound)) {
+        throw error;
+      }
+    }
+  } else {
+    const EXISTS_ERROR = new Deno.errors.AlreadyExists("dest already exists.");
+    try {
+      await Deno.lstat(dest);
+      return Promise.reject(EXISTS_ERROR);
+    } catch {
+      // Do nothing...
+    }
+  }
+
+  await Deno.rename(src, dest);
+}
+
+/**
+ * Synchronously moves a file or directory (along with its contents).
+ *
+ * Requires `--allow-read` and `--allow-write` permissions.
+ *
+ * @see {@link https://docs.deno.com/runtime/manual/basics/permissions#file-system-access}
+ * for more information on Deno's permissions system.
+ *
+ * @param src The source file or directory as a string or URL.
+ * @param dest The destination file or directory as a string or URL.
+ * @param options Options for the move operation.
+ * @throws {Deno.errors.AlreadyExists} If `dest` already exists and
+ * `options.overwrite` is `false`.
+ * @throws {Deno.errors.NotSupported} If `src` is a sub-directory of `dest`.
+ *
+ * @returns A void value that returns once the operation completes.
+ *
+ * @example Basic usage
+ * ```ts ignore
+ * import { moveSync } from "@std/fs/move";
+ *
+ * moveSync("./foo", "./bar");
+ * ```
+ *
+ * This will move the file or directory at `./foo` to `./bar` without
+ * overwriting.
+ *
+ * @example Overwriting
+ * ```ts ignore
+ * import { moveSync } from "@std/fs/move";
+ *
+ * moveSync("./foo", "./bar", { overwrite: true });
+ * ```
+ *
+ * This will move the file or directory at `./foo` to `./bar`, overwriting
+ * `./bar` if it already exists.
+ */
+export function moveSync(
+  src: string | URL,
+  dest: string | URL,
+  options?: MoveOptions,
+): void {
+  const { overwrite = false } = options ?? {};
+
+  const srcStat = Deno.statSync(src);
+
+  if (
+    srcStat.isDirectory &&
+    (isSubdir(src, dest) || isSamePath(src, dest))
+  ) {
+    throw new Deno.errors.NotSupported(
+      `Cannot move '${src}' to a subdirectory of itself, '${dest}'.`,
+    );
+  }
+
+  if (overwrite) {
+    if (isSamePath(src, dest)) return;
+    try {
+      Deno.removeSync(dest, { recursive: true });
+    } catch (error) {
+      if (!(error instanceof Deno.errors.NotFound)) {
+        throw error;
+      }
+    }
+  } else {
+    const EXISTS_ERROR = new Deno.errors.AlreadyExists("dest already exists.");
+    try {
+      Deno.lstatSync(dest);
+      throw EXISTS_ERROR;
+    } catch (error) {
+      if (error === EXISTS_ERROR) {
+        throw error;
+      }
+    }
+  }
+
+  Deno.renameSync(src, dest);
+}
+
+// denoCacheMetadata={"headers":{"x-jsr-backend":"modules","cf-cache-status":"DYNAMIC","server":"cloudflare","x-guploader-uploadid":"AJRbA5XvW1uRFU8J5D0GcGqVh5ST9I3HXHT8RiwJrvgBn4sXnbPp_mmRXjDx52aACTVikc29KXtie0I","cross-origin-resource-policy":"cross-origin","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=%2B1G89e7SX7Nq6BGODcVnQ6z9SiazSs9BWrWtAtrCvQ5SkRO3%2FmCVxgSU%2BNQ7Ddcp3w7NEbAzPTt3x9VUEURtiCNw7TnFpw%3D%3D\"}]}","vary":"Origin, accept-encoding","cf-ray":"9c803a78fda1c4ef-HEL","expires":"Wed, 03 Feb 2027 07:31:23 GMT","x-goog-stored-content-length":"4611","x-robots-tag":"noindex","x-goog-generation":"1768895872304656","x-goog-hash":"crc32c=bWbSww==,md5=ZvIPzE4tL/HZbqd+cAdQNA==","last-modified":"Tue, 20 Jan 2026 07:57:52 GMT","date":"Tue, 03 Feb 2026 07:31:23 GMT","x-goog-metageneration":"1","content-length":"4611","x-goog-storage-class":"STANDARD","access-control-allow-origin":"*","x-content-type-options":"nosniff","x-goog-stored-content-encoding":"identity","access-control-expose-headers":"*","nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","age":"0","alt-svc":"h3=\":443\"; ma=86400","cache-control":"public, max-age=31536000, immutable","etag":"\"66f20fcc4e2d2ff1d96ea77e70075034\"","accept-ranges":"bytes","content-type":"text/typescript","content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';"},"url":"https://jsr.io/@std/fs/1.0.22/move.ts","time":1770103884}

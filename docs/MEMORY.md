@@ -18,7 +18,8 @@ All files are located in `src/memory/`:
 
 ## Public API
 
-The following functions are exported from `src/memory/mod.ts` and re-exported from the main `mod.ts`:
+The following functions are exported from `src/memory/mod.ts` and re-exported from the main
+`mod.ts`:
 
 ### Core Operations
 
@@ -83,6 +84,7 @@ strength(t) = max(min_strength, initial * (0.5 ^ (days_since_reinforcement / hal
 ### Verification
 
 Manual tests confirm the formula works correctly:
+
 - After 0 days: strength = 1.000
 - After 45 days (half of 90-day half-life): strength ≈ 0.707
 - After 90 days (one half-life): strength = 0.500
@@ -101,6 +103,7 @@ When a memory is reinforced:
 6. Event is logged
 
 Reinforcement is skipped if:
+
 - Memory is already very strong (> 1.5)
 - Memory was reinforced recently (< 24 hours ago)
 
@@ -120,6 +123,7 @@ Similarity scores range from 0.0 to 1.0, where 1.0 indicates very similar memori
 ### Filtering
 
 Memories can be filtered by:
+
 - Person (ctx:// reference)
 - Topics (single or array)
 - People involved (single or array)
@@ -130,6 +134,7 @@ Memories can be filtered by:
 ### Sorting
 
 Memories can be sorted by:
+
 - Strength (current calculated strength)
 - Created date
 - Last reinforced date
@@ -150,13 +155,13 @@ const memory = await recordMemory(dataPath, {
   content: {
     summary: "Led OAuth2 design review",
     detail: "Discovered missing PKCE in mobile flow",
-    significance: "high"
+    significance: "high",
   },
   tags: {
     topics: ["oauth", "security"],
     people: ["ctx://person/viktor"],
-    outcome: "positive"
-  }
+    outcome: "positive",
+  },
 });
 ```
 
@@ -222,6 +227,7 @@ Comprehensive tests are provided in `tests/memory_test.ts`:
 - Lifecycle operations (create, prune)
 
 Manual verification tests confirm:
+
 - ✓ Exponential decay formula is correct
 - ✓ Minimum strength floor is respected
 - ✓ Default half-life values work
@@ -232,6 +238,7 @@ Manual verification tests confirm:
 ## Dependencies
 
 Only Deno standard library:
+
 - `@std/toml` - TOML parsing/serialization
 - `@std/fs` - File system operations
 - `@std/path` - Path utilities

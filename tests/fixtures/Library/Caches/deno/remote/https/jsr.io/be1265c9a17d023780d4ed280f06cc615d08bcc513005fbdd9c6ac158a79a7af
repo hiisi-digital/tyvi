@@ -1,0 +1,36 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+// This module is browser compatible.
+
+import { assertArg } from "../_common/from_file_url.ts";
+
+/**
+ * Converts a file URL to a path string.
+ *
+ * @example Usage
+ * ```ts
+ * import { fromFileUrl } from "@std/path/windows/from-file-url";
+ * import { assertEquals } from "@std/assert";
+ *
+ * assertEquals(fromFileUrl("file:///home/foo"), "\\home\\foo");
+ * assertEquals(fromFileUrl("file:///C:/Users/foo"), "C:\\Users\\foo");
+ * assertEquals(fromFileUrl("file://localhost/home/foo"), "\\home\\foo");
+ * ```
+ *
+ * @param url The file URL to convert.
+ * @returns The path string.
+ */
+export function fromFileUrl(url: URL | string): string {
+  url = assertArg(url);
+  let path = decodeURIComponent(
+    url.pathname.replace(/\//g, "\\").replace(/%(?![0-9A-Fa-f]{2})/g, "%25"),
+  ).replace(/^\\*([A-Za-z]:)(\\|$)/, "$1\\");
+  if (url.hostname !== "") {
+    // Note: The `URL` implementation guarantees that the drive letter and
+    // hostname are mutually exclusive. Otherwise it would not have been valid
+    // to append the hostname and path like this.
+    path = `\\\\${url.hostname}${path}`;
+  }
+  return path;
+}
+
+// denoCacheMetadata={"headers":{"nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","x-goog-metageneration":"1","content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","last-modified":"Wed, 24 Dec 2025 07:18:31 GMT","x-jsr-backend":"modules","content-length":"1168","accept-ranges":"bytes","access-control-allow-origin":"*","server":"cloudflare","access-control-expose-headers":"*","age":"0","date":"Tue, 03 Feb 2026 07:31:23 GMT","content-type":"text/typescript","x-goog-hash":"crc32c=kn08dw==,md5=gOaHjLFX+9MDbN8XsgOQNQ==","cache-control":"public, max-age=31536000, immutable","x-goog-storage-class":"STANDARD","x-guploader-uploadid":"AJRbA5Ui2EJrx0sPaAgBrSuDmY45WtEY-5rDtu8W69MSzYRUjOa1X0gDGhC5xgb8DuJxD_K0zSqITvE","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=iyt%2BKY89eT1ZFjujsx5%2B7EfLrnlWxEBzAX7ucTtMi8Ve2ahg%2FpPR7seOs3ti%2FWrwLtp9s%2BHyWrFePB38Qvj3RH56dDqr1g%3D%3D\"}]}","x-goog-stored-content-length":"1168","alt-svc":"h3=\":443\"; ma=86400","cf-ray":"9c803a78fdd8c4ef-HEL","cf-cache-status":"DYNAMIC","x-content-type-options":"nosniff","etag":"\"80e6878cb157fbd3036cdf17b2039035\"","x-goog-generation":"1766560711169509","x-robots-tag":"noindex","expires":"Wed, 03 Feb 2027 07:31:23 GMT","x-goog-stored-content-encoding":"identity","vary":"Origin, accept-encoding","cross-origin-resource-policy":"cross-origin"},"url":"https://jsr.io/@std/path/1.1.4/windows/from_file_url.ts","time":1770103884}

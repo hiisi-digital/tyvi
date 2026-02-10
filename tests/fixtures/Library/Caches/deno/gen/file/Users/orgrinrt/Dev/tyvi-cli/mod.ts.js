@@ -1,0 +1,18 @@
+/**
+ * tyvi-cli - CLI interface for tyvi devspace orchestration
+ *
+ * This package provides a thin command-line interface that delegates
+ * to the core `tyvi` library. All business logic lives in tyvi.
+ *
+ * @module
+ */
+// Re-export CLI entry point
+export { EXIT, main } from "./src/mod.ts";
+// Run if executed directly
+if (import.meta.main) {
+  const { main } = await import("./src/mod.ts");
+  const exitCode = await main(Deno.args);
+  Deno.exit(exitCode);
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImZpbGU6Ly8vVXNlcnMvb3JncmlucnQvRGV2L3R5dmktY2xpL21vZC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIHR5dmktY2xpIC0gQ0xJIGludGVyZmFjZSBmb3IgdHl2aSBkZXZzcGFjZSBvcmNoZXN0cmF0aW9uXG4gKlxuICogVGhpcyBwYWNrYWdlIHByb3ZpZGVzIGEgdGhpbiBjb21tYW5kLWxpbmUgaW50ZXJmYWNlIHRoYXQgZGVsZWdhdGVzXG4gKiB0byB0aGUgY29yZSBgdHl2aWAgbGlicmFyeS4gQWxsIGJ1c2luZXNzIGxvZ2ljIGxpdmVzIGluIHR5dmkuXG4gKlxuICogQG1vZHVsZVxuICovXG5cbi8vIFJlLWV4cG9ydCBDTEkgZW50cnkgcG9pbnRcbmV4cG9ydCB7IEVYSVQsIG1haW4gfSBmcm9tIFwiLi9zcmMvbW9kLnRzXCI7XG5cbi8vIFJ1biBpZiBleGVjdXRlZCBkaXJlY3RseVxuaWYgKGltcG9ydC5tZXRhLm1haW4pIHtcbiAgY29uc3QgeyBtYWluIH0gPSBhd2FpdCBpbXBvcnQoXCIuL3NyYy9tb2QudHNcIik7XG4gIGNvbnN0IGV4aXRDb2RlID0gYXdhaXQgbWFpbihEZW5vLmFyZ3MpO1xuICBEZW5vLmV4aXQoZXhpdENvZGUpO1xufVxuIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7O0NBT0MsR0FFRCw0QkFBNEI7QUFDNUIsU0FBUyxJQUFJLEVBQUUsSUFBSSxRQUFRLGVBQWU7QUFFMUMsMkJBQTJCO0FBQzNCLElBQUksWUFBWSxJQUFJLEVBQUU7RUFDcEIsTUFBTSxFQUFFLElBQUksRUFBRSxHQUFHLE1BQU0sTUFBTSxDQUFDO0VBQzlCLE1BQU0sV0FBVyxNQUFNLEtBQUssS0FBSyxJQUFJO0VBQ3JDLEtBQUssSUFBSSxDQUFDO0FBQ1oifQ==
+// denoCacheMetadata=16625646784457667921,17903227615702340580

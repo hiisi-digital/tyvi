@@ -1,0 +1,32 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+// This module is browser compatible.
+
+import { isWindows } from "jsr:@std/internal@^1.0.12/os";
+import { fromFileUrl as posixFromFileUrl } from "./posix/from_file_url.ts";
+import { fromFileUrl as windowsFromFileUrl } from "./windows/from_file_url.ts";
+
+/**
+ * Converts a file URL to a path string.
+ *
+ * @example Usage
+ * ```ts
+ * import { fromFileUrl } from "@std/path/from-file-url";
+ * import { assertEquals } from "@std/assert";
+ *
+ * if (Deno.build.os === "windows") {
+ *   assertEquals(fromFileUrl("file:///home/foo"), "\\home\\foo");
+ *   assertEquals(fromFileUrl("file:///C:/Users/foo"), "C:\\Users\\foo");
+ *   assertEquals(fromFileUrl("file://localhost/home/foo"), "\\home\\foo");
+ * } else {
+ *   assertEquals(fromFileUrl("file:///home/foo"), "/home/foo");
+ * }
+ * ```
+ *
+ * @param url The file URL to convert to a path.
+ * @returns The path string.
+ */
+export function fromFileUrl(url: string | URL): string {
+  return isWindows ? windowsFromFileUrl(url) : posixFromFileUrl(url);
+}
+
+// denoCacheMetadata={"headers":{"x-goog-stored-content-encoding":"identity","alt-svc":"h3=\":443\"; ma=86400","content-type":"text/typescript","etag":"\"8b5ff0fb4c279cf44b4c1de34804a654\"","x-goog-metageneration":"1","content-length":"1049","server":"cloudflare","x-guploader-uploadid":"AJRbA5Vo65jOvX44oKgHHN40wjEdafEusQTwMEYFFXhLjH9iwE88huST57E90xSoTSS_N7Q0DvScwIs","content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","age":"0","last-modified":"Wed, 24 Dec 2025 07:18:31 GMT","x-content-type-options":"nosniff","cf-ray":"9c803a78fdacc4ef-HEL","x-jsr-backend":"modules","cf-cache-status":"DYNAMIC","access-control-expose-headers":"*","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=OiAi5m6%2B27GO2814QXSIZTsTMNf%2Fj7AYXXSzTsGzZr6Iu4K0vaZ25ZQOP9b7p4NDRcwjZmi7I8cnP9vShK3bhyi5pxX67A%3D%3D\"}]}","x-goog-generation":"1766560711196178","date":"Tue, 03 Feb 2026 07:31:23 GMT","access-control-allow-origin":"*","x-goog-storage-class":"STANDARD","vary":"Origin, accept-encoding","nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","x-goog-stored-content-length":"1049","accept-ranges":"bytes","cache-control":"public, max-age=31536000, immutable","expires":"Wed, 03 Feb 2027 07:31:23 GMT","x-goog-hash":"crc32c=9ctpEw==,md5=i1/w+0wnnPRLTB3jSASmVA==","cross-origin-resource-policy":"cross-origin","x-robots-tag":"noindex"},"url":"https://jsr.io/@std/path/1.1.4/from_file_url.ts","time":1770103884}

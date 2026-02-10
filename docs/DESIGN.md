@@ -2,7 +2,12 @@
 
 > Core library for devspace orchestration, people computation, and context management.
 
-The name comes from Finnish "tyvi" meaning "base" or "trunk"; the foundational part from which branches grow.
+The name comes from Finnish "tyvi" meaning "base" or "trunk"; the foundational part from which
+branches grow.
+
+**Related Design Documents:**
+
+- [`DESIGN.GIT.md`](./DESIGN.GIT.md) — Git restrictions and shell integration
 
 ---
 
@@ -17,10 +22,10 @@ tyvi is the **core library** that contains all types, logic, and functionality f
 
 tyvi is a **library**, not a CLI. Interfaces are provided by:
 
-| Package | Purpose |
-|---------|---------|
-| **tyvi** | Core library (this package) |
-| **tyvi-cli** | Human interaction via terminal |
+| Package      | Purpose                               |
+| ------------ | ------------------------------------- |
+| **tyvi**     | Core library (this package)           |
+| **tyvi-cli** | Human interaction via terminal        |
 | **tyvi-mcp** | AI agent interaction via MCP protocol |
 
 ---
@@ -207,13 +212,13 @@ allowed_paths = [".staging", "../.lab", "../.labs"]
 
 ### Operations
 
-| Operation | Description |
-|-----------|-------------|
-| `load` | Move repos from staging to lab |
-| `unload` | Move repos from lab to staging (requires clean state) |
-| `clone` | Clone repos to staging |
-| `sync` | Synchronize devspace with inventory |
-| `checkGitAllowed` | Check if git operations allowed in path |
+| Operation         | Description                                           |
+| ----------------- | ----------------------------------------------------- |
+| `load`            | Move repos from staging to lab                        |
+| `unload`          | Move repos from lab to staging (requires clean state) |
+| `clone`           | Clone repos to staging                                |
+| `sync`            | Synchronize devspace with inventory                   |
+| `checkGitAllowed` | Check if git operations allowed in path               |
 
 ---
 
@@ -223,14 +228,14 @@ allowed_paths = [".staging", "../.lab", "../.labs"]
 
 People are composed from atomic building blocks:
 
-| Type | Range | Description |
-|------|-------|-------------|
-| Traits | -100 to +100 | Personality axes (both extremes problematic) |
-| Skills | 0 to 100 | Technical capabilities |
-| Experience | 0 to 100 | Domain familiarity |
-| Stacks | 0 to 100 | Technology proficiency |
-| Quirks | boolean | Binary personality markers |
-| Phrases | conditional | Communication flavor |
+| Type       | Range        | Description                                  |
+| ---------- | ------------ | -------------------------------------------- |
+| Traits     | -100 to +100 | Personality axes (both extremes problematic) |
+| Skills     | 0 to 100     | Technical capabilities                       |
+| Experience | 0 to 100     | Domain familiarity                           |
+| Stacks     | 0 to 100     | Technology proficiency                       |
+| Quirks     | boolean      | Binary personality markers                   |
+| Phrases    | conditional  | Communication flavor                         |
 
 ### Composition Rules
 
@@ -245,16 +250,16 @@ weight = 0.4
 
 ### Expression Language
 
-| Syntax | Meaning |
-|--------|---------|
-| `trait.name` | Trait value |
-| `skill.name` | Skill value |
-| `exp.name` | Experience value |
-| `stack.name` | Stack value |
-| `avg(...)` | Average of values |
-| `max(...)` | Maximum |
-| `min(...)` | Minimum |
-| `clamp(v, min, max)` | Clamp to range |
+| Syntax               | Meaning           |
+| -------------------- | ----------------- |
+| `trait.name`         | Trait value       |
+| `skill.name`         | Skill value       |
+| `exp.name`           | Experience value  |
+| `stack.name`         | Stack value       |
+| `avg(...)`           | Average of values |
+| `max(...)`           | Maximum           |
+| `min(...)`           | Minimum           |
+| `clamp(v, min, max)` | Clamp to range    |
 
 ### Person Definition
 
@@ -335,10 +340,10 @@ Similar memories reinforce each other, increasing strength.
 ctx://[~org/][~team/]{type}/{path}
 ```
 
-| Prefix | Meaning | Example |
-|--------|---------|---------|
-| (none) | Global | `ctx://person/alex` |
-| `~{org}/` | Org scope | `ctx://~hiisi/rules/commit-style` |
+| Prefix            | Meaning    | Example                                    |
+| ----------------- | ---------- | ------------------------------------------ |
+| (none)            | Global     | `ctx://person/alex`                        |
+| `~{org}/`         | Org scope  | `ctx://~hiisi/rules/commit-style`          |
 | `~{org}/~{team}/` | Team scope | `ctx://~hiisi/~correctness/research/types` |
 
 ### Scope Hierarchy
@@ -351,11 +356,11 @@ Lower scopes inherit from higher, with automatic fallback.
 
 ### Visibility Rules
 
-| Scope | Can See |
-|-------|---------|
-| Global | Only global |
-| Org | Own org + global |
-| Team | Own team + own org + global |
+| Scope  | Can See                     |
+| ------ | --------------------------- |
+| Global | Only global                 |
+| Org    | Own org + global            |
+| Team   | Own team + own org + global |
 
 ---
 
@@ -434,6 +439,7 @@ No external dependencies.
 ### Everything Computed
 
 No fixed defaults. Every value derives from:
+
 1. Explicitly defined anchor values
 2. Composition rules that propagate
 3. Starting points for computation chains
@@ -452,7 +458,8 @@ people = ["viktor", "graydon"]
 
 ### Scoped with Fallback
 
-Context at multiple levels with automatic inheritance. Query team level, get global if team doesn't override.
+Context at multiple levels with automatic inheritance. Query team level, get global if team doesn't
+override.
 
 ### Config-Driven
 
@@ -461,6 +468,7 @@ All behavior defined in config files. No magic, no implicit behavior.
 ### No Hidden State
 
 All state in:
+
 - Config files (TOML)
 - State files (`.state/`)
 - Git repos themselves
@@ -478,7 +486,8 @@ All state in:
 
 ## Related Documents
 
-- `docs/TODO.md` — Implementation tasks
-- `docs/TODO.DEPRECATION.md` — Migration tracking
+- [`DESIGN.GIT.md`](./DESIGN.GIT.md) — Git restrictions, shell integration, validation API
+- `TODO.md` — Implementation tasks
+- `TODO.DEPRECATION.md` — Migration tracking
 - `tyvi-cli/docs/DESIGN.md` — CLI interface design
 - `tyvi-mcp/docs/DESIGN.md` — MCP server design

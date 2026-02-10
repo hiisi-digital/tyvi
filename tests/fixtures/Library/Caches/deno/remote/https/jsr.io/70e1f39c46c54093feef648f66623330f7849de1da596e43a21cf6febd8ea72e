@@ -1,0 +1,19 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+// This module is browser compatible.
+
+const WHITESPACE_ENCODINGS: Record<string, string> = {
+  "\u0009": "%09",
+  "\u000A": "%0A",
+  "\u000B": "%0B",
+  "\u000C": "%0C",
+  "\u000D": "%0D",
+  "\u0020": "%20",
+};
+
+export function encodeWhitespace(string: string): string {
+  return string.replaceAll(/[\s]/g, (c) => {
+    return WHITESPACE_ENCODINGS[c] ?? c;
+  });
+}
+
+// denoCacheMetadata={"headers":{"x-jsr-backend":"modules","content-length":"419","accept-ranges":"bytes","nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","access-control-expose-headers":"*","access-control-allow-origin":"*","last-modified":"Wed, 24 Dec 2025 07:18:31 GMT","vary":"Origin, accept-encoding","x-robots-tag":"noindex","content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","x-goog-metageneration":"1","cf-ray":"9c803a78fe07c4ef-HEL","alt-svc":"h3=\":443\"; ma=86400","content-type":"text/typescript","cache-control":"public, max-age=31536000, immutable","server":"cloudflare","x-goog-storage-class":"STANDARD","date":"Tue, 03 Feb 2026 07:31:23 GMT","cross-origin-resource-policy":"cross-origin","x-content-type-options":"nosniff","expires":"Wed, 03 Feb 2027 07:31:23 GMT","x-goog-stored-content-length":"419","x-guploader-uploadid":"AJRbA5XQWTZ4McDUvEvFBxQOZFwT9jJTSJWBK0xOPHXL8oyCLcRDVVpUfRSNILh2UFKk_ZU","age":"0","cf-cache-status":"DYNAMIC","x-goog-hash":"crc32c=ccqVPg==,md5=ttkNhiRbSAUJL5Bunsnf/Q==","x-goog-stored-content-encoding":"identity","etag":"\"b6d90d86245b4805092f906e9ec9dffd\"","x-goog-generation":"1766560710996212","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=bgFfb87Xhb37TazfRZ1eg%2FEW%2Fwezk4zVyODZu41AR0RtUasX2JpuUf9SenBd%2BQKEaglECAMqhlN5bvjipST6YBtJJe2Euw%3D%3D\"}]}"},"url":"https://jsr.io/@std/path/1.1.4/_common/to_file_url.ts","time":1770103884}

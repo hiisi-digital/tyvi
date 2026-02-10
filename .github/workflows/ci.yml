@@ -10,7 +10,7 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -34,22 +34,3 @@ jobs:
 
       - name: Generate coverage report
         run: deno coverage coverage --lcov > coverage.lcov
-
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
-
-      - name: Build CLI
-        run: deno compile --allow-read --allow-write --allow-run --output=tyvi src/cli/mod.ts
-
-      - name: Test CLI binary
-        run: ./tyvi --version

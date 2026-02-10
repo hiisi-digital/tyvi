@@ -1,0 +1,47 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+// This module is browser compatible.
+
+import type { GlobOptions } from "../_common/glob_to_reg_exp.ts";
+import { join } from "./join.ts";
+import { SEPARATOR } from "./constants.ts";
+import { normalizeGlob } from "./normalize_glob.ts";
+
+export type { GlobOptions };
+
+/**
+ * Like join(), but doesn't collapse "**\/.." when `globstar` is true.
+ *
+ * @example Usage
+ * ```ts
+ * import { joinGlobs } from "@std/path/posix/join-globs";
+ * import { assertEquals } from "@std/assert";
+ *
+ * const path = joinGlobs(["foo", "bar", "**"], { globstar: true });
+ * assertEquals(path, "foo/bar/**");
+ * ```
+ *
+ * @param globs The globs to join.
+ * @param options The options to use.
+ * @returns The joined path.
+ */
+export function joinGlobs(
+  globs: string[],
+  options: Pick<GlobOptions, "globstar"> = {},
+): string {
+  const { globstar = false } = options;
+  if (!globstar || globs.length === 0) {
+    return join(...globs);
+  }
+  let joined: string | undefined;
+  for (const glob of globs) {
+    const path = glob;
+    if (path.length > 0) {
+      if (!joined) joined = path;
+      else joined += `${SEPARATOR}${path}`;
+    }
+  }
+  if (!joined) return ".";
+  return normalizeGlob(joined, { globstar });
+}
+
+// denoCacheMetadata={"headers":{"cf-cache-status":"DYNAMIC","x-goog-storage-class":"STANDARD","access-control-expose-headers":"*","etag":"\"1b67646b2d940b4814ef4988e172354a\"","x-goog-stored-content-encoding":"identity","access-control-allow-origin":"*","x-goog-generation":"1766560711185322","last-modified":"Wed, 24 Dec 2025 07:18:31 GMT","x-content-type-options":"nosniff","content-type":"text/typescript","x-guploader-uploadid":"AJRbA5XiUf9ltnNO-8TH1iSr6AL810aM4dKGZv47TLjWpHYw2QF-afElaxJJv9uBH7vh20kCj0iOs7o","age":"0","report-to":"{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=cjAkGLIHp1K3nS9Rw0Eisg4rntx%2BRyOuqDHvmKgRTNTHEg%2BitvTEjlF64cnG66z6si9d3IFTBdAvQ56KsY%2F5GIoeC%2FV0mg%3D%3D\"}]}","x-robots-tag":"noindex","content-length":"1251","content-security-policy":"default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; frame-ancestors 'none'; sandbox; form-action 'none';","x-jsr-backend":"modules","x-goog-metageneration":"1","nel":"{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}","vary":"Origin, accept-encoding","alt-svc":"h3=\":443\"; ma=86400","x-goog-stored-content-length":"1251","accept-ranges":"bytes","cache-control":"public, max-age=31536000, immutable","server":"cloudflare","cross-origin-resource-policy":"cross-origin","x-goog-hash":"crc32c=pmMSOA==,md5=G2dkay2UC0gU70mI4XI1Sg==","date":"Tue, 03 Feb 2026 07:31:23 GMT","cf-ray":"9c803a78fdf1c4ef-HEL","expires":"Wed, 03 Feb 2027 07:31:23 GMT"},"url":"https://jsr.io/@std/path/1.1.4/posix/join_globs.ts","time":1770103884}
