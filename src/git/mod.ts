@@ -4,7 +4,7 @@
  */
 
 export { cloneRepo, cloneRepoWithProgress } from "./clone.ts";
-export { fetchAllRemotes, getRemoteUrl, getRemotes } from "./remote.ts";
+export { fetchAllRemotes, getRemotes, getRemoteUrl } from "./remote.ts";
 export {
   getAheadBehind,
   getCurrentBranch,

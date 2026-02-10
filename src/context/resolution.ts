@@ -7,7 +7,6 @@
  */
 
 import { exists } from "@std/fs";
-import { join } from "@std/path";
 import { parse as parseToml } from "@std/toml";
 import type { ContextContent, ContextContentType, ResolvedContext, Scope } from "../types/mod.ts";
 import { parseUri } from "./uri.ts";

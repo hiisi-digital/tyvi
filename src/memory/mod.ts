@@ -1,25 +1,25 @@
 /**
  * Memory system module.
- * 
+ *
  * Provides operations for managing memories with fading and reinforcement.
- * 
+ *
  * @module
  */
 
 import type {
   Memory,
+  MemoryFilters,
   MemoryInput,
   MemoryQuery,
-  MemoryFilters,
   MemorySummary,
+  PruneResult,
   ReinforcementResult,
-  PruneResult
 } from "../types/mod.ts";
 
-import { readMemory, writeMemory, listMemoryIds } from "./storage.ts";
+import { listMemoryIds, readMemory, writeMemory } from "./storage.ts";
 import { createMemory, pruneWeakMemories } from "./lifecycle.ts";
 import { applyReinforcement, shouldReinforce } from "./reinforcement.ts";
-import { queryMemories, filterMemories } from "./query.ts";
+import { filterMemories, queryMemories } from "./query.ts";
 import { logReinforcement } from "./logs.ts";
 
 // ============================================================================
@@ -28,13 +28,13 @@ import { logReinforcement } from "./logs.ts";
 
 /**
  * Recall memories matching a query.
- * 
+ *
  * Returns full memory objects with filtering, sorting, and pagination.
- * 
+ *
  * @param dataPath - Base data directory path
  * @param query - Query parameters
  * @returns Array of matching memories
- * 
+ *
  * @example
  * ```ts
  * const memories = await recallMemories("/data", {
@@ -48,11 +48,11 @@ import { logReinforcement } from "./logs.ts";
  */
 export async function recallMemories(
   dataPath: string,
-  query: MemoryQuery
+  query: MemoryQuery,
 ): Promise<Memory[]> {
   const memoryIds = await listMemoryIds(dataPath);
   const memories: Memory[] = [];
-  
+
   for (const id of memoryIds) {
     try {
       const memory = await readMemory(dataPath, id);
@@ -61,19 +61,19 @@ export async function recallMemories(
       console.error(`Failed to read memory ${id}:`, error);
     }
   }
-  
+
   return queryMemories(memories, query);
 }
 
 /**
  * List memories with simple filtering.
- * 
+ *
  * Returns lightweight memory summaries.
- * 
+ *
  * @param dataPath - Base data directory path
  * @param filters - Optional filter criteria
  * @returns Array of memory summaries
- * 
+ *
  * @example
  * ```ts
  * const summaries = await listMemories("/data", {
@@ -85,11 +85,11 @@ export async function recallMemories(
  */
 export async function listMemories(
   dataPath: string,
-  filters?: MemoryFilters
+  filters?: MemoryFilters,
 ): Promise<MemorySummary[]> {
   const memoryIds = await listMemoryIds(dataPath);
   const memories: Memory[] = [];
-  
+
   for (const id of memoryIds) {
     try {
       const memory = await readMemory(dataPath, id);
@@ -98,17 +98,17 @@ export async function listMemories(
       console.error(`Failed to read memory ${id}:`, error);
     }
   }
-  
+
   return filterMemories(memories, filters);
 }
 
 /**
  * Record a new memory.
- * 
+ *
  * @param dataPath - Base data directory path
  * @param input - Memory input data
  * @returns Created memory
- * 
+ *
  * @example
  * ```ts
  * const memory = await recordMemory("/data", {
@@ -128,21 +128,21 @@ export async function listMemories(
  */
 export async function recordMemory(
   dataPath: string,
-  input: MemoryInput
+  input: MemoryInput,
 ): Promise<Memory> {
   return await createMemory(dataPath, input);
 }
 
 /**
  * Reinforce an existing memory.
- * 
+ *
  * Increases memory strength when referenced or related events occur.
- * 
+ *
  * @param dataPath - Base data directory path
  * @param id - Memory ID to reinforce
  * @param reason - Reason for reinforcement
  * @returns Reinforcement result with strength changes
- * 
+ *
  * @example
  * ```ts
  * const result = await reinforceMemory(
@@ -156,10 +156,10 @@ export async function recordMemory(
 export async function reinforceMemory(
   dataPath: string,
   id: string,
-  reason: string
+  reason: string,
 ): Promise<ReinforcementResult> {
   const memory = await readMemory(dataPath, id);
-  
+
   // Check if reinforcement is meaningful
   if (!shouldReinforce(memory)) {
     return {
@@ -167,30 +167,30 @@ export async function reinforceMemory(
       previousStrength: memory.strength.current,
       newStrength: memory.strength.current,
       delta: 0,
-      reason: "Reinforcement skipped (too recent or too strong)"
+      reason: "Reinforcement skipped (too recent or too strong)",
     };
   }
-  
+
   // Apply reinforcement
   const result = applyReinforcement(memory, reason);
-  
+
   // Log the reinforcement
   logReinforcement(memory, reason, result.delta);
-  
+
   // Save updated memory
   await writeMemory(dataPath, memory);
-  
+
   return result;
 }
 
 /**
  * Prune weak memories below threshold.
- * 
+ *
  * Removes memories that have faded below the minimum strength threshold.
- * 
+ *
  * @param dataPath - Base data directory path
  * @returns Prune result with count and IDs of removed memories
- * 
+ *
  * @example
  * ```ts
  * const result = await pruneMemories("/data");
@@ -205,6 +205,6 @@ export async function pruneMemories(dataPath: string): Promise<PruneResult> {
 // Re-export utility types and functions for advanced usage
 // ============================================================================
 
-export { getMemoryStrength, calculateStrength, getDefaultHalfLife } from "./strength.ts";
+export { calculateStrength, getDefaultHalfLife, getMemoryStrength } from "./strength.ts";
 export { calculateSimilarity, findSimilarMemories } from "./similarity.ts";
 export { toMemorySummary } from "./query.ts";

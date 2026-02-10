@@ -6,5 +6,5 @@
  * @module
  */
 
-export { loadPerson, listPeople } from "./loading.ts";
-export { computePerson } from "./computation.ts";
+export { listPeople, loadPerson } from "./loading.ts";
+export { computeFromData, computePerson } from "./computation.ts";

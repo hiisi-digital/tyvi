@@ -7,7 +7,7 @@
  */
 
 import { exists, walk } from "@std/fs";
-import { join, relative } from "@std/path";
+import { relative } from "@std/path";
 import { parse as parseToml } from "@std/toml";
 import type {
   ContextContentType,

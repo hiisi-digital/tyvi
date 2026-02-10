@@ -5,17 +5,25 @@
 
 export { loadInventoryConfig, parseInventoryConfig } from "./inventory.ts";
 export {
-    loadDevspaceConfig,
-    loadWorkspaceConfig,
-    parseDevspaceConfig,
-    parseWorkspaceConfig
-} from "./workspace.ts";
+  loadDevspaceConfig,
+  loadWorkspaceConfig,
+  parseDevspaceConfig,
+  parseWorkspaceConfig,
+} from "./devspace.ts";
 
-import { exists } from "@std/fs";
-import { dirname, join } from "@std/path";
-import type { Devspace, InventoryConfig } from "../types/mod.ts";
+import { ensureDir, exists } from "@std/fs";
+import { dirname, join, resolve } from "@std/path";
+import type {
+  Devspace,
+  ExtState,
+  InitOptions,
+  InitResult,
+  InventoryConfig,
+  LabState,
+} from "../types/mod.ts";
 import { loadInventoryConfig } from "./inventory.ts";
-import { loadWorkspaceConfig } from "./workspace.ts";
+import { loadDevspaceConfig } from "./devspace.ts";
+import { readExtState, readLabState } from "../devspace/state.ts";
 
 // Re-export types
 export type { Devspace, DevspaceConfig, InventoryConfig } from "../types/mod.ts";
@@ -81,7 +89,7 @@ export async function loadDevspace(startDir: string = Deno.cwd()): Promise<Devsp
   }
 
   const configPath = join(rootPath, "tyvi.toml");
-  const config = await loadWorkspaceConfig(configPath);
+  const config = await loadDevspaceConfig(configPath);
 
   const namespaces = new Map<string, InventoryConfig>();
 
@@ -98,10 +106,29 @@ export async function loadDevspace(startDir: string = Deno.cwd()): Promise<Devsp
     }
   }
 
+  // Load state files (non-fatal if missing or corrupt)
+  const devspacePartial = { config, rootPath, namespaces } as Devspace;
+
+  let labState: LabState | undefined;
+  try {
+    labState = await readLabState(devspacePartial);
+  } catch {
+    labState = { repos: [] };
+  }
+
+  let extState: ExtState | undefined;
+  try {
+    extState = await readExtState(devspacePartial);
+  } catch {
+    extState = { repos: [] };
+  }
+
   return {
     config,
     rootPath,
     namespaces,
+    labState,
+    extState,
   };
 }
 
@@ -121,4 +148,110 @@ export async function loadInventory(
 ): Promise<InventoryConfig> {
   const inventoryPath = join(devspaceRoot, namespace, "inventory.toml");
   return await loadInventoryConfig(inventoryPath);
+}
+
+/**
+ * Initialize a new devspace at the given root path.
+ *
+ * Creates a `tyvi.toml` config file, namespace directories with empty
+ * `inventory.toml` files, and the configured directory structure
+ * (staging, lab, state, tmp).
+ *
+ * All paths are config-driven via InitOptions, with sensible defaults.
+ *
+ * @param rootPath - Directory to initialize the devspace in
+ * @param options - Initialization options
+ * @returns Result with created directories and config path
+ * @throws Error if tyvi.toml already exists at rootPath
+ *
+ * @example
+ * ```ts
+ * const result = await initDevspace("/home/user/dev", {
+ *   name: "my-devspace",
+ *   namespaces: ["@myorg", "@contrib"],
+ *   labPath: "../.lab",
+ * });
+ * console.log(`Created devspace at ${result.rootPath}`);
+ * ```
+ */
+export async function initDevspace(
+  rootPath: string,
+  options: InitOptions,
+): Promise<InitResult> {
+  const absRoot = resolve(rootPath);
+  const configPath = join(absRoot, "tyvi.toml");
+
+  // Don't overwrite existing config
+  if (await exists(configPath)) {
+    throw new Error(
+      `tyvi.toml already exists at ${configPath}.\n` +
+        "Remove it first or use a different directory.",
+    );
+  }
+
+  const created: string[] = [];
+
+  // Resolve options with defaults
+  const namespaces = options.namespaces ?? ["@default"];
+  const defaultNamespace = options.defaultNamespace ?? namespaces[0]!;
+  const labPath = options.labPath ?? ".lab";
+  const stagingPath = options.stagingPath ?? ".staging";
+  const statePath = options.statePath ?? ".state";
+  const tmpPath = options.tmpPath ?? ".tmp";
+
+  // Ensure root directory exists
+  await ensureDir(absRoot);
+
+  // Create namespace directories with empty inventory.toml
+  for (const ns of namespaces) {
+    const nsDir = join(absRoot, ns);
+    await ensureDir(nsDir);
+    created.push(ns);
+
+    const inventoryPath = join(nsDir, "inventory.toml");
+    if (!await exists(inventoryPath)) {
+      await Deno.writeTextFile(inventoryPath, "# Repository inventory\n");
+    }
+  }
+
+  // Create subdirectories (resolved relative to root)
+  for (const subPath of [stagingPath, labPath, statePath, tmpPath]) {
+    const absDir = resolve(absRoot, subPath);
+    await ensureDir(absDir);
+    created.push(subPath);
+  }
+
+  // Build tyvi.toml content
+  const namespacePaths = namespaces.map((ns) => `"${ns}"`).join(", ");
+
+  let tomlContent = `[devspace]
+name = "${options.name}"
+staging_path = "${stagingPath}"
+lab_path = "${labPath}"
+state_path = "${statePath}"
+tmp_path = "${tmpPath}"
+
+[devspace.namespaces]
+default = "${defaultNamespace}"
+paths = [${namespacePaths}]
+`;
+
+  if (options.gitPolicy) {
+    const allowedPaths = (options.gitAllowedPaths ?? [])
+      .map((p) => `"${p}"`)
+      .join(", ");
+    tomlContent += `
+[devspace.git_policy]
+enabled = true
+allowed_paths = [${allowedPaths}]
+`;
+  }
+
+  await Deno.writeTextFile(configPath, tomlContent);
+
+  return {
+    rootPath: absRoot,
+    created,
+    configPath,
+  };
 }

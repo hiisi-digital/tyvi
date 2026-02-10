@@ -102,7 +102,9 @@ export function parseInventoryConfig(content: string): InventoryConfig {
       category: typeof repoObj.category === "string" ? repoObj.category : undefined,
       status: typeof repoObj.status === "string"
         ? repoObj.status as RepoDefinition["status"]
-        : (typeof metaDefaults?.status === "string" ? metaDefaults.status as RepoDefinition["status"] : "active"),
+        : (typeof metaDefaults?.status === "string"
+          ? metaDefaults.status as RepoDefinition["status"]
+          : "active"),
       language: typeof repoObj.language === "string"
         ? repoObj.language
         : (typeof metaDefaults?.language === "string" ? metaDefaults.language : undefined),
@@ -115,9 +117,7 @@ export function parseInventoryConfig(content: string): InventoryConfig {
       keep_in_sync: typeof repoObj.keep_in_sync === "boolean"
         ? repoObj.keep_in_sync
         : (typeof metaDefaults?.keep_in_sync === "boolean" ? metaDefaults.keep_in_sync : true),
-      allow_agents: typeof repoObj.allow_agents === "boolean"
-        ? repoObj.allow_agents
-        : undefined,
+      allow_agents: typeof repoObj.allow_agents === "boolean" ? repoObj.allow_agents : undefined,
       notes: typeof repoObj.notes === "string" ? repoObj.notes : undefined,
     });
   }

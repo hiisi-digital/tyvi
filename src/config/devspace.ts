@@ -1,8 +1,8 @@
 /**
- * Workspace/Devspace configuration parsing.
+ * Devspace configuration parsing.
  *
- * Note: "workspace" is being renamed to "devspace" for clarity.
- * This file handles both formats for backwards compatibility.
+ * Parses tyvi.toml config files. Supports both [devspace] and
+ * legacy [workspace] section names for backwards compatibility.
  *
  * @module
  */
@@ -13,7 +13,7 @@ import type { DevspaceConfig, DevspaceSection, GitPolicy } from "../types/mod.ts
 /**
  * Parse tyvi.toml content into DevspaceConfig.
  *
- * Supports both old [workspace] and new [devspace] section names.
+ * Supports both [devspace] and legacy [workspace] section names.
  *
  * @param content - TOML file content
  * @returns Parsed devspace configuration
@@ -22,11 +22,11 @@ import type { DevspaceConfig, DevspaceSection, GitPolicy } from "../types/mod.ts
  * @example
  * ```ts
  * const content = await Deno.readTextFile("tyvi.toml");
- * const config = parseWorkspaceConfig(content);
+ * const config = parseDevspaceConfig(content);
  * console.log(config.devspace.name);
  * ```
  */
-export function parseWorkspaceConfig(content: string): DevspaceConfig {
+export function parseDevspaceConfig(content: string): DevspaceConfig {
   const parsed = parse(content) as Record<string, unknown>;
 
   // Support both [devspace] and legacy [workspace] section names
@@ -104,21 +104,11 @@ export function parseWorkspaceConfig(content: string): DevspaceConfig {
   // Build the devspace section
   const devspaceSection: DevspaceSection = {
     name: devspace.name,
-    staging_path: typeof devspace.staging_path === "string"
-      ? devspace.staging_path
-      : ".staging",
-    lab_path: typeof devspace.lab_path === "string"
-      ? devspace.lab_path
-      : ".lab",
-    state_path: typeof devspace.state_path === "string"
-      ? devspace.state_path
-      : ".state",
-    tmp_path: typeof devspace.tmp_path === "string"
-      ? devspace.tmp_path
-      : ".tmp",
-    ext_path: typeof devspace.ext_path === "string"
-      ? devspace.ext_path
-      : ".tmp/ext",
+    staging_path: typeof devspace.staging_path === "string" ? devspace.staging_path : ".staging",
+    lab_path: typeof devspace.lab_path === "string" ? devspace.lab_path : ".lab",
+    state_path: typeof devspace.state_path === "string" ? devspace.state_path : ".state",
+    tmp_path: typeof devspace.tmp_path === "string" ? devspace.tmp_path : ".tmp",
+    ext_path: typeof devspace.ext_path === "string" ? devspace.ext_path : ".tmp/ext",
     trusted_orgs: Array.isArray(devspace.trusted_orgs)
       ? devspace.trusted_orgs as string[]
       : undefined,
@@ -130,12 +120,12 @@ export function parseWorkspaceConfig(content: string): DevspaceConfig {
     devspace: devspaceSection,
     defaults: defaults
       ? {
-          host: typeof defaults.host === "string" ? defaults.host : undefined,
-          clone_method: defaults.clone_method === "https" ? "https" : "ssh",
-          fetch_on_status: typeof defaults.fetch_on_status === "boolean"
-            ? defaults.fetch_on_status
-            : false,
-        }
+        host: typeof defaults.host === "string" ? defaults.host : undefined,
+        clone_method: defaults.clone_method === "https" ? "https" : "ssh",
+        fetch_on_status: typeof defaults.fetch_on_status === "boolean"
+          ? defaults.fetch_on_status
+          : false,
+      }
       : undefined,
   };
 }
@@ -147,10 +137,10 @@ export function parseWorkspaceConfig(content: string): DevspaceConfig {
  * @returns Parsed devspace configuration
  * @throws Error if file cannot be read or config is invalid
  */
-export async function loadWorkspaceConfig(path: string): Promise<DevspaceConfig> {
+export async function loadDevspaceConfig(path: string): Promise<DevspaceConfig> {
   try {
     const content = await Deno.readTextFile(path);
-    return parseWorkspaceConfig(content);
+    return parseDevspaceConfig(content);
   } catch (error) {
     if (error instanceof Deno.errors.NotFound) {
       throw new Error(
@@ -162,6 +152,8 @@ export async function loadWorkspaceConfig(path: string): Promise<DevspaceConfig>
   }
 }
 
-// Aliases for backwards compatibility
-export { loadWorkspaceConfig as loadDevspaceConfig, parseWorkspaceConfig as parseDevspaceConfig };
+/** @deprecated Use parseDevspaceConfig instead */
+export const parseWorkspaceConfig = parseDevspaceConfig;
 
+/** @deprecated Use loadDevspaceConfig instead */
+export const loadWorkspaceConfig = loadDevspaceConfig;
