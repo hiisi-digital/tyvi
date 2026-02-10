@@ -1,13 +1,13 @@
 /**
  * Manual verification script for memory system.
- * 
+ *
  * This script manually tests the memory system without external dependencies.
  * Run with: deno run --allow-read --allow-write manual_test.ts
  */
 
 // Manual type checking by importing the module
-import { getMemoryStrength, calculateStrength, getDefaultHalfLife } from "../src/memory/strength.ts";
-import type { MemoryStrength, MemoryFade } from "../src/types/memory.ts";
+import { calculateStrength, getDefaultHalfLife } from "../src/memory/strength.ts";
+import type { MemoryFade, MemoryStrength } from "../src/types/memory.ts";
 
 console.log("=== Memory System Manual Tests ===\n");
 
@@ -17,7 +17,7 @@ const strength1: MemoryStrength = {
   initial: 1.0,
   current: 1.0,
   last_reinforced: new Date().toISOString(),
-  reinforcement_count: 0
+  reinforcement_count: 0,
 };
 const fade1: MemoryFade = { half_life_days: 90, min_strength: 0.1 };
 const result1 = calculateStrength(strength1, fade1, new Date());
@@ -32,7 +32,7 @@ const strength2: MemoryStrength = {
   initial: 1.0,
   current: 1.0,
   last_reinforced: created2.toISOString(),
-  reinforcement_count: 0
+  reinforcement_count: 0,
 };
 const fade2: MemoryFade = { half_life_days: 90, min_strength: 0.1 };
 const result2 = calculateStrength(strength2, fade2, now2);
@@ -47,7 +47,7 @@ const strength3: MemoryStrength = {
   initial: 1.0,
   current: 1.0,
   last_reinforced: created3.toISOString(),
-  reinforcement_count: 0
+  reinforcement_count: 0,
 };
 const fade3: MemoryFade = { half_life_days: 90, min_strength: 0.1 };
 const result3 = calculateStrength(strength3, fade3, now3);
@@ -69,7 +69,7 @@ console.log("Test 5: Verify exponential decay formula");
 console.log("  Testing at various time points:");
 const testCases = [
   { days: 0, expected: 1.0 },
-  { days: 45, expected: 0.707 },  // sqrt(0.5) ≈ 0.707
+  { days: 45, expected: 0.707 }, // sqrt(0.5) ≈ 0.707
   { days: 90, expected: 0.5 },
   { days: 180, expected: 0.25 },
   { days: 270, expected: 0.125 },
@@ -83,13 +83,17 @@ for (const testCase of testCases) {
     initial: 1.0,
     current: 1.0,
     last_reinforced: baseTime.toISOString(),
-    reinforcement_count: 0
+    reinforcement_count: 0,
   };
   const fade: MemoryFade = { half_life_days: 90, min_strength: 0.0 };
   const result = calculateStrength(strength, fade, testTime);
   const pass = Math.abs(result - testCase.expected) < 0.01;
   allPass = allPass && pass;
-  console.log(`    Day ${testCase.days}: ${result.toFixed(3)} (expected: ${testCase.expected.toFixed(3)}) ${pass ? "✓" : "✗"}`);
+  console.log(
+    `    Day ${testCase.days}: ${result.toFixed(3)} (expected: ${testCase.expected.toFixed(3)}) ${
+      pass ? "✓" : "✗"
+    }`,
+  );
 }
 console.log(`  ✓ ${allPass ? "PASS" : "FAIL"}\n`);
 

@@ -1,0 +1,18 @@
+[quirk]
+id = "quirk.edge-case-hunter"
+
+[quirk.description]
+name = "Edge Case Hunter"
+summary = "Constantly searches for edge cases"
+
+[quirk.manifestations]
+behaviors = [
+  "Asks 'what if' questions",
+  "Identifies boundary conditions"
+]
+
+[quirk.auto_assign]
+all_of = [
+  "trait.detail-focus > 70",
+  "skill.debugging > 80"
+]

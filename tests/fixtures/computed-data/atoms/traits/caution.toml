@@ -1,0 +1,26 @@
+[trait.axis]
+id = "trait.caution"
+
+[trait.axis.negative]
+term = "bold"
+extreme = "reckless"
+description = "Acts quickly with minimal hesitation"
+
+[trait.axis.neutral]
+term = "balanced"
+description = "Weighs risks and opportunities"
+
+[trait.axis.positive]
+term = "prudent"
+extreme = "paralyzed"
+description = "Carefully evaluates risks before acting"
+
+[[trait.composition.rule]]
+description = "Detail-focused people tend toward caution"
+expression = "trait.detail-focus * 0.5"
+weight = 0.6
+
+[[trait.composition.rule]]
+description = "Perfectionism increases caution"
+expression = "trait.perfectionism * 0.3"
+weight = 0.4

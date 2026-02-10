@@ -1,0 +1,18 @@
+[phrase]
+id = "phrase.precision-language"
+
+[phrase.description]
+name = "Precision Language"
+summary = "Uses precise, unambiguous language"
+
+[phrase.conditions]
+all_of = [
+  "trait.perfectionism > 60",
+  "trait.detail-focus > 60"
+]
+
+[phrase.examples]
+variations = [
+  "Specifies exact types",
+  "Avoids vague quantifiers"
+]

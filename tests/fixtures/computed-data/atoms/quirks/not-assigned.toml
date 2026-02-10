@@ -1,0 +1,15 @@
+[quirk]
+id = "quirk.not-assigned"
+
+[quirk.description]
+name = "Not Assigned"
+summary = "Should not be assigned"
+
+[quirk.manifestations]
+behaviors = ["nothing"]
+
+[quirk.auto_assign]
+all_of = [
+  "trait.detail-focus > 95",
+  "skill.debugging > 95"
+]

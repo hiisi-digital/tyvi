@@ -1,0 +1,25 @@
+[skill]
+id = "skill.code-review"
+category = "collaboration"
+
+[skill.description]
+name = "Code Review"
+summary = "Ability to review code effectively"
+
+[skill.levels]
+0 = "Cannot review code"
+20 = "Basic syntax checking"
+40 = "Identifies common issues"
+60 = "Provides actionable feedback"
+80 = "Finds subtle bugs and design flaws"
+100 = "Expert reviewer"
+
+[[skill.composition.rule]]
+description = "Debugging skill helps code review"
+expression = "skill.debugging * 0.4"
+weight = 0.6
+
+[[skill.composition.rule]]
+description = "Detail focus improves reviews"
+expression = "trait.detail-focus * 0.3"
+weight = 0.4

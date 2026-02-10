@@ -7,10 +7,10 @@
 import { assertAlmostEquals, assertEquals, assertThrows } from "@std/assert";
 import type { EvaluationContext } from "../../src/computation/evaluator.ts";
 import {
-    createContext,
-    evaluate,
-    EvaluationError,
-    Evaluator,
+  createContext,
+  evaluate,
+  EvaluationError,
+  Evaluator,
 } from "../../src/computation/evaluator.ts";
 import { tokenize } from "../../src/computation/lexer.ts";
 import { parse } from "../../src/computation/parser.ts";
