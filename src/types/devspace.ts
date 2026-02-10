@@ -173,6 +173,8 @@ export interface DevspaceSection {
   namespaces?: DevspaceNamespaces;
   /** Git policy */
   git_policy?: GitPolicy;
+  /** Paths to retain during migration (not moved/deleted) */
+  retained_paths?: string[];
 }
 
 /**
@@ -369,4 +371,81 @@ export interface InitResult {
   created: string[];
   /** Path to the generated tyvi.toml */
   configPath: string;
+}
+
+// ============================================================================
+// Migration Types
+// ============================================================================
+
+/**
+ * Type of entry discovered during directory scan.
+ */
+export type DiscoveredEntryType = "git-repo" | "directory" | "file" | "tyvi-project";
+
+/**
+ * A discovered entry in a source directory for migration.
+ */
+export interface DiscoveredEntry {
+  /** Absolute path */
+  path: string;
+  /** Name (basename) */
+  name: string;
+  /** Entry type */
+  type: DiscoveredEntryType;
+  /** Auto-detected as tyvi-internal (staging, lab, state, config, namespace dirs) */
+  isTyviInternal: boolean;
+  /** Matches a retained_paths entry */
+  isRetained: boolean;
+  /** Git metadata (only if type === "git-repo" or "tyvi-project") */
+  git?: {
+    remotes: RemoteDefinition[];
+    currentBranch?: string;
+    gitStatus: GitStatus;
+    lastActivity?: Date;
+    suggestedNamespace?: string;
+  };
+}
+
+/**
+ * Options for migrating a single repo into a devspace.
+ */
+export interface MigrateRepoOptions {
+  /** Source repo path */
+  sourcePath: string;
+  /** Target namespace (e.g., "@hiisi") */
+  namespace: string;
+  /** Repo name override (defaults to dir basename) */
+  name?: string;
+  /** Custom local_path in staging */
+  localPath?: string;
+  /** Category for inventory */
+  category?: string;
+  /** Whether to copy or move */
+  strategy: "copy" | "move";
+}
+
+/**
+ * Result of migrating a single entry.
+ */
+export interface MigrateEntryResult {
+  /** Entry name */
+  name: string;
+  /** What happened */
+  action: "imported" | "deleted" | "skipped" | "failed";
+  /** Namespace (if imported) */
+  namespace?: string;
+  /** Error message (if failed) */
+  error?: string;
+}
+
+/**
+ * Result of scanning a directory.
+ */
+export interface ScanResult {
+  /** All discovered entries */
+  entries: DiscoveredEntry[];
+  /** Entries auto-skipped (tyvi internal + retained) */
+  autoSkipped: DiscoveredEntry[];
+  /** Entries requiring user decision */
+  actionable: DiscoveredEntry[];
 }

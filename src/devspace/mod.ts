@@ -15,3 +15,4 @@ export {
 } from "./operations.ts";
 export { readExtState, readLabState, writeExtState, writeLabState } from "./state.ts";
 export { checkGitAllowed, getBlockedMessage } from "./restrictions.ts";
+export { deleteEntry, migrateRepo, scanDirectory, suggestNamespace } from "./migration.ts";

@@ -114,6 +114,9 @@ export function parseDevspaceConfig(content: string): DevspaceConfig {
       : undefined,
     namespaces,
     git_policy: gitPolicy,
+    retained_paths: Array.isArray(devspace.retained_paths)
+      ? devspace.retained_paths as string[]
+      : undefined,
   };
 
   return {
