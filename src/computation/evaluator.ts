@@ -116,10 +116,11 @@ export class Evaluator {
           `Wildcard '${expr.namespace}.*' can only be used inside aggregate functions (avg, sum, min, max, count)`,
         );
 
-      default:
+      default: {
         // TypeScript exhaustiveness check
         const _exhaustive: never = expr;
         throw new EvaluationError(`Unknown expression kind: ${(_exhaustive as Expression).kind}`);
+      }
     }
   }
 

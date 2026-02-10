@@ -14,18 +14,17 @@
  * namespaced  = IDENTIFIER '.' (IDENTIFIER | '*')
  * function    = FUNCTION '(' (expression (',' expression)*)? ')'
  * ```
- *
  */
 
 import type { Expression } from "./ast.ts";
 import {
-    binaryOp,
-    comparisonOp,
-    functionCall,
-    identifier,
-    numberLiteral,
-    specialValue,
-    wildcard,
+  binaryOp,
+  comparisonOp,
+  functionCall,
+  identifier,
+  numberLiteral,
+  specialValue,
+  wildcard,
 } from "./ast.ts";
 import type { Token } from "./lexer.ts";
 import { TokenType } from "./lexer.ts";

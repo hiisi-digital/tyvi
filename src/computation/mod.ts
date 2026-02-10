@@ -29,25 +29,25 @@
 
 // AST types and constructors
 export type {
-    BinaryOp,
-    ComparisonOp,
-    Expression,
-    ExpressionNode,
-    FunctionCall,
-    Identifier,
-    NumberLiteral,
-    SpecialValue,
-    Wildcard
+  BinaryOp,
+  ComparisonOp,
+  Expression,
+  ExpressionNode,
+  FunctionCall,
+  Identifier,
+  NumberLiteral,
+  SpecialValue,
+  Wildcard,
 } from "./ast.ts";
 
 export {
-    binaryOp,
-    comparisonOp,
-    functionCall,
-    identifier,
-    numberLiteral,
-    specialValue,
-    wildcard
+  binaryOp,
+  comparisonOp,
+  functionCall,
+  identifier,
+  numberLiteral,
+  specialValue,
+  wildcard,
 } from "./ast.ts";
 
 // Lexer
@@ -63,25 +63,25 @@ export type { EvaluationContext } from "./evaluator.ts";
 
 // Dependencies
 export {
-    analyzeDependencies,
-    buildDependencyGraph,
-    extractDependencies,
-    formatCycle,
-    isCircular
+  analyzeDependencies,
+  buildDependencyGraph,
+  extractDependencies,
+  formatCycle,
+  isCircular,
 } from "./dependencies.ts";
 export type { Dependency, DependencyAnalysis } from "./dependencies.ts";
 
 // Rules
 export {
-    buildRuleCollection,
-    combineResults,
-    createRule,
-    getBaseValue,
-    getRuleEvaluationOrder,
-    getTargetType,
-    logCircularDependency,
-    normalizeValue,
-    RuleEngineError
+  buildRuleCollection,
+  combineResults,
+  createRule,
+  getBaseValue,
+  getRuleEvaluationOrder,
+  getTargetType,
+  logCircularDependency,
+  normalizeValue,
+  RuleEngineError,
 } from "./rules.ts";
 export type { CompositionRule, RuleCollection, RuleResult, ValueType } from "./rules.ts";
 
@@ -99,4 +99,3 @@ export function createEmptyTrace(): import("../types/mod.ts").ComputationTrace {
     computationOrder: [],
   };
 }
-
