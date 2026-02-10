@@ -56,6 +56,8 @@ export type {
   DevspaceDefaults,
   DevspaceNamespaces,
   DevspaceSection,
+  DiscoveredEntry,
+  DiscoveredEntryType,
   Experience,
   ExperienceLevels,
   ExtState,
@@ -85,6 +87,8 @@ export type {
   MemoryStrength,
   MemorySummary,
   MemoryTags,
+  MigrateEntryResult,
+  MigrateRepoOptions,
   OrgAliases,
   OrgEmails,
   ParsedUri,
@@ -124,6 +128,7 @@ export type {
   RepoWithStatus,
   ResolvedContext,
   RuleApplication,
+  ScanResult,
   Scope,
   ScopeChain,
   ScopeLevel,
@@ -166,6 +171,9 @@ export {
 
 // Re-export git restriction checking
 export { checkGitAllowed, getBlockedMessage } from "./src/devspace/mod.ts";
+
+// Re-export migration operations
+export { deleteEntry, migrateRepo, scanDirectory, suggestNamespace } from "./src/devspace/mod.ts";
 
 // Re-export git utilities
 export { getCurrentBranch, getGitStatus, isGitRepo } from "./src/git/mod.ts";
