@@ -1,0 +1,18 @@
+[identity]
+id = "dana"
+name = "Dana"
+pronouns = "she/her"
+
+[orgs]
+primary = "hiisi"
+
+[traits]
+detail-focus = 80
+perfectionism = 70
+
+[skills]
+debugging = 90
+api-design = 60
+
+[quirks]
+explicit = ["verbose-logger"]

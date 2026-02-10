@@ -1,0 +1,17 @@
+[phrase]
+id = "phrase.casual-tone"
+
+[phrase.description]
+name = "Casual Tone"
+summary = "Uses relaxed conversational style"
+
+[phrase.conditions]
+any_of = [
+  "trait.perfectionism < 30"
+]
+
+[phrase.examples]
+variations = [
+  "Uses colloquialisms",
+  "Informal greetings"
+]

@@ -6,11 +6,11 @@
 
 import { assertEquals } from "@std/assert";
 import {
-    analyzeDependencies,
-    buildDependencyGraph,
-    extractDependencies,
-    formatCycle,
-    isCircular,
+  analyzeDependencies,
+  buildDependencyGraph,
+  extractDependencies,
+  formatCycle,
+  isCircular,
 } from "../../src/computation/dependencies.ts";
 import { tokenize } from "../../src/computation/lexer.ts";
 import { parse } from "../../src/computation/parser.ts";
@@ -310,7 +310,10 @@ Deno.test("dependencies - realistic rule set", () => {
     // skill.effective-debugging depends on experience
     { target: "skill.effective-debugging", dependencies: ["exp.rust", "exp.typescript"] },
     // final-score depends on effective values
-    { target: "final-score", dependencies: ["trait.effective-caution", "skill.effective-debugging"] },
+    {
+      target: "final-score",
+      dependencies: ["trait.effective-caution", "skill.effective-debugging"],
+    },
   ];
 
   const { order, cycles } = analyzeDependencies(dependencies);
