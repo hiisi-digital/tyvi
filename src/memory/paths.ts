@@ -1,6 +1,6 @@
 /**
  * Path utilities for memory files.
- * 
+ *
  * @module
  */
 
@@ -15,7 +15,7 @@ export function getMemoriesDir(dataPath: string): string {
 
 /**
  * Get the path to a specific memory file.
- * 
+ *
  * @param dataPath - Base data directory path
  * @param memoryId - Memory ID (e.g., "alex-oauth-2025-02")
  * @returns Full path to memory TOML file
@@ -26,7 +26,7 @@ export function getMemoryFilePath(dataPath: string, memoryId: string): string {
 
 /**
  * Extract memory ID from a file path.
- * 
+ *
  * @param filePath - Path to memory file
  * @returns Memory ID without .toml extension
  */

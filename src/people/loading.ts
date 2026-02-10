@@ -27,7 +27,7 @@ export async function loadPerson(dataPath: string, id: string): Promise<Person> 
   if (!(await exists(personPath))) {
     throw new Error(
       `Person file not found: ${personPath}\n` +
-      `Expected file: ${id}.person.toml in ${join(dataPath, "people")}/`
+        `Expected file: ${id}.person.toml in ${join(dataPath, "people")}/`,
     );
   }
 
