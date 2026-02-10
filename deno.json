@@ -12,13 +12,13 @@
   },
   "tasks": {
     "test": "deno test --allow-read --allow-write --allow-run",
-    "check": "deno check mod.ts",
-    "cli": "deno run --allow-read --allow-write --allow-run src/cli/mod.ts"
+    "check": "deno check mod.ts"
   },
   "lint": {
     "rules": {
       "tags": ["recommended"]
-    }
+    },
+    "exclude": ["tests/fixtures/Library/"]
   },
   "fmt": {
     "useTabs": false,
