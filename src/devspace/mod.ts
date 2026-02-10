@@ -3,4 +3,15 @@
  * @module
  */
 
-export { addRepo, clone, getStatus, removeRepo, sync } from "./operations.ts";
+export {
+  addRepo,
+  clone,
+  getStatus,
+  listRepos,
+  load,
+  removeRepo,
+  sync,
+  unload,
+} from "./operations.ts";
+export { readExtState, readLabState, writeExtState, writeLabState } from "./state.ts";
+export { checkGitAllowed, getBlockedMessage } from "./restrictions.ts";

@@ -11,16 +11,10 @@
  *
  * @example
  * ```ts
- * import { loadDevspace, load, unload, getStatus } from "@hiisi/tyvi";
+ * import { loadDevspace, getStatus } from "@hiisi/tyvi";
  *
  * const devspace = await loadDevspace(".");
  * const status = await getStatus(devspace);
- *
- * // Load a repo to the lab
- * await load(devspace, "viola");
- *
- * // Unload when done
- * await unload(devspace, "viola");
  * ```
  */
 
@@ -66,8 +60,11 @@ export type {
   ExperienceLevels,
   ExtState,
   ExtStateEntry,
+  GitCheckResult,
   GitPolicy,
   GitStatus,
+  InitOptions,
+  InitResult,
   InventoryConfig,
   InventoryMeta,
   LabState,
@@ -122,6 +119,7 @@ export type {
   RelationshipType,
   RemoteDefinition,
   RepoDefinition,
+  RepoListing,
   RepoStatus,
   RepoWithStatus,
   ResolvedContext,
@@ -148,26 +146,29 @@ export type {
 } from "./src/types/mod.ts";
 
 // ============================================================================
-// Devspace Operations (existing, to be renamed internally)
+// Devspace Operations
 // ============================================================================
 
-// Re-export config parsing
-export { loadInventory } from "./src/config/mod.ts";
+// Re-export config and devspace loading
+export { findDevspaceRoot, initDevspace, loadDevspace, loadInventory } from "./src/config/mod.ts";
 
 // Re-export devspace operations
-export { addRepo, clone, getStatus, removeRepo, sync } from "./src/devspace/mod.ts";
+export {
+  addRepo,
+  clone,
+  getStatus,
+  listRepos,
+  load,
+  removeRepo,
+  sync,
+  unload,
+} from "./src/devspace/mod.ts";
+
+// Re-export git restriction checking
+export { checkGitAllowed, getBlockedMessage } from "./src/devspace/mod.ts";
 
 // Re-export git utilities
 export { getCurrentBranch, getGitStatus, isGitRepo } from "./src/git/mod.ts";
-
-// ============================================================================
-// Devspace Operations (new API - to be implemented)
-// ============================================================================
-
-// TODO: These will be implemented as part of the migration
-// export { loadDevspace } from "./src/devspace/mod.ts";
-// export { load, unload } from "./src/devspace/operations.ts";
-// export { checkGitAllowed, getDevspaceHint, findDevspaceRoot } from "./src/devspace/restrictions.ts";
 
 // ============================================================================
 // Computation Engine
@@ -175,49 +176,69 @@ export { getCurrentBranch, getGitStatus, isGitRepo } from "./src/git/mod.ts";
 
 // Re-export computation module
 export {
-    // Dependencies
-    analyzeDependencies,
-    // AST constructors
-    binaryOp, buildDependencyGraph,
-    // Rules
-    buildRuleCollection,
-    combineResults, comparisonOp,
-    // Evaluator
-    createContext, createRule, evaluate,
-    EvaluationError,
-    Evaluator, extractDependencies,
-    formatCycle, functionCall, getBaseValue,
-    getRuleEvaluationOrder,
-    getTargetType, identifier, isCircular,
-    // Lexer
-    Lexer,
-    LexerError, logCircularDependency,
-    normalizeValue, numberLiteral,
-    // Parser
-    parse,
-    ParseError,
-    Parser, RuleEngineError, specialValue, tokenize,
-    TokenType, wildcard
+  // Dependencies
+  analyzeDependencies,
+  // AST constructors
+  binaryOp,
+  buildDependencyGraph,
+  // Rules
+  buildRuleCollection,
+  combineResults,
+  comparisonOp,
+  // Evaluator
+  createContext,
+  createRule,
+  evaluate,
+  EvaluationError,
+  Evaluator,
+  extractDependencies,
+  formatCycle,
+  functionCall,
+  getBaseValue,
+  getRuleEvaluationOrder,
+  getTargetType,
+  identifier,
+  isCircular,
+  // Lexer
+  Lexer,
+  LexerError,
+  logCircularDependency,
+  normalizeValue,
+  numberLiteral,
+  // Parser
+  parse,
+  ParseError,
+  Parser,
+  RuleEngineError,
+  specialValue,
+  tokenize,
+  TokenType,
+  wildcard,
 } from "./src/computation/mod.ts";
 
 export type {
-    // AST types
-    BinaryOp,
-    ComparisonOp,
-    // Rule types
-    CompositionRule as ComputationRule,
-    // Dependency types
-    Dependency,
-    DependencyAnalysis,
-    // Evaluator types
-    EvaluationContext, Expression,
-    ExpressionNode,
-    FunctionCall,
-    Identifier,
-    NumberLiteral, RuleCollection,
-    RuleResult, SpecialValue,
-    // Lexer types
-    Token, ValueType, Wildcard
+  // AST types
+  BinaryOp,
+  ComparisonOp,
+  // Rule types
+  CompositionRule as ComputationRule,
+  // Dependency types
+  Dependency,
+  DependencyAnalysis,
+  // Evaluator types
+  EvaluationContext,
+  Expression,
+  ExpressionNode,
+  FunctionCall,
+  Identifier,
+  NumberLiteral,
+  RuleCollection,
+  RuleResult,
+  SpecialValue,
+  // Lexer types
+  Token,
+  ValueType,
+  Wildcard,
 } from "./src/computation/mod.ts";
 
 /**
@@ -239,31 +260,39 @@ export function createEmptyTrace(): import("./src/types/mod.ts").ComputationTrac
 // Atoms Operations
 // ============================================================================
 
-export { loadAtoms, loadExperience, loadPhrases, loadQuirks, loadSkills, loadStacks, loadTraits } from "./src/atoms/mod.ts";
+export {
+  loadAtoms,
+  loadExperience,
+  loadPhrases,
+  loadQuirks,
+  loadSkills,
+  loadStacks,
+  loadTraits,
+} from "./src/atoms/mod.ts";
 
 // ============================================================================
 // People Operations
 // ============================================================================
 
-export { loadPerson, computePerson, listPeople } from "./src/people/mod.ts";
+export { computeFromData, computePerson, listPeople, loadPerson } from "./src/people/mod.ts";
 
 // ============================================================================
 // Memory Operations
 // ============================================================================
 
 export {
-  recallMemories,
-  listMemories,
-  recordMemory,
-  reinforceMemory,
-  pruneMemories,
+  calculateSimilarity,
+  calculateStrength,
+  findSimilarMemories,
+  getDefaultHalfLife,
   // Utility exports for advanced usage
   getMemoryStrength,
-  calculateStrength,
-  getDefaultHalfLife,
-  calculateSimilarity,
-  findSimilarMemories,
-  toMemorySummary
+  listMemories,
+  pruneMemories,
+  recallMemories,
+  recordMemory,
+  reinforceMemory,
+  toMemorySummary,
 } from "./src/memory/mod.ts";
 
 // ============================================================================

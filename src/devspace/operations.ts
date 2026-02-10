@@ -3,17 +3,27 @@
  * @module
  */
 
-import { exists } from "@std/fs";
-import { join } from "@std/path";
+import { ensureDir, exists } from "@std/fs";
+import { join, resolve } from "@std/path";
 import {
-    cloneRepo, cloneRepoWithProgress,
-    getAheadBehind,
-    getCurrentBranch,
-    getGitStatus,
-    getLastCommitDate,
-    isGitRepo,
+  cloneRepo,
+  cloneRepoWithProgress,
+  getAheadBehind,
+  getCurrentBranch,
+  getGitStatus,
+  getLastCommitDate,
+  hasUncommittedChanges,
+  isGitRepo,
 } from "../git/mod.ts";
-import type { CloneStatus, Devspace, RepoWithStatus } from "../types/mod.ts";
+import type {
+  CloneStatus,
+  Devspace,
+  LoadResult,
+  RepoListing,
+  RepoWithStatus,
+  UnloadResult,
+} from "../types/mod.ts";
+import { readLabState, writeLabState } from "./state.ts";
 
 /**
  * Get status of all repositories in devspace.
@@ -74,6 +84,63 @@ export async function getStatus(devspace: Devspace): Promise<RepoWithStatus[]> {
       }
 
       repos.push(repoWithStatus);
+    }
+  }
+
+  return repos;
+}
+
+/**
+ * List all repositories in the devspace without checking git status.
+ *
+ * Faster than `getStatus()` — only checks whether repos exist on disk
+ * and whether they're loaded to lab. No git operations are performed.
+ *
+ * @param devspace - Devspace model
+ * @returns Array of lightweight repo listings
+ *
+ * @example
+ * ```ts
+ * const repos = await listRepos(devspace);
+ * for (const repo of repos) {
+ *   console.log(`${repo.namespace}/${repo.name} ${repo.loaded ? "(loaded)" : ""}`);
+ * }
+ * ```
+ */
+export async function listRepos(devspace: Devspace): Promise<RepoListing[]> {
+  const repos: RepoListing[] = [];
+
+  const labState = await readLabState(devspace);
+  const loadedNames = new Set(labState.repos.map((r) => r.name));
+
+  const stagingBase = resolve(
+    devspace.rootPath,
+    devspace.config.devspace.staging_path ?? ".staging",
+  );
+
+  for (const [namespace, inventory] of devspace.namespaces) {
+    for (const repo of inventory.repos) {
+      if (repo.local_path === false) continue;
+
+      const localPath = repo.local_path || repo.name;
+      const stagingPath = join(stagingBase, namespace, localPath);
+
+      let cloneStatus: CloneStatus;
+      if (await exists(stagingPath)) {
+        cloneStatus = await isGitRepo(stagingPath) ? "cloned" : "partial";
+      } else {
+        cloneStatus = "missing";
+      }
+
+      repos.push({
+        name: repo.name,
+        namespace,
+        description: repo.description,
+        category: repo.category,
+        status: repo.status,
+        cloneStatus,
+        loaded: loadedNames.has(repo.name),
+      });
     }
   }
 
@@ -276,13 +343,15 @@ export async function addRepo(
   const escapedUrl = escapeTOMLString(url);
 
   // Build new repo entry
-  const newEntry = `\n[[repos]]\nname = "${escapedName}"\nremotes = [{ name = "origin", url = "${escapedUrl}" }]\n`;
+  const newEntry =
+    `\n[[repos]]\nname = "${escapedName}"\nremotes = [{ name = "origin", url = "${escapedUrl}" }]\n`;
 
   if (options.category) {
     const localPath = options.localPath || `${options.category}/${repoName}`;
     const escapedLocalPath = escapeTOMLString(localPath);
     const escapedCategory = escapeTOMLString(options.category);
-    const fullEntry = newEntry + `local_path = "${escapedLocalPath}"\ncategory = "${escapedCategory}"\n`;
+    const fullEntry = newEntry +
+      `local_path = "${escapedLocalPath}"\ncategory = "${escapedCategory}"\n`;
     await Deno.writeTextFile(inventoryPath, appendToInventory(content, fullEntry));
   } else {
     await Deno.writeTextFile(inventoryPath, appendToInventory(content, newEntry));
@@ -361,4 +430,225 @@ export async function removeRepo(
   }
 
   return false;
+}
+
+/**
+ * Load repositories from staging to lab by creating symlinks.
+ *
+ * Repos are symlinked from their staging location (organized by namespace)
+ * to the lab directory (flat structure) for active work.
+ *
+ * All paths are resolved from devspace config (`staging_path`, `lab_path`).
+ *
+ * @param devspace - Devspace model
+ * @param options - Load options (pattern, namespace, or all)
+ * @returns Result with loaded, already loaded, and failed repos
+ *
+ * @example
+ * ```ts
+ * const result = await load(devspace, { pattern: "viola" });
+ * console.log(`Loaded ${result.loaded.length} repos to ${result.labPath}`);
+ * ```
+ */
+export async function load(
+  devspace: Devspace,
+  options: {
+    pattern?: string;
+    namespace?: string;
+    all?: boolean;
+  } = {},
+): Promise<LoadResult> {
+  const loaded: string[] = [];
+  const alreadyLoaded: string[] = [];
+  const failed: Array<{ name: string; error: string }> = [];
+
+  const labState = await readLabState(devspace);
+  const loadedNames = new Set(labState.repos.map((r) => r.name));
+
+  const stagingBase = resolve(
+    devspace.rootPath,
+    devspace.config.devspace.staging_path ?? ".staging",
+  );
+  const labBase = resolve(
+    devspace.rootPath,
+    devspace.config.devspace.lab_path ?? ".lab",
+  );
+
+  for (const [namespace, inventory] of devspace.namespaces) {
+    for (const repo of inventory.repos) {
+      // Skip repos with local_path = false
+      if (repo.local_path === false) continue;
+
+      // Apply filters
+      if (options.namespace && namespace !== options.namespace) continue;
+      if (options.pattern && !repo.name.includes(options.pattern)) continue;
+      if (!options.all && !options.pattern && !options.namespace) continue;
+
+      // Already loaded?
+      if (loadedNames.has(repo.name)) {
+        alreadyLoaded.push(repo.name);
+        continue;
+      }
+
+      const localPath = repo.local_path || repo.name;
+      const stagingPath = join(stagingBase, namespace, localPath);
+      const labPath = join(labBase, repo.name);
+
+      // Check staging path exists
+      if (!await exists(stagingPath)) {
+        failed.push({
+          name: repo.name,
+          error: "not cloned in staging; run 'tyvi clone' first",
+        });
+        continue;
+      }
+
+      // Check for name collision in lab
+      if (await exists(labPath)) {
+        failed.push({
+          name: repo.name,
+          error: `path already exists at ${labPath}`,
+        });
+        continue;
+      }
+
+      // Create lab directory and symlink
+      try {
+        await ensureDir(labBase);
+        await Deno.symlink(stagingPath, labPath);
+
+        labState.repos.push({
+          name: repo.name,
+          namespace,
+          loaded_at: new Date().toISOString(),
+          staging_path: join(namespace, localPath),
+        });
+        loaded.push(repo.name);
+      } catch (err) {
+        failed.push({
+          name: repo.name,
+          error: err instanceof Error ? err.message : String(err),
+        });
+      }
+    }
+  }
+
+  // Write updated state
+  if (loaded.length > 0) {
+    await writeLabState(devspace, labState);
+  }
+
+  return { loaded, alreadyLoaded, failed, labPath: labBase };
+}
+
+/**
+ * Unload repositories from lab back to staging.
+ *
+ * For symlinked repos, the symlink is removed (the repo stays in staging).
+ * For moved repos (non-symlink), git status is checked first:
+ * refuses if dirty or has unpushed commits unless `force` is set.
+ *
+ * All paths are resolved from devspace config.
+ *
+ * @param devspace - Devspace model
+ * @param options - Unload options (pattern, all, force)
+ * @returns Result with unloaded and refused repos
+ *
+ * @example
+ * ```ts
+ * const result = await unload(devspace, { pattern: "viola" });
+ * console.log(`Unloaded ${result.unloaded.length} repos`);
+ * ```
+ */
+export async function unload(
+  devspace: Devspace,
+  options: {
+    pattern?: string;
+    all?: boolean;
+    force?: boolean;
+  } = {},
+): Promise<UnloadResult> {
+  const unloaded: string[] = [];
+  const refused: Array<{ name: string; reason: string }> = [];
+
+  const labState = await readLabState(devspace);
+  const labBase = resolve(
+    devspace.rootPath,
+    devspace.config.devspace.lab_path ?? ".lab",
+  );
+
+  const remaining = [...labState.repos];
+  const toRemove: string[] = [];
+
+  for (const entry of remaining) {
+    // Apply filters
+    if (options.pattern && !entry.name.includes(options.pattern)) continue;
+    if (!options.all && !options.pattern) continue;
+
+    const labPath = join(labBase, entry.name);
+
+    // If lab path doesn't exist, clean up stale state entry
+    if (!await exists(labPath)) {
+      toRemove.push(entry.name);
+      unloaded.push(entry.name);
+      continue;
+    }
+
+    // Check if it's a symlink
+    try {
+      const stat = await Deno.lstat(labPath);
+
+      if (stat.isSymlink) {
+        // Symlink: just remove it, repo stays in staging
+        await Deno.remove(labPath);
+        toRemove.push(entry.name);
+        unloaded.push(entry.name);
+      } else {
+        // Real directory: check git status before moving back
+        if (!options.force) {
+          const dirty = await hasUncommittedChanges(labPath);
+          if (dirty) {
+            refused.push({
+              name: entry.name,
+              reason: "has uncommitted changes",
+            });
+            continue;
+          }
+
+          const aheadBehind = await getAheadBehind(labPath);
+          if (aheadBehind && aheadBehind.ahead > 0) {
+            refused.push({
+              name: entry.name,
+              reason: "has unpushed commits",
+            });
+            continue;
+          }
+        }
+
+        // Move back to staging
+        const stagingPath = join(
+          resolve(devspace.rootPath),
+          entry.staging_path,
+        );
+        await ensureDir(resolve(stagingPath, ".."));
+        await Deno.rename(labPath, stagingPath);
+        toRemove.push(entry.name);
+        unloaded.push(entry.name);
+      }
+    } catch (err) {
+      refused.push({
+        name: entry.name,
+        reason: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
+  // Update state: remove unloaded entries
+  if (toRemove.length > 0) {
+    const removeSet = new Set(toRemove);
+    labState.repos = labState.repos.filter((r) => !removeSet.has(r.name));
+    await writeLabState(devspace, labState);
+  }
+
+  return { unloaded, refused };
 }
