@@ -21,6 +21,7 @@ Thumbs.db
 
 # Test artifacts
 /tmp/
+tests/fixtures/Library/
 
 # Node (for compatibility checks only)
 node_modules/
