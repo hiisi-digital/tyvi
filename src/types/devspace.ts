@@ -59,6 +59,26 @@ export interface RepoDefinition {
 }
 
 /**
+ * Lightweight repo listing (no git status checks).
+ */
+export interface RepoListing {
+  /** Repository name */
+  name: string;
+  /** Namespace it belongs to */
+  namespace: string;
+  /** Repository description */
+  description?: string;
+  /** Category */
+  category?: string;
+  /** Development status */
+  status?: RepoStatus;
+  /** Whether it exists on disk */
+  cloneStatus: CloneStatus;
+  /** Whether it's currently loaded to lab */
+  loaded: boolean;
+}
+
+/**
  * Repository with full status information.
  */
 export interface RepoWithStatus extends RepoDefinition {
@@ -291,4 +311,62 @@ export interface SyncOptions {
   fetch?: boolean;
   /** Whether to prune deleted branches */
   prune?: boolean;
+}
+
+// ============================================================================
+// Git Restriction Types
+// ============================================================================
+
+/**
+ * Result of checking whether git operations are allowed at a path.
+ */
+export interface GitCheckResult {
+  /** Whether git is allowed */
+  allowed: boolean;
+  /** Reason for the result */
+  reason: "lab" | "root" | "whitelist" | "outside_project" | "blocked";
+  /** Human-readable message (populated when blocked) */
+  message?: string;
+  /** Suggested action (populated when blocked) */
+  suggestion?: string;
+}
+
+// ============================================================================
+// Init Types
+// ============================================================================
+
+/**
+ * Options for initializing a new devspace.
+ */
+export interface InitOptions {
+  /** Devspace name */
+  name: string;
+  /** Namespace paths (defaults to ["@default"]) */
+  namespaces?: string[];
+  /** Default namespace (defaults to first namespace) */
+  defaultNamespace?: string;
+  /** Lab path relative to root (defaults to ".lab") */
+  labPath?: string;
+  /** Staging path relative to root (defaults to ".staging") */
+  stagingPath?: string;
+  /** State path relative to root (defaults to ".state") */
+  statePath?: string;
+  /** Tmp path relative to root (defaults to ".tmp") */
+  tmpPath?: string;
+  /** Enable git policy */
+  gitPolicy?: boolean;
+  /** Git policy allowed paths */
+  gitAllowedPaths?: string[];
+}
+
+/**
+ * Result of devspace initialization.
+ */
+export interface InitResult {
+  /** Root path of the created devspace */
+  rootPath: string;
+  /** Directories that were created */
+  created: string[];
+  /** Path to the generated tyvi.toml */
+  configPath: string;
 }
