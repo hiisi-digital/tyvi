@@ -107,7 +107,7 @@ export async function listRelationships(
         type: rel.type,
         status: rel.status,
         since: rel.since,
-        summary: rel.dynamic.summary,
+        summary: rel.dynamic?.summary ?? "",
       });
     }
   }
