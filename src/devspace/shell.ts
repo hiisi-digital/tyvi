@@ -102,9 +102,13 @@ function generateBashInit(
   labPath: string,
   whitelist: string[],
 ): string {
-  const whitelistChecks = whitelist.map((p) => `    "${p}"*) command git "$@"; return $? ;;`).join(
-    "\n",
-  );
+  // Whitelist paths become separate case patterns (before the generic block)
+  const whitelistPatterns = whitelist.map((p) =>
+    `    "${p}"/*|"${p}")
+      command git "$@"
+      return $?
+      ;;`
+  ).join("\n");
 
   return `# tyvi git guard — auto-generated
 # Source this file in your shell RC to enforce devspace git restrictions.
@@ -119,9 +123,8 @@ git() {
   local _tyvi_pwd
   _tyvi_pwd="$PWD"
 
-  # Fast path: clearly not in tyvi project
   case "$_tyvi_pwd" in
-    "${labPath}"*)
+    "${labPath}"/*|"${labPath}")
       command git "$@"
       return $?
       ;;
@@ -129,10 +132,9 @@ git() {
       command git "$@"
       return $?
       ;;
+${whitelistPatterns}
     "${rootPath}"/*)
-      # Inside tyvi project — check whitelist
-${whitelistChecks}
-      # Blocked
+      # Inside tyvi project — blocked
       echo "Git operations blocked here." >&2
       echo "" >&2
       echo "Location: $_tyvi_pwd" >&2
@@ -169,8 +171,11 @@ function generateFishInit(
   labPath: string,
   whitelist: string[],
 ): string {
-  const whitelistChecks = whitelist.map((p) =>
-    `        case "${p}*"\n            command git $argv\n            return $status`
+  // Whitelist paths as separate case patterns before the generic block
+  const whitelistPatterns = whitelist.map((p) =>
+    `        case "${p}" "${p}/*"
+            command git $argv
+            return $status`
   ).join("\n");
 
   return `# tyvi git guard — auto-generated
@@ -180,16 +185,15 @@ function git
     set -l _tyvi_pwd (pwd)
 
     switch $_tyvi_pwd
-        case "${labPath}*"
+        case "${labPath}" "${labPath}/*"
             command git $argv
             return $status
         case "${rootPath}"
             command git $argv
             return $status
+${whitelistPatterns}
         case "${rootPath}/*"
-            # Inside tyvi project — check whitelist
-${whitelistChecks}
-            # Blocked
+            # Inside tyvi project — blocked
             echo "Git operations blocked here." >&2
             echo "" >&2
             echo "Location: $_tyvi_pwd" >&2

@@ -397,32 +397,61 @@ export async function removeRepo(
     const inventoryPath = join(devspace.rootPath, namespace, "inventory.toml");
     const content = await Deno.readTextFile(inventoryPath);
 
-    // Simple removal - find the [[repos]] section for this repo and remove it
-    // This is a simplified approach; a full TOML editor would be better
+    // Remove the [[repos]] section for the target repo.
+    // Buffer lines while inside a [[repos]] section until the name is known,
+    // then either flush (keep) or discard (remove) the buffered lines.
     const lines = content.split("\n");
     const newLines: string[] = [];
     let inRepoSection = false;
     let currentRepoName = "";
+    let sectionBuffer: string[] = [];
 
     for (const line of lines) {
       if (line.trim().startsWith("[[repos]]")) {
+        // Flush any previous section buffer (it wasn't the target)
+        if (sectionBuffer.length > 0 && currentRepoName !== repoName) {
+          newLines.push(...sectionBuffer);
+        }
+        // Start buffering a new section
         inRepoSection = true;
         currentRepoName = "";
-      } else if (line.trim().startsWith("name =") && inRepoSection) {
-        const match = line.match(/name\s*=\s*"([^"]+)"/);
-        if (match) {
-          currentRepoName = match[1] || "";
-        }
-      } else if (line.trim().startsWith("[[") || line.trim().startsWith("[meta")) {
-        inRepoSection = false;
+        sectionBuffer = [line];
+        continue;
       }
 
-      if (currentRepoName === repoName && inRepoSection) {
-        // Skip this line (part of the repo we're removing)
-        continue;
+      if (inRepoSection) {
+        if (line.trim().startsWith("name =")) {
+          const match = line.match(/name\s*=\s*"([^"]+)"/);
+          if (match) {
+            currentRepoName = match[1] || "";
+          }
+        }
+
+        // Check if this line starts a new non-repo section
+        if (
+          (line.trim().startsWith("[[") && !line.trim().startsWith("[[repos]]")) ||
+          line.trim().startsWith("[meta")
+        ) {
+          // Flush buffer if not the target repo
+          if (currentRepoName !== repoName) {
+            newLines.push(...sectionBuffer);
+          }
+          inRepoSection = false;
+          currentRepoName = "";
+          sectionBuffer = [];
+          newLines.push(line);
+          continue;
+        }
+
+        sectionBuffer.push(line);
       } else {
         newLines.push(line);
       }
+    }
+
+    // Flush any remaining section buffer
+    if (sectionBuffer.length > 0 && currentRepoName !== repoName) {
+      newLines.push(...sectionBuffer);
     }
 
     await Deno.writeTextFile(inventoryPath, newLines.join("\n"));
