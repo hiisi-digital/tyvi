@@ -102,6 +102,139 @@ Deno.test("generateShellInit - bash script contains root and lab paths", async (
   }
 });
 
+Deno.test("generateShellInit - bash script is syntactically valid", async () => {
+  const { dir, devspace } = await createTempDevspace({
+    gitPolicy: { enabled: true, allowed_paths: [".staging/@test/special"] },
+  });
+  try {
+    const script = generateShellInit(devspace, "bash");
+
+    // Write to temp file and validate with bash -n (syntax check only, no execution)
+    const scriptPath = join(dir, "test-init.sh");
+    await Deno.writeTextFile(scriptPath, script);
+
+    const cmd = new Deno.Command("bash", {
+      args: ["-n", scriptPath],
+      stderr: "piped",
+    });
+    const result = await cmd.output();
+
+    assert(
+      result.success,
+      `Generated bash script has syntax errors: ${new TextDecoder().decode(result.stderr)}`,
+    );
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("generateShellInit - bash script blocks git in staging dir", async () => {
+  const { dir, devspace } = await createTempDevspace({
+    gitPolicy: { enabled: true, allowed_paths: [] },
+  });
+  try {
+    const script = generateShellInit(devspace, "bash");
+    const scriptPath = join(dir, "test-init.sh");
+    await Deno.writeTextFile(scriptPath, script);
+
+    // Run from a blocked directory (staging)
+    const stagingPath = resolve(dir, ".staging", "@test");
+    await Deno.mkdir(stagingPath, { recursive: true });
+
+    const cmd = new Deno.Command("bash", {
+      args: [
+        "-c",
+        `source "${scriptPath}" && cd "${stagingPath}" && git status 2>/dev/null; echo $?`,
+      ],
+      stdout: "piped",
+      stderr: "piped",
+      env: { ...Deno.env.toObject(), PWD: stagingPath },
+      cwd: stagingPath,
+    });
+    const result = await cmd.output();
+    const stdout = new TextDecoder().decode(result.stdout).trim();
+
+    // The function should return exit code 1 (blocked)
+    assertEquals(stdout.split("\n").pop(), "1", "git should be blocked in staging");
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("generateShellInit - bash script allows git at root", async () => {
+  const { dir, devspace } = await createTempDevspace({
+    gitPolicy: { enabled: true, allowed_paths: [] },
+  });
+  try {
+    const script = generateShellInit(devspace, "bash");
+    const scriptPath = join(dir, "test-init.sh");
+    await Deno.writeTextFile(scriptPath, script);
+
+    // Run from root — should allow (git init so `git status` succeeds)
+    const gitCmd = new Deno.Command("git", {
+      args: ["init"],
+      cwd: dir,
+      stdout: "null",
+      stderr: "null",
+    });
+    await gitCmd.output();
+
+    const cmd = new Deno.Command("bash", {
+      args: [
+        "-c",
+        `source "${scriptPath}" && cd "${resolve(dir)}" && git status >/dev/null 2>&1; echo $?`,
+      ],
+      stdout: "piped",
+      stderr: "piped",
+      cwd: dir,
+    });
+    const result = await cmd.output();
+    const stdout = new TextDecoder().decode(result.stdout).trim();
+
+    assertEquals(stdout.split("\n").pop(), "0", "git should be allowed at root");
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("generateShellInit - bash script allows git in lab", async () => {
+  const { dir, devspace } = await createTempDevspace({
+    gitPolicy: { enabled: true, allowed_paths: [] },
+  });
+  try {
+    const script = generateShellInit(devspace, "bash");
+    const scriptPath = join(dir, "test-init.sh");
+    await Deno.writeTextFile(scriptPath, script);
+
+    // Set up a git repo in lab
+    const labRepo = resolve(dir, ".lab", "my-repo");
+    await Deno.mkdir(labRepo, { recursive: true });
+    const gitCmd = new Deno.Command("git", {
+      args: ["init"],
+      cwd: labRepo,
+      stdout: "null",
+      stderr: "null",
+    });
+    await gitCmd.output();
+
+    const cmd = new Deno.Command("bash", {
+      args: [
+        "-c",
+        `source "${scriptPath}" && cd "${labRepo}" && git status >/dev/null 2>&1; echo $?`,
+      ],
+      stdout: "piped",
+      stderr: "piped",
+      cwd: labRepo,
+    });
+    const result = await cmd.output();
+    const stdout = new TextDecoder().decode(result.stdout).trim();
+
+    assertEquals(stdout.split("\n").pop(), "0", "git should be allowed in lab");
+  } finally {
+    await cleanup(dir);
+  }
+});
+
 Deno.test("generateShellInit - fish script uses switch syntax", async () => {
   const { dir, devspace } = await createTempDevspace();
   try {
@@ -443,6 +576,170 @@ Deno.test("removeHooks - no-op when no hook exists", async () => {
   try {
     // Should not throw
     await removeHooks(devspace);
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("installHooks - hook blocks commit without TYVI_ALLOW_COMMIT", async () => {
+  const { dir, devspace } = await createTempDevspace({ initGit: true });
+  try {
+    await installHooks(devspace);
+
+    // Create a file to commit
+    await Deno.writeTextFile(join(dir, "test.txt"), "test");
+
+    const addCmd = new Deno.Command("git", {
+      args: ["add", "test.txt"],
+      cwd: dir,
+      stdout: "null",
+      stderr: "null",
+    });
+    await addCmd.output();
+
+    const configCmds = [
+      ["config", "user.email", "test@test.com"],
+      ["config", "user.name", "Test"],
+    ];
+    for (const args of configCmds) {
+      const cmd = new Deno.Command("git", {
+        args,
+        cwd: dir,
+        stdout: "null",
+        stderr: "null",
+      });
+      await cmd.output();
+    }
+
+    // Commit without TYVI_ALLOW_COMMIT — hook should block
+    const env = { ...Deno.env.toObject() };
+    delete env.TYVI_ALLOW_COMMIT;
+    const commitCmd = new Deno.Command("git", {
+      args: ["commit", "-m", "test commit"],
+      cwd: dir,
+      stdout: "piped",
+      stderr: "piped",
+      env,
+    });
+    const result = await commitCmd.output();
+
+    assert(!result.success, "commit without TYVI_ALLOW_COMMIT should be blocked");
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("installHooks - hook allows commit with TYVI_ALLOW_COMMIT from root", async () => {
+  const { dir, devspace } = await createTempDevspace({ initGit: true });
+  try {
+    await installHooks(devspace);
+
+    // Create a file at root
+    await Deno.writeTextFile(join(dir, "test.txt"), "test");
+
+    // Stage and configure git
+    const addCmd = new Deno.Command("git", {
+      args: ["add", "test.txt"],
+      cwd: dir,
+      stdout: "null",
+      stderr: "null",
+    });
+    await addCmd.output();
+
+    const configCmds = [
+      ["config", "user.email", "test@test.com"],
+      ["config", "user.name", "Test"],
+    ];
+    for (const args of configCmds) {
+      const cmd = new Deno.Command("git", {
+        args,
+        cwd: dir,
+        stdout: "null",
+        stderr: "null",
+      });
+      await cmd.output();
+    }
+
+    // Commit with TYVI_ALLOW_COMMIT — hook should allow
+    const commitCmd = new Deno.Command("git", {
+      args: ["commit", "-m", "test commit from root"],
+      cwd: dir,
+      stdout: "piped",
+      stderr: "piped",
+      env: { ...Deno.env.toObject(), TYVI_ALLOW_COMMIT: "1" },
+    });
+    const result = await commitCmd.output();
+
+    assert(result.success, "commit with TYVI_ALLOW_COMMIT should be allowed");
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("installHooks - TYVI_ALLOW_COMMIT bypasses hook", async () => {
+  const { dir, devspace } = await createTempDevspace({ initGit: true });
+  try {
+    await installHooks(devspace);
+
+    const subDir = join(dir, "subdir");
+    await Deno.mkdir(subDir);
+    await Deno.writeTextFile(join(subDir, "test.txt"), "test");
+
+    const addCmd = new Deno.Command("git", {
+      args: ["add", "subdir/test.txt"],
+      cwd: dir,
+      stdout: "null",
+      stderr: "null",
+    });
+    await addCmd.output();
+
+    const configCmds = [
+      ["config", "user.email", "test@test.com"],
+      ["config", "user.name", "Test"],
+    ];
+    for (const args of configCmds) {
+      const cmd = new Deno.Command("git", {
+        args,
+        cwd: dir,
+        stdout: "null",
+        stderr: "null",
+      });
+      await cmd.output();
+    }
+
+    // Commit from subdirectory WITH TYVI_ALLOW_COMMIT set — should be allowed
+    const commitCmd = new Deno.Command("git", {
+      args: ["commit", "-m", "allowed via env"],
+      cwd: subDir,
+      stdout: "piped",
+      stderr: "piped",
+      env: { ...Deno.env.toObject(), TYVI_ALLOW_COMMIT: "1" },
+    });
+    const result = await commitCmd.output();
+
+    assert(result.success, "commit with TYVI_ALLOW_COMMIT should bypass hook");
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("hasHooks - returns true for non-tyvi hook (false positive)", async () => {
+  // This test documents a semantic bug: hasHooks returns true for ANY
+  // pre-commit hook, not just tyvi's. validateGuards then incorrectly
+  // reports hooks are installed.
+  const { dir, devspace } = await createTempDevspace({ initGit: true });
+  try {
+    const hooksDir = join(dir, ".git", "hooks");
+    await Deno.mkdir(hooksDir, { recursive: true });
+    await Deno.writeTextFile(
+      join(hooksDir, "pre-commit"),
+      "#!/bin/sh\n# some other tool's hook\nexit 0\n",
+    );
+
+    const result = await hasHooks(devspace);
+    // Currently returns true — this is a known false positive.
+    // TODO: hasHooks should check for tyvi marker, not just file existence.
+    assertEquals(result, true, "hasHooks returns true for any pre-commit (known false positive)");
   } finally {
     await cleanup(dir);
   }

@@ -167,6 +167,142 @@ Deno.test("addRelationshipLogEntry - throws when no relationships file", async (
   }
 });
 
+Deno.test("addRelationshipLogEntry - stringify round-trip preserves other relationships", async () => {
+  const tempDir = await copyFixtureToTemp();
+  try {
+    const entry: RelationshipLogEntry = {
+      timestamp: "2025-04-01T10:00:00Z",
+      event: "collaboration",
+      note: "Quick sync call",
+    };
+
+    await addRelationshipLogEntry(tempDir, "alex", "viktor", entry);
+
+    // Verify the OTHER relationship (sam) is still intact
+    const collection = await loadRelationships(tempDir, "alex");
+    const sam = collection.relationships.find((r) => r.with === "ctx://person/sam");
+    assertExists(sam, "sam relationship should survive stringify round-trip");
+    assertEquals(sam.type, "mentor");
+    assertEquals(sam.status, "dormant");
+    assertEquals(sam.since, "2023-01-15");
+  } finally {
+    await cleanup(tempDir);
+  }
+});
+
+Deno.test("listRelationships - handles missing dynamic section without crash", async () => {
+  const tempDir = await Deno.makeTempDir();
+  try {
+    const peoplePath = join(tempDir, "people");
+    await Deno.mkdir(peoplePath);
+
+    // Create a relationship file WITHOUT a [relationship.dynamic] section
+    await Deno.writeTextFile(
+      join(peoplePath, "bob.relationships.toml"),
+      `[[relationship]]
+with = "ctx://person/alice"
+type = "collaborator"
+status = "active"
+since = "2025-01-01"
+`,
+    );
+
+    // This should NOT crash — but it will if `rel.dynamic.summary` is accessed
+    // on an entry where dynamic is undefined. This test exposes a real bug.
+    try {
+      const summaries = await listRelationships(tempDir);
+      // If we get here without crashing, the bug is fixed.
+      // With the fix, we should get 1 result with summary being undefined or empty.
+      assertEquals(summaries.length, 1);
+      assertEquals(summaries[0]!.type, "collaborator");
+    } catch (err) {
+      if (err instanceof TypeError && String(err).includes("Cannot read properties of undefined")) {
+        throw new Error(
+          "BUG: listRelationships crashes when dynamic section is missing. " +
+            "Line 110 of relationships/mod.ts accesses rel.dynamic.summary unconditionally.",
+        );
+      }
+      throw err;
+    }
+  } finally {
+    await cleanup(tempDir);
+  }
+});
+
+Deno.test("listRelationships - multiple person files aggregated correctly", async () => {
+  const tempDir = await Deno.makeTempDir();
+  try {
+    const peoplePath = join(tempDir, "people");
+    await Deno.mkdir(peoplePath);
+
+    await Deno.writeTextFile(
+      join(peoplePath, "alice.relationships.toml"),
+      `[[relationship]]
+with = "ctx://person/bob"
+type = "collaborator"
+status = "active"
+since = "2025-01-01"
+
+[relationship.dynamic]
+summary = "Working on frontend"
+`,
+    );
+
+    await Deno.writeTextFile(
+      join(peoplePath, "charlie.relationships.toml"),
+      `[[relationship]]
+with = "ctx://person/diana"
+type = "mentor"
+status = "active"
+since = "2024-06-01"
+
+[relationship.dynamic]
+summary = "Mentoring on architecture"
+`,
+    );
+
+    const summaries = await listRelationships(tempDir);
+
+    assertEquals(summaries.length, 2, "should aggregate across multiple person files");
+    const bob = summaries.find((s) => s.withId === "bob");
+    const diana = summaries.find((s) => s.withId === "diana");
+    assertExists(bob);
+    assertExists(diana);
+  } finally {
+    await cleanup(tempDir);
+  }
+});
+
+Deno.test("loadRelationships - typo in TOML key silently returns empty", async () => {
+  const tempDir = await Deno.makeTempDir();
+  try {
+    const peoplePath = join(tempDir, "people");
+    await Deno.mkdir(peoplePath);
+
+    // Intentional typo: "relatioship" instead of "relationship"
+    await Deno.writeTextFile(
+      join(peoplePath, "typo.relationships.toml"),
+      `[[relatioship]]
+with = "ctx://person/someone"
+type = "collaborator"
+status = "active"
+since = "2025-01-01"
+`,
+    );
+
+    // This should NOT crash, but relationships will be empty
+    // because parsed.relationship is undefined (the key is misspelled)
+    const collection = await loadRelationships(tempDir, "typo");
+    assertEquals(
+      collection.relationships.length,
+      0,
+      "misspelled key should result in empty relationships (data silently lost)",
+    );
+  } finally {
+    await cleanup(tempDir);
+  }
+});
+
 Deno.test("addRelationshipLogEntry - throws when relationship not found", async () => {
   const tempDir = await copyFixtureToTemp();
   try {
