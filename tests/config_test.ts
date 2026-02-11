@@ -146,3 +146,82 @@ Deno.test("loadDevspace - not found", async () => {
     "No tyvi.toml found",
   );
 });
+
+// ============================================================================
+// Backward Compatibility Tests
+// ============================================================================
+
+Deno.test("parseDevspaceConfig - [workspace] backward compat parses correctly", () => {
+  const content = `
+[workspace]
+name = "legacy-project"
+
+[workspace.namespaces]
+default = "@legacy"
+paths = ["@legacy"]
+`;
+
+  const config = parseDevspaceConfig(content);
+
+  assertEquals(config.devspace.name, "legacy-project");
+  assertEquals(config.devspace.namespaces?.default, "@legacy");
+  assertEquals(config.devspace.namespaces?.paths, ["@legacy"]);
+});
+
+Deno.test("parseDevspaceConfig - [workspace] with git_policy", () => {
+  const content = `
+[workspace]
+name = "legacy-guarded"
+
+[workspace.namespaces]
+default = "@default"
+paths = ["@default"]
+
+[workspace.git_policy]
+enabled = true
+allowed_paths = [".ci"]
+`;
+
+  const config = parseDevspaceConfig(content);
+
+  assertExists(config.devspace.git_policy);
+  assertEquals(config.devspace.git_policy!.enabled, true);
+  assertEquals(config.devspace.git_policy!.allowed_paths, [".ci"]);
+});
+
+// ============================================================================
+// Empty Inventory Tests
+// ============================================================================
+
+Deno.test("parseInventoryConfig - empty inventory (no [[repos]]) throws", () => {
+  const content = `# Repository inventory
+`;
+
+  assertThrows(
+    () => parseInventoryConfig(content),
+    Error,
+    "missing or invalid [[repos]] entries",
+  );
+});
+
+Deno.test("parseInventoryConfig - meta defaults don't override explicit repo values", () => {
+  const content = `
+[meta.defaults]
+status = "stable"
+language = "rust"
+keep_in_sync = false
+
+[[repos]]
+name = "explicit-repo"
+remotes = [{ name = "origin", url = "git@github.com:test/repo.git" }]
+status = "active"
+language = "typescript"
+keep_in_sync = true
+`;
+
+  const config = parseInventoryConfig(content);
+
+  assertEquals(config.repos[0]?.status, "active", "explicit status should win");
+  assertEquals(config.repos[0]?.language, "typescript", "explicit language should win");
+  assertEquals(config.repos[0]?.keep_in_sync, true, "explicit keep_in_sync should win");
+});

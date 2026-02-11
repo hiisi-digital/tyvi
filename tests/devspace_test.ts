@@ -7,11 +7,13 @@ import { join, resolve } from "@std/path";
 import { exists } from "@std/fs";
 import { initDevspace, loadDevspace } from "../src/config/mod.ts";
 import {
+  addRepo,
   checkGitAllowed,
   getBlockedMessage,
   getStatus,
   load,
   readLabState,
+  removeRepo,
   unload,
   writeLabState,
 } from "../src/devspace/mod.ts";
@@ -620,6 +622,31 @@ Deno.test("initDevspace - refuses if tyvi.toml already exists", async () => {
   }
 });
 
+Deno.test("initDevspace - creates loadable devspace (init → load round-trip)", async () => {
+  const dir = await Deno.makeTempDir();
+  const rootPath = join(dir, "roundtrip");
+  try {
+    await initDevspace(rootPath, { name: "roundtrip-test" });
+
+    // The critical test: can we loadDevspace immediately after init?
+    // initDevspace creates empty inventory files ("# Repository inventory\n")
+    // which have no [[repos]] entries. loadDevspace must handle this gracefully.
+    const devspace = await loadDevspace(rootPath);
+
+    assertEquals(devspace.config.devspace.name, "roundtrip-test");
+    // Should have loaded the namespace but with 0 repos (empty inventory)
+    // If this crashes, it means empty inventories aren't handled.
+    const inventory = devspace.namespaces.get("@default");
+    // inventory may be undefined if empty inventory isn't loadable, OR
+    // it may exist with 0 repos. Either is acceptable, but a crash is not.
+    if (inventory) {
+      assertEquals(inventory.repos.length, 0);
+    }
+  } finally {
+    await cleanup(dir);
+  }
+});
+
 Deno.test("initDevspace - with git policy enabled", async () => {
   const dir = await Deno.makeTempDir();
   const rootPath = join(dir, "with-git");
@@ -634,6 +661,283 @@ Deno.test("initDevspace - with git policy enabled", async () => {
     assertExists(devspace.config.devspace.git_policy);
     assertEquals(devspace.config.devspace.git_policy!.enabled, true);
     assertEquals(devspace.config.devspace.git_policy!.allowed_paths, ["scripts", ".ci"]);
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+// ============================================================================
+// Symlink Target Verification Tests
+// ============================================================================
+
+Deno.test("load - symlink points to correct staging directory", async () => {
+  const { dir, devspace } = await createTempDevspace();
+  try {
+    const stagingPath = join(dir, ".staging", "@test", "repo-a");
+    await Deno.mkdir(stagingPath, { recursive: true });
+    await Deno.writeTextFile(join(stagingPath, "README.md"), "test content");
+
+    await load(devspace, { pattern: "repo-a" });
+
+    const labPath = join(dir, ".lab", "repo-a");
+    // Verify symlink TARGET is the staging directory
+    const target = await Deno.readLink(labPath);
+    assertEquals(target, stagingPath, "symlink should point to staging dir");
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("load - content accessible through symlink", async () => {
+  const { dir, devspace } = await createTempDevspace();
+  try {
+    const stagingPath = join(dir, ".staging", "@test", "repo-a");
+    await Deno.mkdir(stagingPath, { recursive: true });
+    await Deno.writeTextFile(join(stagingPath, "README.md"), "hello from staging");
+
+    await load(devspace, { pattern: "repo-a" });
+
+    // Read through the symlink — if symlink points wrong, this fails
+    const labReadme = join(dir, ".lab", "repo-a", "README.md");
+    const content = await Deno.readTextFile(labReadme);
+    assertEquals(content, "hello from staging");
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("load - namespace filter works", async () => {
+  const { dir, devspace } = await createTempDevspace();
+  try {
+    const stagingPath = join(dir, ".staging", "@test", "repo-a");
+    await Deno.mkdir(stagingPath, { recursive: true });
+    await Deno.writeTextFile(join(stagingPath, "README.md"), "test");
+
+    // Filter by wrong namespace — should load nothing
+    const result = await load(devspace, { namespace: "@other" });
+    assertEquals(result.loaded.length, 0);
+
+    // Filter by correct namespace — should try to load both repos
+    // but only repo-a has staging dir, repo-b fails
+    const result2 = await load(devspace, { namespace: "@test" });
+    assertEquals(result2.loaded.length, 1);
+    assertEquals(result2.loaded[0], "repo-a");
+    assertEquals(result2.failed.length, 1);
+    assertEquals(result2.failed[0]?.name, "repo-b");
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("load + unload - round-trip preserves staging integrity", async () => {
+  const { dir, devspace } = await createTempDevspace();
+  try {
+    const stagingPath = join(dir, ".staging", "@test", "repo-a");
+    await Deno.mkdir(stagingPath, { recursive: true });
+    await Deno.writeTextFile(join(stagingPath, "README.md"), "original content");
+    await Deno.writeTextFile(join(stagingPath, "src.ts"), "export const x = 1;");
+
+    // Load
+    await load(devspace, { pattern: "repo-a" });
+
+    // Verify lab has content
+    const labPath = join(dir, ".lab", "repo-a");
+    assert(await exists(labPath), "lab symlink should exist");
+
+    // Unload
+    await unload(devspace, { pattern: "repo-a" });
+
+    // Lab should be gone
+    assertEquals(await exists(labPath), false, "lab symlink should be removed");
+
+    // Staging should still have all files
+    const readme = await Deno.readTextFile(join(stagingPath, "README.md"));
+    assertEquals(readme, "original content");
+    const src = await Deno.readTextFile(join(stagingPath, "src.ts"));
+    assertEquals(src, "export const x = 1;");
+
+    // State should be clean
+    const state = await readLabState(devspace);
+    assertEquals(state.repos.length, 0);
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+// ============================================================================
+// addRepo Tests
+// ============================================================================
+
+Deno.test("addRepo - appends repo to inventory", async () => {
+  const { dir, devspace } = await createTempDevspace();
+  try {
+    await addRepo(devspace, "git@github.com:org/new-repo.git", {
+      name: "new-repo",
+    });
+
+    // Re-read inventory and verify
+    const reloaded = await loadDevspace(dir);
+    const inventory = reloaded.namespaces.get("@test");
+    assertExists(inventory);
+    const newRepo = inventory.repos.find((r) => r.name === "new-repo");
+    assertExists(newRepo, "new repo should be in inventory");
+    assertEquals(newRepo.remotes[0]?.url, "git@github.com:org/new-repo.git");
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("addRepo - extracts name from URL", async () => {
+  const { dir, devspace } = await createTempDevspace();
+  try {
+    await addRepo(devspace, "git@github.com:org/extracted-name.git");
+
+    const reloaded = await loadDevspace(dir);
+    const inventory = reloaded.namespaces.get("@test");
+    assertExists(inventory);
+    const repo = inventory.repos.find((r) => r.name === "extracted-name");
+    assertExists(repo, "should extract 'extracted-name' from URL");
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("addRepo - with category sets local_path", async () => {
+  const { dir, devspace } = await createTempDevspace();
+  try {
+    await addRepo(devspace, "git@github.com:org/lib.git", {
+      name: "lib",
+      category: "libraries",
+    });
+
+    const reloaded = await loadDevspace(dir);
+    const inventory = reloaded.namespaces.get("@test");
+    assertExists(inventory);
+    const repo = inventory.repos.find((r) => r.name === "lib");
+    assertExists(repo);
+    assertEquals(repo.local_path, "libraries/lib");
+    assertEquals(repo.category, "libraries");
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("addRepo - rejects invalid repo names", async () => {
+  const { dir, devspace } = await createTempDevspace();
+  try {
+    await assertRejects(
+      () => addRepo(devspace, "git@github.com:org/repo.git", { name: "bad name with spaces" }),
+      Error,
+      "Invalid repository name",
+    );
+
+    await assertRejects(
+      () => addRepo(devspace, "git@github.com:org/repo.git", { name: "bad/name" }),
+      Error,
+      "Invalid repository name",
+    );
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+// ============================================================================
+// removeRepo Tests
+// ============================================================================
+
+Deno.test("removeRepo - removes repo from inventory", async () => {
+  const { dir, devspace } = await createTempDevspace();
+  try {
+    const result = await removeRepo(devspace, "repo-a");
+    assertEquals(result, true);
+
+    // Verify repo-a is gone but repo-b remains
+    const reloaded = await loadDevspace(dir);
+    const inventory = reloaded.namespaces.get("@test");
+    assertExists(inventory);
+    assertEquals(inventory.repos.length, 1);
+    assertEquals(inventory.repos[0]?.name, "repo-b");
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("removeRepo - returns false for nonexistent repo", async () => {
+  const { dir, devspace } = await createTempDevspace();
+  try {
+    const result = await removeRepo(devspace, "nonexistent");
+    assertEquals(result, false);
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("removeRepo - handles repo at end of file", async () => {
+  const { dir, devspace } = await createTempDevspace();
+  try {
+    // Remove repo-b (last entry in the file)
+    const result = await removeRepo(devspace, "repo-b");
+    assertEquals(result, true);
+
+    const reloaded = await loadDevspace(dir);
+    const inventory = reloaded.namespaces.get("@test");
+    assertExists(inventory);
+    assertEquals(inventory.repos.length, 1);
+    assertEquals(inventory.repos[0]?.name, "repo-a");
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("removeRepo - doesn't remove partial name match", async () => {
+  const dir = await Deno.makeTempDir();
+  try {
+    await Deno.writeTextFile(
+      join(dir, "tyvi.toml"),
+      `[devspace]
+name = "test"
+[devspace.namespaces]
+default = "@ns"
+paths = ["@ns"]`,
+    );
+    await Deno.mkdir(join(dir, "@ns"));
+    await Deno.writeTextFile(
+      join(dir, "@ns", "inventory.toml"),
+      `[[repos]]
+name = "foo"
+remotes = [{ name = "origin", url = "git@github.com:test/foo.git" }]
+
+[[repos]]
+name = "foobar"
+remotes = [{ name = "origin", url = "git@github.com:test/foobar.git" }]`,
+    );
+
+    const devspace = await loadDevspace(dir);
+    await removeRepo(devspace, "foo");
+
+    const reloaded = await loadDevspace(dir);
+    const inventory = reloaded.namespaces.get("@ns");
+    assertExists(inventory);
+    assertEquals(inventory.repos.length, 1);
+    assertEquals(inventory.repos[0]?.name, "foobar", "foobar should not be removed");
+  } finally {
+    await cleanup(dir);
+  }
+});
+
+Deno.test("removeRepo - with deleteFiles removes directory", async () => {
+  const { dir, devspace } = await createTempDevspace();
+  try {
+    // Create the repo directory
+    const repoDir = join(dir, "@test", "repo-a");
+    await Deno.mkdir(repoDir, { recursive: true });
+    await Deno.writeTextFile(join(repoDir, "file.txt"), "content");
+
+    const result = await removeRepo(devspace, "repo-a", { deleteFiles: true });
+    assertEquals(result, true);
+
+    // Directory should be gone
+    assertEquals(await exists(repoDir), false, "repo directory should be deleted");
   } finally {
     await cleanup(dir);
   }
