@@ -449,3 +449,49 @@ export interface ScanResult {
   /** Entries requiring user decision */
   actionable: DiscoveredEntry[];
 }
+
+// ============================================================================
+// Shell Integration Types
+// ============================================================================
+
+/**
+ * Detected shell environment for git guard integration.
+ */
+export interface ShellIntegration {
+  /** Detected shell type */
+  shell: "zsh" | "bash" | "fish" | "unknown";
+  /** Path to shell RC file (null if not found) */
+  rcFile: string | null;
+  /** Whether an existing git alias was detected */
+  hasExistingAlias: boolean;
+  /** Existing git alias value if found */
+  existingAlias?: string;
+}
+
+// ============================================================================
+// Validation Types
+// ============================================================================
+
+/**
+ * Issue found during guard validation.
+ */
+export interface ValidationIssue {
+  /** Guard type that has the issue */
+  type: "shell" | "direnv" | "hooks" | "config";
+  /** Severity of the issue */
+  severity: "error" | "warning";
+  /** Human-readable description */
+  message: string;
+  /** Suggested fix */
+  fix?: string;
+}
+
+/**
+ * Result of validating devspace guards.
+ */
+export interface ValidationResult {
+  /** Whether all guards are in place */
+  valid: boolean;
+  /** Issues found */
+  issues: ValidationIssue[];
+}
