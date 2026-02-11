@@ -5,7 +5,7 @@
 import { assert, assertEquals, assertExists, assertRejects } from "@std/assert";
 import { join, resolve } from "@std/path";
 import { exists } from "@std/fs";
-import { initDevspace, loadDevspace, loadWorkspace } from "../src/config/mod.ts";
+import { initDevspace, loadDevspace } from "../src/config/mod.ts";
 import {
   checkGitAllowed,
   getBlockedMessage,
@@ -85,10 +85,10 @@ async function cleanup(dir: string): Promise<void> {
 // ============================================================================
 
 Deno.test("getStatus - lists all repos from inventory", async () => {
-  const fixturePath = join(Deno.cwd(), "tests", "fixtures", "valid-workspace");
-  const workspace = await loadWorkspace(fixturePath);
+  const fixturePath = join(Deno.cwd(), "tests", "fixtures", "valid-devspace");
+  const devspace = await loadDevspace(fixturePath);
 
-  const repos = await getStatus(workspace);
+  const repos = await getStatus(devspace);
 
   assertEquals(repos.length, 2);
 
@@ -109,9 +109,9 @@ Deno.test("getStatus - skips repos with local_path = false", async () => {
   try {
     await Deno.writeTextFile(
       join(tempDir, "tyvi.toml"),
-      `[workspace]
+      `[devspace]
 name = "test"
-[workspace.namespaces]
+[devspace.namespaces]
 default = "@test"
 paths = ["@test"]`,
     );
@@ -129,8 +129,8 @@ name = "include-me"
 remotes = [{ name = "origin", url = "git@github.com:test/repo.git" }]`,
     );
 
-    const workspace = await loadWorkspace(tempDir);
-    const repos = await getStatus(workspace);
+    const devspace = await loadDevspace(tempDir);
+    const repos = await getStatus(devspace);
 
     assertEquals(repos.length, 1);
     assertEquals(repos[0]?.name, "include-me");

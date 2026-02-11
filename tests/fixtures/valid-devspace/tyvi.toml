@@ -1,7 +1,7 @@
-[workspace]
-name = "test-workspace"
+[devspace]
+name = "test-devspace"
 
-[workspace.namespaces]
+[devspace.namespaces]
 default = "@default"
 paths = ["@default"]
 

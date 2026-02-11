@@ -1,6 +1,6 @@
-[workspace]
+[devspace]
 name = "minimal"
 
-[workspace.namespaces]
+[devspace.namespaces]
 default = "@default"
 paths = ["@default"]
