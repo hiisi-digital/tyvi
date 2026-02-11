@@ -1,0 +1,29 @@
+[[relationship]]
+with = "ctx://person/viktor"
+type = "frequent-collaborator"
+status = "active"
+since = "2024-06-01"
+
+[relationship.dynamic]
+summary = "Strong technical collaborators on type system design"
+strengths = ["code review", "architecture"]
+friction = ["deployment timing"]
+
+[[relationship.log]]
+timestamp = "2024-06-01T00:00:00Z"
+event = "established"
+note = "Started working together on type system"
+
+[[relationship]]
+with = "ctx://person/sam"
+type = "mentor"
+status = "dormant"
+since = "2023-01-15"
+
+[relationship.dynamic]
+summary = "Mentored sam on Rust ecosystem"
+
+[[relationship.log]]
+timestamp = "2023-01-15T00:00:00Z"
+event = "established"
+note = "Began mentoring relationship"
