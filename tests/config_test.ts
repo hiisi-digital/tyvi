@@ -4,14 +4,14 @@
 
 import { assertEquals, assertExists, assertRejects, assertThrows } from "@std/assert";
 import { join } from "@std/path";
-import { loadWorkspace, parseInventoryConfig, parseWorkspaceConfig } from "../src/config/mod.ts";
+import { loadDevspace, parseDevspaceConfig, parseInventoryConfig } from "../src/config/mod.ts";
 
-Deno.test("parseWorkspaceConfig - valid config", () => {
+Deno.test("parseDevspaceConfig - valid config", () => {
   const content = `
-[workspace]
-name = "test-workspace"
+[devspace]
+name = "test-devspace"
 
-[workspace.namespaces]
+[devspace.namespaces]
 default = "@default"
 paths = ["@default", "@other"]
 
@@ -19,37 +19,37 @@ paths = ["@default", "@other"]
 clone_method = "ssh"
 `;
 
-  const config = parseWorkspaceConfig(content);
+  const config = parseDevspaceConfig(content);
 
-  assertEquals(config.devspace.name, "test-workspace");
+  assertEquals(config.devspace.name, "test-devspace");
   assertEquals(config.devspace.namespaces?.default, "@default");
   assertEquals(config.devspace.namespaces?.paths, ["@default", "@other"]);
   assertEquals(config.defaults?.clone_method, "ssh");
 });
 
-Deno.test("parseWorkspaceConfig - missing devspace section", () => {
+Deno.test("parseDevspaceConfig - missing devspace section", () => {
   const content = `
 [defaults]
 clone_method = "ssh"
 `;
 
   assertThrows(
-    () => parseWorkspaceConfig(content),
+    () => parseDevspaceConfig(content),
     Error,
     "missing [devspace] section",
   );
 });
 
-Deno.test("parseWorkspaceConfig - missing name", () => {
+Deno.test("parseDevspaceConfig - missing name", () => {
   const content = `
-[workspace]
-[workspace.namespaces]
+[devspace]
+[devspace.namespaces]
 default = "@default"
 paths = ["@default"]
 `;
 
   assertThrows(
-    () => parseWorkspaceConfig(content),
+    () => parseDevspaceConfig(content),
     Error,
     "missing required 'name' field",
   );
@@ -113,35 +113,35 @@ remotes = [{ name = "origin", url = "git@github.com:test/repo.git" }]
   assertEquals(config.repos[0]?.keep_in_sync, false);
 });
 
-Deno.test("loadWorkspace - valid workspace", async () => {
-  const fixturePath = join(Deno.cwd(), "tests", "fixtures", "valid-workspace");
-  const workspace = await loadWorkspace(fixturePath);
+Deno.test("loadDevspace - valid devspace", async () => {
+  const fixturePath = join(Deno.cwd(), "tests", "fixtures", "valid-devspace");
+  const devspace = await loadDevspace(fixturePath);
 
-  assertExists(workspace);
-  assertEquals(workspace.config.devspace.name, "test-workspace");
-  assertEquals(workspace.namespaces.size, 1);
+  assertExists(devspace);
+  assertEquals(devspace.config.devspace.name, "test-devspace");
+  assertEquals(devspace.namespaces.size, 1);
 
-  const inventory = workspace.namespaces.get("@default");
+  const inventory = devspace.namespaces.get("@default");
   assertExists(inventory);
   assertEquals(inventory.repos.length, 2);
 });
 
-Deno.test("loadWorkspace - minimal workspace", async () => {
-  const fixturePath = join(Deno.cwd(), "tests", "fixtures", "minimal-workspace");
-  const workspace = await loadWorkspace(fixturePath);
+Deno.test("loadDevspace - minimal devspace", async () => {
+  const fixturePath = join(Deno.cwd(), "tests", "fixtures", "minimal-devspace");
+  const devspace = await loadDevspace(fixturePath);
 
-  assertExists(workspace);
-  assertEquals(workspace.config.devspace.name, "minimal");
+  assertExists(devspace);
+  assertEquals(devspace.config.devspace.name, "minimal");
 
-  const inventory = workspace.namespaces.get("@default");
+  const inventory = devspace.namespaces.get("@default");
   assertExists(inventory);
   assertEquals(inventory.repos.length, 1);
   assertEquals(inventory.repos[0]?.name, "minimal-repo");
 });
 
-Deno.test("loadWorkspace - not found", async () => {
+Deno.test("loadDevspace - not found", async () => {
   await assertRejects(
-    async () => await loadWorkspace("/nonexistent/path"),
+    async () => await loadDevspace("/nonexistent/path"),
     Error,
     "No tyvi.toml found",
   );

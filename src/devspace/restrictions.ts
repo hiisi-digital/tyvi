@@ -115,7 +115,7 @@ export function getBlockedMessage(
     "",
     "Allowed locations:",
     `  ${rootPath}    (project root only)`,
-    `  ${labPath}     (live workspace)`,
+    `  ${labPath}     (lab)`,
   ];
 
   // Add whitelist paths if any
