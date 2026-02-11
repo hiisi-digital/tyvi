@@ -38,9 +38,12 @@ export type {
   RepoStatus,
   RepoWithStatus,
   ScanResult,
+  ShellIntegration,
   SyncOptions,
   SyncResult,
   UnloadResult,
+  ValidationIssue,
+  ValidationResult,
 } from "./devspace.ts";
 
 // Atom types (traits, skills, quirks, phrases)
