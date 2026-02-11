@@ -132,6 +132,7 @@ export type {
   Scope,
   ScopeChain,
   ScopeLevel,
+  ShellIntegration,
   SimilarityResult,
   Skill,
   SkillLevels,
@@ -144,6 +145,8 @@ export type {
   TraitAxis,
   UnloadResult,
   UriScheme,
+  ValidationIssue,
+  ValidationResult,
   ValidationSchedule,
   ValueTrace,
   VisibilityGrant,
@@ -174,6 +177,23 @@ export { checkGitAllowed, getBlockedMessage } from "./src/devspace/mod.ts";
 
 // Re-export migration operations
 export { deleteEntry, migrateRepo, scanDirectory, suggestNamespace } from "./src/devspace/mod.ts";
+
+// Re-export shell integration
+export {
+  appendToRcFile,
+  detectShell,
+  generateShellInit,
+  writeShellInit,
+} from "./src/devspace/mod.ts";
+
+// Re-export direnv integration
+export { allowDirenv, generateEnvrc, hasDirenv, writeEnvrc } from "./src/devspace/mod.ts";
+
+// Re-export git hooks
+export { generateHook, hasHooks, installHooks, removeHooks } from "./src/devspace/mod.ts";
+
+// Re-export validation
+export { validateGuards } from "./src/devspace/mod.ts";
 
 // Re-export git utilities
 export { getCurrentBranch, getGitStatus, isGitRepo } from "./src/git/mod.ts";
@@ -302,6 +322,16 @@ export {
   reinforceMemory,
   toMemorySummary,
 } from "./src/memory/mod.ts";
+
+// ============================================================================
+// Relationship Operations
+// ============================================================================
+
+export {
+  addRelationshipLogEntry,
+  listRelationships,
+  loadRelationships,
+} from "./src/relationships/mod.ts";
 
 // ============================================================================
 // Context Operations
