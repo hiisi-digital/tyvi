@@ -156,30 +156,54 @@ Implementation tasks for the core library.
 
 ---
 
-## Phase 7: Devspace Operations
-
-**Enhance existing:** `src/workspace/` → rename to `src/devspace/`
+## Phase 7: Devspace Operations ✓
 
 ### Rename and Restructure
 
-- [ ] Rename src/workspace/ to src/devspace/
-- [ ] Update all imports
-- [ ] Rename functions to use "devspace" terminology
+- [x] Rename src/workspace/ to src/devspace/
+- [x] Update all imports
+- [x] Rename functions to use "devspace" terminology
 
-### New Operations
+### Core Operations
 
-- [ ] `load(devspace, pattern)` — Move repos from staging to lab
-- [ ] `unload(devspace, pattern)` — Move repos from lab to staging
-- [ ] `checkGitAllowed(devspace, path)` — Check git policy
-- [ ] `getDevspaceHint(devspace)` — Get guidance message
-- [ ] `findDevspaceRoot(from)` — Find devspace root directory
+- [x] `load(devspace, pattern)` — Move repos from staging to lab (symlink)
+- [x] `unload(devspace, pattern)` — Move repos from lab to staging
+- [x] `checkGitAllowed(devspace, path)` — Check git policy
+- [x] `getBlockedMessage(devspace, path)` — Get guidance message
+- [x] `findDevspaceRoot(from)` — Find devspace root directory
+- [x] `getStatus(devspace)` — Get status of all repos
+- [x] `listRepos(devspace)` — List repos without git checks
+- [x] `clone(devspace, options)` — Clone repos to staging
+- [x] `sync(devspace, options)` — Synchronize devspace
+- [x] `addRepo(devspace, url, options)` — Add repo to inventory
+- [x] `removeRepo(devspace, name, options)` — Remove repo from inventory
 
 ### State Management
 
-- [ ] Create .state/ directory handling
-- [ ] Implement lab.toml read/write
-- [ ] Implement ext.toml read/write
-- [ ] Track loaded repos with timestamps
+- [x] Create .state/ directory handling
+- [x] Implement lab.toml read/write
+- [x] Implement ext.toml read/write
+- [x] Track loaded repos with timestamps
+
+### Git Guard Integration
+
+- [x] Shell integration (detectShell, generateShellInit, writeShellInit, appendToRcFile)
+- [x] direnv integration (hasDirenv, generateEnvrc, writeEnvrc, allowDirenv)
+- [x] Git hooks (generateHook, hasHooks, installHooks, removeHooks)
+- [x] Guard validation (validateGuards)
+
+### Migration Operations
+
+- [x] `scanDirectory` — Discover entries in a directory
+- [x] `migrateRepo` — Move/copy repo to staging + inventory
+- [x] `suggestNamespace` — Infer namespace from remote URL
+- [x] `deleteEntry` — Remove unwanted entries
+
+### Relationship Operations
+
+- [x] `loadRelationships` — Load per-person relationships
+- [x] `listRelationships` — Query relationships with filters
+- [x] `addRelationshipLogEntry` — Append events to relationship log
 
 ---
 
@@ -224,7 +248,7 @@ Implementation tasks for the core library.
 
 ## Test Summary
 
-**Total: 247 passing tests**
+**Total: 340 passing tests**
 
 | Module                     | Tests |
 | -------------------------- | ----- |
@@ -233,11 +257,14 @@ Implementation tasks for the core library.
 | Computation (evaluator)    | 78    |
 | Computation (dependencies) | 27    |
 | Atoms                      | 14    |
-| People                     | 7     |
+| People                     | 13    |
 | Memory                     | 15    |
 | Context                    | 40    |
 | Config                     | 9     |
-| Workspace                  | 2     |
+| Devspace (operations)      | 28    |
+| Devspace (migration)       | 18    |
+| Devspace (guards)          | 34    |
+| Relationships              | 9     |
 
 ---
 

@@ -172,9 +172,8 @@ Before writing ANY code:
 
 ## Current State
 
-Phases 1–6 are complete (types, computation engine, atoms, people, memory, context — 247 passing
-tests). Phase 7 (devspace operations — load/unload, state management, git policy) is in progress.
-See `docs/TODO.md` for full details.
+Phases 1–7 are complete (types, computation engine, atoms, people, memory, context, devspace
+operations — 340 passing tests). Phase 8 (schemas) is next. See `docs/TODO.md` for full details.
 
 ## Related Repos
 
