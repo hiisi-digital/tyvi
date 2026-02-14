@@ -1,6 +1,6 @@
 {
   "name": "@hiisi/tyvi",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "exports": "./mod.ts",
   "publish": {
     "include": [
@@ -32,9 +32,13 @@
   },
   "lint": {
     "rules": {
-      "tags": ["recommended"]
+      "tags": [
+        "recommended"
+      ]
     },
-    "exclude": ["tests/fixtures/Library/"]
+    "exclude": [
+      "tests/fixtures/Library/"
+    ]
   },
   "fmt": {
     "useTabs": false,
