@@ -30,7 +30,7 @@ jobs:
         run: deno check mod.ts
 
       - name: Run tests
-        run: deno test --allow-read --allow-write --allow-run --coverage=coverage
+        run: deno test --allow-read --allow-write --allow-run --allow-env --coverage=coverage
 
       - name: Generate coverage report
         run: deno coverage coverage --lcov > coverage.lcov
