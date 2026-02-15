@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schemas/skill.schema.json",
+  "title": "Skill",
+  "description": "A skill definition representing technical capability (0-100). Also applicable to experience and stack atoms which share the same structure.",
+  "type": "object",
+  "required": ["skill"],
+  "properties": {
+    "skill": {
+      "$ref": "#/definitions/SkillBody"
+    }
+  },
+  "definitions": {
+    "SkillBody": {
+      "type": "object",
+      "description": "Skill definition body.",
+      "required": ["id", "category", "description", "levels"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier (e.g., \"skill.type-system-design\").",
+          "pattern": "^(skill|exp|stack)\\."
+        },
+        "category": {
+          "type": "string",
+          "description": "Category (e.g., \"architecture\", \"implementation\", \"language\")."
+        },
+        "description": {
+          "$ref": "#/definitions/Description"
+        },
+        "levels": {
+          "$ref": "#/definitions/Levels"
+        },
+        "composition": {
+          "$ref": "#/definitions/Composition"
+        }
+      }
+    },
+    "Description": {
+      "type": "object",
+      "description": "Name and summary for the skill.",
+      "required": ["name", "summary"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "summary": {
+          "type": "string",
+          "description": "Short summary of the skill."
+        }
+      }
+    },
+    "Levels": {
+      "type": "object",
+      "description": "Level descriptions at 0, 20, 40, 60, 80, 100.",
+      "required": ["0", "20", "40", "60", "80", "100"],
+      "properties": {
+        "0": {
+          "type": "string",
+          "description": "Level 0: No knowledge."
+        },
+        "20": {
+          "type": "string",
+          "description": "Level 20: Basic familiarity."
+        },
+        "40": {
+          "type": "string",
+          "description": "Level 40: Comfortable usage."
+        },
+        "60": {
+          "type": "string",
+          "description": "Level 60: Advanced usage."
+        },
+        "80": {
+          "type": "string",
+          "description": "Level 80: Expert level."
+        },
+        "100": {
+          "type": "string",
+          "description": "Level 100: World-class mastery."
+        }
+      }
+    },
+    "Composition": {
+      "type": "object",
+      "description": "Composition rules that derive values from other values.",
+      "required": ["rule"],
+      "properties": {
+        "rule": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CompositionRule"
+          }
+        }
+      }
+    },
+    "CompositionRule": {
+      "type": "object",
+      "description": "A single composition rule.",
+      "required": ["description", "expression", "weight"],
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of what this rule does."
+        },
+        "expression": {
+          "type": "string",
+          "description": "Expression to evaluate (e.g., \"skill.api-design * 0.3\")."
+        },
+        "weight": {
+          "type": "number",
+          "description": "Weight of this rule in the final computation (0-1).",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  }
+}

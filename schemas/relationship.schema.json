@@ -1,0 +1,146 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schemas/relationship.schema.json",
+  "title": "Relationship Collection",
+  "description": "A collection of relationships for a person. Relationships track connections between people with type, dynamic, and history.",
+  "type": "object",
+  "required": ["relationship"],
+  "properties": {
+    "relationship": {
+      "type": "array",
+      "description": "All relationships for this person.",
+      "items": {
+        "$ref": "#/definitions/RelationshipEntry"
+      }
+    }
+  },
+  "definitions": {
+    "RelationshipEntry": {
+      "type": "object",
+      "description": "A single relationship definition.",
+      "required": ["with", "type", "status", "since", "dynamic", "log"],
+      "properties": {
+        "with": {
+          "type": "string",
+          "description": "ctx:// reference to the other person.",
+          "pattern": "^ctx://"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of relationship.",
+          "enum": [
+            "mentor",
+            "mentee",
+            "frequent-collaborator",
+            "occasional-collaborator",
+            "productive-tension",
+            "complementary",
+            "historical",
+            "new"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "description": "Current status.",
+          "enum": ["active", "dormant", "ended"]
+        },
+        "since": {
+          "type": "string",
+          "description": "ISO date when relationship began."
+        },
+        "dynamic": {
+          "$ref": "#/definitions/RelationshipDynamic"
+        },
+        "log": {
+          "type": "array",
+          "description": "History log.",
+          "items": {
+            "$ref": "#/definitions/RelationshipLogEntry"
+          }
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional notes."
+        }
+      }
+    },
+    "RelationshipDynamic": {
+      "type": "object",
+      "description": "Dynamic aspects of a relationship.",
+      "required": ["summary"],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "Summary of the relationship dynamic."
+        },
+        "strengths": {
+          "type": "array",
+          "description": "Areas where the relationship is strong.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "friction": {
+          "type": "array",
+          "description": "Areas of friction or tension.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "areas": {
+          "type": "array",
+          "description": "Focus areas of collaboration.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "complements": {
+          "type": "array",
+          "description": "Complementary skills/traits.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "RelationshipLogEntry": {
+      "type": "object",
+      "description": "Log entry for relationship events.",
+      "required": ["timestamp", "event", "note"],
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "description": "ISO timestamp of the event.",
+          "format": "date-time"
+        },
+        "event": {
+          "type": "string",
+          "description": "Type of event.",
+          "enum": [
+            "established",
+            "collaboration",
+            "tension",
+            "resolution",
+            "growth",
+            "milestone",
+            "shift",
+            "ended"
+          ]
+        },
+        "note": {
+          "type": "string",
+          "description": "Description of the event."
+        },
+        "memory_ref": {
+          "type": "string",
+          "description": "Reference to a related memory (ctx://)."
+        },
+        "impact": {
+          "type": "string",
+          "description": "Impact on relationship.",
+          "enum": ["positive", "negative", "neutral"]
+        }
+      }
+    }
+  }
+}

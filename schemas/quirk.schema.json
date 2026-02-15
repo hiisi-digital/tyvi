@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schemas/quirk.schema.json",
+  "title": "Quirk",
+  "description": "A quirk definition - binary personality markers that are either present or absent.",
+  "type": "object",
+  "required": ["quirk"],
+  "properties": {
+    "quirk": {
+      "$ref": "#/definitions/QuirkBody"
+    }
+  },
+  "definitions": {
+    "QuirkBody": {
+      "type": "object",
+      "description": "Quirk definition body.",
+      "required": ["id", "description", "manifestations"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier (e.g., \"quirk.edge-case-hunter\").",
+          "pattern": "^quirk\\."
+        },
+        "description": {
+          "$ref": "#/definitions/Description"
+        },
+        "manifestations": {
+          "$ref": "#/definitions/Manifestations"
+        },
+        "auto_assign": {
+          "$ref": "#/definitions/AutoAssign"
+        },
+        "overdone": {
+          "$ref": "#/definitions/Overdone"
+        }
+      }
+    },
+    "Description": {
+      "type": "object",
+      "description": "Name and summary for the quirk.",
+      "required": ["name", "summary"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "summary": {
+          "type": "string",
+          "description": "Short summary of the quirk."
+        }
+      }
+    },
+    "Manifestations": {
+      "type": "object",
+      "description": "Observable behaviors of the quirk.",
+      "required": ["behaviors"],
+      "properties": {
+        "behaviors": {
+          "type": "array",
+          "description": "List of observable behaviors.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "AutoAssign": {
+      "type": "object",
+      "description": "Conditions for automatically assigning this quirk based on trait/skill values.",
+      "properties": {
+        "any_of": {
+          "type": "array",
+          "description": "Any condition being true triggers assignment.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "all_of": {
+          "type": "array",
+          "description": "All conditions must be true for assignment.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Overdone": {
+      "type": "object",
+      "description": "Warning about when this quirk is overdone.",
+      "required": ["note"],
+      "properties": {
+        "note": {
+          "type": "string",
+          "description": "Description of negative effects when the quirk dominates."
+        }
+      }
+    }
+  }
+}

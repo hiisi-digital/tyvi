@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schemas/trait-axis.schema.json",
+  "title": "Trait Axis",
+  "description": "A trait axis definition with bipolar spectrum (-100 to +100). Traits are the personality building blocks of tyvi.",
+  "type": "object",
+  "required": ["trait"],
+  "properties": {
+    "trait": {
+      "type": "object",
+      "required": ["axis"],
+      "properties": {
+        "axis": {
+          "$ref": "#/definitions/TraitAxis"
+        },
+        "composition": {
+          "$ref": "#/definitions/Composition"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "TraitAxis": {
+      "type": "object",
+      "description": "Definition of a trait axis with negative, neutral, and positive poles.",
+      "required": ["id", "negative", "neutral", "positive"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier (e.g., \"trait.caution\").",
+          "pattern": "^trait\\."
+        },
+        "negative": {
+          "$ref": "#/definitions/AxisPoint",
+          "description": "Negative end of the axis (-100 to -30)."
+        },
+        "neutral": {
+          "$ref": "#/definitions/AxisPoint",
+          "description": "Neutral point of the axis (-30 to +30)."
+        },
+        "positive": {
+          "$ref": "#/definitions/AxisPoint",
+          "description": "Positive end of the axis (+30 to +100)."
+        }
+      }
+    },
+    "AxisPoint": {
+      "type": "object",
+      "description": "A point on a trait axis spectrum.",
+      "required": ["term", "description"],
+      "properties": {
+        "term": {
+          "type": "string",
+          "description": "Term used for this point (e.g., \"bold\", \"prudent\")."
+        },
+        "extreme": {
+          "type": "string",
+          "description": "Extreme version of the term (optional, for +/-70-100 range)."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of behavior at this point."
+        }
+      }
+    },
+    "Composition": {
+      "type": "object",
+      "description": "Composition rules that derive values from other values.",
+      "required": ["rule"],
+      "properties": {
+        "rule": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CompositionRule"
+          }
+        }
+      }
+    },
+    "CompositionRule": {
+      "type": "object",
+      "description": "A single composition rule.",
+      "required": ["description", "expression", "weight"],
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of what this rule does."
+        },
+        "expression": {
+          "type": "string",
+          "description": "Expression to evaluate (e.g., \"trait.detail-focus * 0.5\")."
+        },
+        "weight": {
+          "type": "number",
+          "description": "Weight of this rule in the final computation (0-1).",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  }
+}

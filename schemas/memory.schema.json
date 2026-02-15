@@ -1,0 +1,186 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schemas/memory.schema.json",
+  "title": "Memory",
+  "description": "A memory definition tracking significant events with exponential decay fading, reinforcement, and tagging for retrieval.",
+  "type": "object",
+  "required": ["memory"],
+  "properties": {
+    "memory": {
+      "$ref": "#/definitions/MemoryBody"
+    }
+  },
+  "definitions": {
+    "MemoryBody": {
+      "type": "object",
+      "description": "Complete memory definition.",
+      "required": ["id", "person", "created", "content", "tags", "strength", "fade", "log"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique ID (e.g., \"alex-oauth-2025-02\")."
+        },
+        "person": {
+          "type": "string",
+          "description": "Person this memory belongs to (ctx:// reference).",
+          "pattern": "^ctx://"
+        },
+        "created": {
+          "type": "string",
+          "description": "ISO timestamp when created.",
+          "format": "date-time"
+        },
+        "content": {
+          "$ref": "#/definitions/MemoryContent"
+        },
+        "tags": {
+          "$ref": "#/definitions/MemoryTags"
+        },
+        "strength": {
+          "$ref": "#/definitions/MemoryStrength"
+        },
+        "fade": {
+          "$ref": "#/definitions/MemoryFade"
+        },
+        "log": {
+          "type": "array",
+          "description": "Event log.",
+          "items": {
+            "$ref": "#/definitions/MemoryLogEntry"
+          }
+        }
+      }
+    },
+    "MemoryContent": {
+      "type": "object",
+      "description": "Content of a memory.",
+      "required": ["summary", "significance"],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "Short summary of the memory."
+        },
+        "detail": {
+          "type": "string",
+          "description": "Detailed description."
+        },
+        "significance": {
+          "type": "string",
+          "description": "Significance level affects base half-life.",
+          "enum": ["low", "medium", "high"]
+        }
+      }
+    },
+    "MemoryTags": {
+      "type": "object",
+      "description": "Metadata tags for retrieval and similarity detection.",
+      "required": ["topics", "people"],
+      "properties": {
+        "topics": {
+          "type": "array",
+          "description": "Topics related to this memory.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "people": {
+          "type": "array",
+          "description": "People involved (ctx:// references).",
+          "items": {
+            "type": "string"
+          }
+        },
+        "outcome": {
+          "type": "string",
+          "description": "Outcome of the event.",
+          "enum": ["positive", "negative", "neutral", "mixed"]
+        },
+        "project": {
+          "type": "string",
+          "description": "Optional project reference."
+        },
+        "custom": {
+          "type": "array",
+          "description": "Additional custom tags.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "MemoryStrength": {
+      "type": "object",
+      "description": "Strength tracking. Decays over time but can be reinforced.",
+      "required": ["initial", "current", "last_reinforced", "reinforcement_count"],
+      "properties": {
+        "initial": {
+          "type": "number",
+          "description": "Initial strength when created (usually 1.0).",
+          "minimum": 0
+        },
+        "current": {
+          "type": "number",
+          "description": "Current strength after decay and reinforcement.",
+          "minimum": 0
+        },
+        "last_reinforced": {
+          "type": "string",
+          "description": "ISO timestamp of last reinforcement.",
+          "format": "date-time"
+        },
+        "reinforcement_count": {
+          "type": "integer",
+          "description": "Number of times reinforced.",
+          "minimum": 0
+        }
+      }
+    },
+    "MemoryFade": {
+      "type": "object",
+      "description": "Fading parameters controlling decay rate.",
+      "required": ["half_life_days", "min_strength"],
+      "properties": {
+        "half_life_days": {
+          "type": "number",
+          "description": "Half-life in days (strength halves every N days).",
+          "minimum": 1
+        },
+        "min_strength": {
+          "type": "number",
+          "description": "Minimum strength floor.",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "MemoryLogEntry": {
+      "type": "object",
+      "description": "Log entry for memory events.",
+      "required": ["timestamp", "event", "note"],
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "description": "ISO timestamp of event.",
+          "format": "date-time"
+        },
+        "event": {
+          "type": "string",
+          "description": "Type of event.",
+          "enum": ["created", "reinforced", "referenced", "related", "updated", "pruned"]
+        },
+        "note": {
+          "type": "string",
+          "description": "Description of the event."
+        },
+        "strength_delta": {
+          "type": "number",
+          "description": "Change in strength (if applicable)."
+        },
+        "related_memory": {
+          "type": "string",
+          "description": "Related memory ID (for reinforcement/relation events)."
+        }
+      }
+    }
+  }
+}

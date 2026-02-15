@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schemas/person.schema.json",
+  "title": "Person",
+  "description": "A person definition with identity, anchor values, and quirk assignments. Contains only what makes a person unique - everything else is computed via composition rules.",
+  "type": "object",
+  "required": ["identity"],
+  "properties": {
+    "identity": {
+      "$ref": "#/definitions/PersonIdentity"
+    },
+    "orgs": {
+      "$ref": "#/definitions/PersonOrgs"
+    },
+    "traits": {
+      "type": "object",
+      "description": "Anchor trait values. Keys are trait names (without 'trait.' prefix), values are -100 to +100.",
+      "additionalProperties": {
+        "type": "number",
+        "minimum": -100,
+        "maximum": 100
+      }
+    },
+    "skills": {
+      "type": "object",
+      "description": "Anchor skill values. Keys are skill names (without 'skill.' prefix), values are 0-100.",
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    "experience": {
+      "type": "object",
+      "description": "Anchor experience values. Keys are experience names (without 'exp.' prefix), values are 0-100.",
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    "stacks": {
+      "type": "object",
+      "description": "Anchor stack values. Keys are stack names (without 'stack.' prefix), values are 0-100.",
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    "quirks": {
+      "$ref": "#/definitions/PersonQuirks"
+    },
+    "tools": {
+      "$ref": "#/definitions/PersonTools"
+    },
+    "custom": {
+      "type": "object",
+      "description": "Custom metadata fields."
+    }
+  },
+  "definitions": {
+    "PersonIdentity": {
+      "type": "object",
+      "description": "A person's identity information.",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique ID (e.g., \"alex\")."
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "pronouns": {
+          "type": "string",
+          "description": "Pronouns (e.g., \"they/them\")."
+        },
+        "github_username": {
+          "type": "string",
+          "description": "GitHub username."
+        }
+      }
+    },
+    "PersonOrgs": {
+      "type": "object",
+      "description": "Organization and team membership.",
+      "required": ["primary"],
+      "properties": {
+        "primary": {
+          "type": "string",
+          "description": "Primary organization (e.g., \"hiisi\")."
+        },
+        "teams": {
+          "type": "array",
+          "description": "Teams within the org.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "PersonQuirks": {
+      "type": "object",
+      "description": "Quirk assignments.",
+      "required": ["explicit"],
+      "properties": {
+        "explicit": {
+          "type": "array",
+          "description": "Explicitly assigned quirk IDs.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "PersonTools": {
+      "type": "object",
+      "description": "Tool permissions.",
+      "required": ["allowed"],
+      "properties": {
+        "allowed": {
+          "type": "array",
+          "description": "Allowed tool names.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

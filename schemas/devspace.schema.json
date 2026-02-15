@@ -1,0 +1,129 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schemas/devspace.schema.json",
+  "title": "Devspace Configuration",
+  "description": "Devspace configuration file (tyvi.toml). Defines the multi-repo development environment managed by tyvi.",
+  "type": "object",
+  "required": ["devspace"],
+  "properties": {
+    "devspace": {
+      "$ref": "#/definitions/DevspaceSection"
+    },
+    "workspace": {
+      "$ref": "#/definitions/DevspaceSection",
+      "description": "Legacy alias for devspace section (backward compatibility)."
+    },
+    "defaults": {
+      "$ref": "#/definitions/DevspaceDefaults"
+    }
+  },
+  "definitions": {
+    "DevspaceSection": {
+      "type": "object",
+      "description": "Devspace section of tyvi.toml.",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Devspace name."
+        },
+        "staging_path": {
+          "type": "string",
+          "description": "Path to staging directory (cold repos)."
+        },
+        "lab_path": {
+          "type": "string",
+          "description": "Path to lab directory (active repos)."
+        },
+        "state_path": {
+          "type": "string",
+          "description": "Path to state directory."
+        },
+        "tmp_path": {
+          "type": "string",
+          "description": "Path to tmp directory."
+        },
+        "ext_path": {
+          "type": "string",
+          "description": "Path for external repo clones."
+        },
+        "trusted_orgs": {
+          "type": "array",
+          "description": "Trusted GitHub organizations.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "namespaces": {
+          "$ref": "#/definitions/DevspaceNamespaces"
+        },
+        "git_policy": {
+          "$ref": "#/definitions/GitPolicy"
+        },
+        "retained_paths": {
+          "type": "array",
+          "description": "Paths to retain during migration (not moved/deleted).",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "DevspaceNamespaces": {
+      "type": "object",
+      "description": "Namespace configuration.",
+      "required": ["default", "paths"],
+      "properties": {
+        "default": {
+          "type": "string",
+          "description": "Default namespace (e.g., \"@default\")."
+        },
+        "paths": {
+          "type": "array",
+          "description": "All namespace paths.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "GitPolicy": {
+      "type": "object",
+      "description": "Git restriction policy.",
+      "required": ["enabled"],
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether git restrictions are enabled."
+        },
+        "allowed_paths": {
+          "type": "array",
+          "description": "Paths where git operations are allowed.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "DevspaceDefaults": {
+      "type": "object",
+      "description": "Default values for devspace operations.",
+      "properties": {
+        "host": {
+          "type": "string",
+          "description": "Default git host."
+        },
+        "clone_method": {
+          "type": "string",
+          "description": "Default clone method.",
+          "enum": ["ssh", "https"]
+        },
+        "fetch_on_status": {
+          "type": "boolean",
+          "description": "Whether to fetch from remotes when checking status."
+        }
+      }
+    }
+  }
+}
