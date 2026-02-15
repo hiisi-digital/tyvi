@@ -351,3 +351,24 @@ export {
   searchContext,
   validateUri,
 } from "./src/context/mod.ts";
+
+// ============================================================================
+// Cache Operations
+// ============================================================================
+
+export {
+  buildSourceHash,
+  createEmptyStorage,
+  getCacheEntry,
+  hashDirectory,
+  hashFile,
+  pruneOldEntries,
+  readCache,
+  removeCacheEntry,
+  setCacheEntry,
+  shouldRunValidation,
+  validateEntry,
+  validateStorage,
+  verifySourceHash,
+  writeCache,
+} from "./src/cache/mod.ts";

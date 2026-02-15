@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schemas/phrase.schema.json",
+  "title": "Phrase",
+  "description": "A phrase definition for conditional communication flavor. Phrases describe how a person communicates when conditions are met.",
+  "type": "object",
+  "required": ["phrase"],
+  "properties": {
+    "phrase": {
+      "$ref": "#/definitions/PhraseBody"
+    }
+  },
+  "definitions": {
+    "PhraseBody": {
+      "type": "object",
+      "description": "Phrase definition body.",
+      "required": ["id", "description", "examples"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier (e.g., \"phrase.direct-clarity\").",
+          "pattern": "^phrase\\."
+        },
+        "description": {
+          "$ref": "#/definitions/Description"
+        },
+        "conditions": {
+          "$ref": "#/definitions/Conditions"
+        },
+        "examples": {
+          "$ref": "#/definitions/Examples"
+        },
+        "usage": {
+          "$ref": "#/definitions/Usage"
+        }
+      }
+    },
+    "Description": {
+      "type": "object",
+      "description": "Name and summary for the phrase.",
+      "required": ["name", "summary"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "summary": {
+          "type": "string",
+          "description": "Short summary of the phrase style."
+        }
+      }
+    },
+    "Conditions": {
+      "type": "object",
+      "description": "Conditions for when this phrase style applies.",
+      "properties": {
+        "any_of": {
+          "type": "array",
+          "description": "Any condition being true applies this phrase.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "all_of": {
+          "type": "array",
+          "description": "All conditions must be true for this phrase.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Examples": {
+      "type": "object",
+      "description": "Examples of the communication flavor (not literal text to use).",
+      "required": ["variations"],
+      "properties": {
+        "variations": {
+          "type": "array",
+          "description": "Example variations of the phrase style.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "Usage": {
+      "type": "object",
+      "description": "Usage guidance for this phrase.",
+      "required": ["note"],
+      "properties": {
+        "note": {
+          "type": "string",
+          "description": "When and how to apply this phrase style."
+        }
+      }
+    }
+  }
+}

@@ -6,6 +6,7 @@
     "include": [
       "mod.ts",
       "src/**/*.ts",
+      "schemas/**/*.json",
       "README.md",
       "LICENSE"
     ],
