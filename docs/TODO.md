@@ -22,7 +22,7 @@ Implementation tasks for the core library.
 - [x] Create mod.ts entry point
 - [x] Add LICENSE (MPL-2.0)
 - [x] Set up test infrastructure
-- [ ] Configure CI workflow
+- [x] Configure CI workflow
 
 ### Core Types
 
@@ -207,20 +207,52 @@ Implementation tasks for the core library.
 
 ---
 
-## Phase 8: Schemas
+## Phase 8: Schemas ✓
 
-- [ ] Copy schemas/ from tyvi-mcp
-- [ ] Add devspace.schema.json
-- [ ] Add inventory.schema.json
+### JSON Schemas (draft-07)
+
+- [x] trait-axis.schema.json — Trait axis with bipolar spectrum
+- [x] skill.schema.json — Skill/experience/stack definitions (shared structure)
+- [x] quirk.schema.json — Binary personality markers
+- [x] phrase.schema.json — Conditional communication flavor
+- [x] person.schema.json — Person definition with anchor values
+- [x] memory.schema.json — Memory with decay/reinforcement
+- [x] relationship.schema.json — Relationship collections
+- [x] devspace.schema.json — Devspace configuration (tyvi.toml)
+- [x] inventory.schema.json — Inventory configuration (inventory.toml)
+- [x] Added schemas to JSR publish config
 
 ---
 
-## Phase 9: Cache System
+## Phase 9: Cache System ✓
 
-- [ ] Implement cache storage
-- [ ] Content hashing
-- [ ] Cache validation
-- [ ] Export from mod.ts
+### Files Implemented
+
+- [x] `src/cache/hashing.ts` — SHA-256 file/directory hashing, source hash build/verify
+- [x] `src/cache/storage.ts` — JSON-based cache read/write, CRUD for entries
+- [x] `src/cache/validation.ts` — Entry validation, schedule checking, age-based pruning
+- [x] `src/cache/mod.ts` — Module exports
+
+### Public API
+
+- [x] `hashFile(path)` — SHA-256 hash of file contents
+- [x] `hashDirectory(path)` — Deterministic hash of all files in directory
+- [x] `buildSourceHash(file, dataPath, section?)` — Build SourceHash for cache invalidation
+- [x] `verifySourceHash(hash, dataPath)` — Check if source still matches
+- [x] `readCache(cachePath)` / `writeCache(cachePath, storage)` — Persist cache to JSON
+- [x] `getCacheEntry(storage, key)` / `setCacheEntry(...)` / `removeCacheEntry(...)` — CRUD
+- [x] `validateEntry(entry, dataPath)` / `validateStorage(storage, dataPath)` — Verify hashes
+- [x] `shouldRunValidation(schedule, tier)` — Check validation schedule
+- [x] `pruneOldEntries(storage, maxAgeMs)` — Remove stale entries
+
+### Tests
+
+- [x] Cache tests (22 tests)
+
+### Note
+
+Cache primitives only. Integration into existing functions (loadAtoms, computePerson, etc.) is
+deferred until dogfooding identifies real bottlenecks.
 
 ---
 
@@ -240,15 +272,15 @@ Implementation tasks for the core library.
 
 ### CI/CD
 
-- [ ] GitHub Actions workflow
-- [ ] Test on PR
-- [ ] Publish to JSR
+- [x] GitHub Actions CI workflow (test on push/PR)
+- [x] Release workflow (manual dispatch → JSR publish)
+- [x] Published to JSR as @hiisi/tyvi
 
 ---
 
 ## Test Summary
 
-**Total: 340 passing tests**
+**Total: 392 passing tests**
 
 | Module                     | Tests |
 | -------------------------- | ----- |
@@ -258,13 +290,14 @@ Implementation tasks for the core library.
 | Computation (dependencies) | 27    |
 | Atoms                      | 14    |
 | People                     | 13    |
-| Memory                     | 15    |
+| Memory                     | 18    |
 | Context                    | 40    |
-| Config                     | 9     |
-| Devspace (operations)      | 28    |
+| Config                     | 13    |
+| Devspace (operations)      | 39    |
 | Devspace (migration)       | 18    |
-| Devspace (guards)          | 34    |
-| Relationships              | 9     |
+| Devspace (guards)          | 42    |
+| Relationships              | 13    |
+| Cache                      | 22    |
 
 ---
 
@@ -280,13 +313,12 @@ Implementation tasks for the core library.
 
 ### Dependencies
 
-Only Deno std library:
+Deno std library plus one external:
 
 - `@std/path` — Path utilities
 - `@std/fs` — File system utilities
 - `@std/toml` — TOML parsing
-
-No external dependencies.
+- `moo` — Lexer tokenization (computation engine)
 
 ---
 
