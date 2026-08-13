@@ -1,6 +1,7 @@
 # tyvi
 
-Core library for devspace orchestration, people computation, and context management.
+Core library for devspace orchestration, people computation, memory systems, and context
+resolution.
 
 The name comes from Finnish "tyvi" meaning "base" or "trunk"; the foundational part from which
 branches grow.
@@ -20,22 +21,11 @@ illustration.
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                      tyvi (this package)                        │
-│                                                                 │
-│   Core library: types, computation, people, memory, devspace    │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-        ▲                                       ▲
-        │ imports                               │ imports
-        │                                       │
-┌───────┴───────────┐                ┌─────────┴─────────┐
-│     tyvi-cli      │                │     tyvi-mcp      │
-│                   │                │                   │
-│  CLI for humans   │                │  MCP for AI agents│
-└───────────────────┘                └───────────────────┘
-```
+`tyvi` is the core package: types, computation engine, people, memory, context, and devspace
+operations. Two thin wrappers import it: [`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli)
+(CLI for humans) and [`tyvi-mcp`](https://github.com/hiisi-digital/tyvi-mcp) (MCP server for AI
+agents). All logic lives here; the wrappers only translate between their interface and this
+library's API.
 
 ## Installation
 
@@ -141,7 +131,8 @@ devspace/
 │   └── @myorg/
 │       └── my-app/
 ├── .state/                # Runtime state
-│   └── lab.toml
+│   ├── lab.toml
+│   └── ext.toml
 └── .lab/                  # Active repos (flat, git allowed)
     ├── my-app/
     └── shared-lib/
@@ -218,8 +209,8 @@ tyvi status --dirty         # Only repos with uncommitted changes
 
 ## Related Packages
 
-- [`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli) — CLI interface for human interaction
-- [`tyvi-mcp`](https://github.com/hiisi-digital/tyvi-mcp) — MCP server for AI agent interaction
+- [`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli): CLI interface for human interaction
+- [`tyvi-mcp`](https://github.com/hiisi-digital/tyvi-mcp): MCP server for AI agent interaction
 
 ## Support
 
