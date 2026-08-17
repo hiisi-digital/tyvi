@@ -1,7 +1,6 @@
 # tyvi
 
-Core library for devspace orchestration, people computation, memory systems, and context
-resolution.
+Core library for devspace orchestration, people computation, memory systems, and context resolution.
 
 The name comes from Finnish "tyvi" meaning "base" or "trunk"; the foundational part from which
 branches grow.
@@ -22,12 +21,11 @@ illustration.
 ## Architecture
 
 `tyvi` is the core package: types, the computation engine, atoms, people, memory, relationships,
-context, cache, git utilities, and devspace operations. Every one of those has a module under
-`src/` and is re-exported from `mod.ts`.
-Two thin wrappers import it: [`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli)
-(CLI for humans) and [`tyvi-mcp`](https://github.com/hiisi-digital/tyvi-mcp) (MCP server for AI
-agents). All logic lives here; the wrappers only translate between their interface and this
-library's API.
+context, cache, git utilities, and devspace operations. Every one of those has a module under `src/`
+and is re-exported from `mod.ts`. Two thin wrappers import it:
+[`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli) (CLI for humans) and
+[`tyvi-mcp`](https://github.com/hiisi-digital/tyvi-mcp) (MCP server for AI agents). All logic lives
+here; the wrappers only translate between their interface and this library's API.
 
 ## Installation
 
