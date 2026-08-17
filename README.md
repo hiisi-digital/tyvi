@@ -22,10 +22,10 @@ illustration.
 
 `tyvi` is the core package: types, the computation engine, atoms, people, memory, relationships,
 context, cache, git utilities, and devspace operations. Every one of those has a module under `src/`
-and is re-exported from `mod.ts`. Two thin wrappers import it:
-[`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli) (CLI for humans) and
-[`tyvi-mcp`](https://github.com/hiisi-digital/tyvi-mcp) (MCP server for AI agents). All logic lives
-here; the wrappers only translate between their interface and this library's API.
+and is re-exported from `mod.ts`. One thin wrapper imports it today,
+[`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli) (CLI for humans). A second, `tyvi-mcp` (MCP
+server for AI agents), is planned and not yet published. All logic lives here; the wrappers only
+translate between their interface and this library's API.
 
 ## Installation
 
@@ -213,7 +213,7 @@ tyvi status --dirty         # Only repos with uncommitted changes
 ## Related Packages
 
 - [`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli): CLI interface for human interaction
-- [`tyvi-mcp`](https://github.com/hiisi-digital/tyvi-mcp): MCP server for AI agent interaction
+- `tyvi-mcp`: MCP server for AI agent interaction (planned, not yet published)
 
 ## Support
 
