@@ -21,8 +21,10 @@ illustration.
 
 ## Architecture
 
-`tyvi` is the core package: types, computation engine, people, memory, context, and devspace
-operations. Two thin wrappers import it: [`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli)
+`tyvi` is the core package: types, the computation engine, atoms, people, memory, relationships,
+context, cache, git utilities, and devspace operations. Every one of those has a module under
+`src/` and is re-exported from `mod.ts`.
+Two thin wrappers import it: [`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli)
 (CLI for humans) and [`tyvi-mcp`](https://github.com/hiisi-digital/tyvi-mcp) (MCP server for AI
 agents). All logic lives here; the wrappers only translate between their interface and this
 library's API.
@@ -54,6 +56,7 @@ This creates:
 
 - `tyvi.toml` with devspace settings
 - `@default/inventory.toml` as a starting point
+- the `.staging`, `.lab`, `.state`, and `.tmp` directories
 
 ### 2. Add repositories to inventory
 
@@ -133,7 +136,8 @@ devspace/
 ├── .state/                # Runtime state
 │   ├── lab.toml
 │   └── ext.toml
-└── .lab/                  # Active repos (flat, git allowed)
+├── .tmp/                  # Scratch space, external clones under .tmp/ext
+└── .lab/                  # Active repos (flat symlinks into staging, git allowed)
     ├── my-app/
     └── shared-lib/
 ```
@@ -150,6 +154,7 @@ name = "my-devspace"
 staging_path = ".staging"
 lab_path = ".lab"
 state_path = ".state"
+tmp_path = ".tmp"
 
 [devspace.namespaces]
 default = "@myorg"
