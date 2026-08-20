@@ -60,6 +60,7 @@ src/
 ├── people/             # Person computation pipeline: load anchors → apply rules → computed person
 ├── memory/             # Memory system: storage, exponential decay fading, reinforcement, similarity
 ├── context/            # URI-based context resolution (ctx:// scheme) with scope hierarchy + fallback
+├── relationships/      # Relationship collections, filtering, log entries
 ├── devspace/           # Devspace operations: load, unload, clone, sync, git policy
 ├── config/             # TOML config parsing (tyvi.toml, inventory.toml)
 ├── git/                # Git operations (clone, status, remote)
@@ -130,12 +131,15 @@ All behavior defined in TOML config files. No magic, no implicit behavior, no hi
 
 ## Dependencies
 
-Only Deno std library plus `moo` for lexing:
+Runtime code uses the Deno std library plus `moo` for lexing:
 
-- `@std/path` — Path utilities
-- `@std/fs` — File system utilities
-- `@std/toml` — TOML parsing
-- `moo` — Lexer tokenization
+- `@std/path`: path utilities
+- `@std/fs`: file system utilities
+- `@std/toml`: TOML parsing
+- `moo`: lexer tokenization
+
+Tests use `@std/assert`. The `@hiisi/viola*` entries in `deno.json` back the `lint:viola` task and
+`viola.config.ts`; no module under `src/` imports them.
 
 Do not add new dependencies without explicit approval.
 
@@ -172,8 +176,9 @@ Before writing ANY code:
 
 ## Current State
 
-Phases 1–7 are complete (types, computation engine, atoms, people, memory, context, devspace
-operations — 340 passing tests). Phase 8 (schemas) is next. See `docs/TODO.md` for full details.
+Phases 1 to 9 are complete: types, computation engine, atoms, people, memory, context, devspace
+operations, the JSON schemas under `schemas/`, and the cache system. The suite is 392 passing tests.
+Phase 10 (documentation and polish) is open. See `docs/TODO.md` for full details.
 
 ## Related Repos
 

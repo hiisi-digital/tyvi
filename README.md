@@ -1,6 +1,6 @@
 # tyvi
 
-Core library for devspace orchestration, people computation, and context management.
+Core library for devspace orchestration, people computation, memory systems, and context resolution.
 
 The name comes from Finnish "tyvi" meaning "base" or "trunk"; the foundational part from which
 branches grow.
@@ -20,22 +20,12 @@ illustration.
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                      tyvi (this package)                        │
-│                                                                 │
-│   Core library: types, computation, people, memory, devspace    │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-        ▲                                       ▲
-        │ imports                               │ imports
-        │                                       │
-┌───────┴───────────┐                ┌─────────┴─────────┐
-│     tyvi-cli      │                │     tyvi-mcp      │
-│                   │                │                   │
-│  CLI for humans   │                │  MCP for AI agents│
-└───────────────────┘                └───────────────────┘
-```
+`tyvi` is the core package: types, the computation engine, atoms, people, memory, relationships,
+context, cache, git utilities, and devspace operations. Every one of those has a module under `src/`
+and is re-exported from `mod.ts`. One thin wrapper imports it today,
+[`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli) (CLI for humans). A second, `tyvi-mcp` (MCP
+server for AI agents), is planned and not yet published. All logic lives here; the wrappers only
+translate between their interface and this library's API.
 
 ## Installation
 
@@ -64,6 +54,7 @@ This creates:
 
 - `tyvi.toml` with devspace settings
 - `@default/inventory.toml` as a starting point
+- the `.staging`, `.lab`, `.state`, and `.tmp` directories
 
 ### 2. Add repositories to inventory
 
@@ -141,8 +132,10 @@ devspace/
 │   └── @myorg/
 │       └── my-app/
 ├── .state/                # Runtime state
-│   └── lab.toml
-└── .lab/                  # Active repos (flat, git allowed)
+│   ├── lab.toml
+│   └── ext.toml
+├── .tmp/                  # Scratch space, external clones under .tmp/ext
+└── .lab/                  # Active repos (flat symlinks into staging, git allowed)
     ├── my-app/
     └── shared-lib/
 ```
@@ -159,6 +152,7 @@ name = "my-devspace"
 staging_path = ".staging"
 lab_path = ".lab"
 state_path = ".state"
+tmp_path = ".tmp"
 
 [devspace.namespaces]
 default = "@myorg"
@@ -218,8 +212,8 @@ tyvi status --dirty         # Only repos with uncommitted changes
 
 ## Related Packages
 
-- [`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli) — CLI interface for human interaction
-- [`tyvi-mcp`](https://github.com/hiisi-digital/tyvi-mcp) — MCP server for AI agent interaction
+- [`tyvi-cli`](https://github.com/hiisi-digital/tyvi-cli): CLI interface for human interaction
+- `tyvi-mcp`: MCP server for AI agent interaction (planned, not yet published)
 
 ## Support
 

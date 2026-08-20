@@ -22,7 +22,6 @@ Implementation tasks for the core library.
 - [x] Create mod.ts entry point
 - [x] Add LICENSE (MPL-2.0)
 - [x] Set up test infrastructure
-- [x] Configure CI workflow
 
 ### Core Types
 
@@ -272,9 +271,10 @@ deferred until dogfooding identifies real bottlenecks.
 
 ### CI/CD
 
-- [x] GitHub Actions CI workflow (test on push/PR)
-- [x] Release workflow (manual dispatch → JSR publish)
 - [x] Published to JSR as @hiisi/tyvi
+
+Both GitHub Actions workflows were removed in 98ef99a. Checks and the JSR publish run from a dev
+machine that already holds the tokens and the toolchain.
 
 ---
 

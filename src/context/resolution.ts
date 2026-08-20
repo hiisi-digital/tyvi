@@ -188,10 +188,11 @@ export async function canResolve(dataPath: string, uri: string): Promise<boolean
 }
 
 /**
- * Resolve multiple URIs in batch.
+ * Resolve multiple URIs, collecting the ones that resolve.
  *
- * More efficient than resolving one at a time when multiple URIs
- * need to be resolved from the same context.
+ * Each URI is resolved independently and in order; there is no shared work
+ * between them. Unlike `resolveContext`, a URI that fails to resolve is
+ * skipped rather than thrown, so the result may be smaller than the input.
  *
  * @param dataPath - Root data directory
  * @param uris - Array of URIs to resolve

@@ -3,7 +3,9 @@
 Comprehensive audit of every test gap in the tyvi test suite. Tests are organized by severity: what
 will actually cause bugs in real usage, not just theoretical coverage gaps.
 
-**Total: 340 tests passing. Many are tautological or happy-path only.**
+**This is the original audit snapshot, taken at 340 tests. The suite is now 392.** The counts and
+the priority table below are the snapshot's and have not been recomputed. All ten entries under
+"Tests to write first" have since landed; see the note there before working from this list.
 
 ---
 
@@ -356,6 +358,12 @@ These are the most dangerous because they involve contracts between modules that
 | Prune    | 9     | Remove — testing nothing meaningful             |
 
 ### Tests to write first (Critical)
+
+All ten now exist. Items 1 to 3 are `guards_test.ts:105`, `:131`, `:164`, `:200`, `:584`, `:632`,
+`:679`; item 4 is `config_test.ts:154` and `:171`; item 5 is `devspace_test.ts:625`; items 7 to 9
+are `devspace_test.ts:771` onward, `:848` onward, `:673` and `:691`; items 6 and 10 are
+`relationships_test.ts`. Item 5's assertion is guarded by `if (inventory)` and that branch is never
+taken, so it still does not check what it names.
 
 1. Shell script syntax validation (`bash -n`, `fish -n` on generated scripts)
 2. Shell script functional test (blocks git in blocked dir, allows in lab/root)

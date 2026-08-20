@@ -1,6 +1,6 @@
 /**
  * @module
- * Core library for devspace orchestration, people computation, and context management.
+ * Core library for devspace orchestration, people computation, memory systems, and context resolution.
  *
  * tyvi manages multi-repo devspaces through declarative config files.
  * Define your repositories in inventory.toml files, organize them by namespace,
