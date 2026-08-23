@@ -1,6 +1,6 @@
 {
   "name": "@hiisi/tyvi",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Core library for devspace orchestration, people computation, memory systems, and context resolution.",
   "license": "MPL-2.0",
   "exports": "./mod.ts",
