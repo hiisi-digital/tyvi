@@ -5,15 +5,19 @@
  * and file organization problems.
  */
 
-import { report, viola, when } from "jsr:@hiisi/viola@^0.3.0";
-import defaultLints from "jsr:@hiisi/viola-default-lints@^0.3.0";
-import tsGrammar from "jsr:@hiisi/viola-grammar-ts@^0.3.0";
+import { report, viola, when } from "jsr:@hiisi/viola@^0.3.1";
+import defaultLints from "jsr:@hiisi/viola-default-lints@^0.3.1";
+import tsGrammar from "jsr:@hiisi/viola-grammar-ts@^0.3.1";
 
 export default viola()
   .add(tsGrammar).as("ts")
   .use(defaultLints)
-  // Suppress all lint issues in test files and fixtures
-  .rule(report.off, when.in("tests/**"))
+  // anything a linter has any confidence in at all is a failure. without
+  // this the gate reports and never refuses.
+  .rule(report.error, when.confidence.atLeast(1))
+  // tests are held to the same bar as source. they were off entirely.
+  .rule(report.error, when.in("tests/**"))
+  // fixtures meant to be wrong are the one exception
   .rule(report.off, when.in("**/fixtures/**"))
   // Suppress duplicate-strings for shell/template generation files
   .rule(
