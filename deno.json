@@ -32,7 +32,7 @@
     "test": "deno test --allow-read --allow-write --allow-run --allow-env",
     "check": "deno check mod.ts",
     "lint:viola": "deno run --allow-read --allow-write --allow-env --allow-run --allow-net jsr:@hiisi/viola-cli@^0.3.0",
-    "lint": "deno run -A --min-dep-age=0 jsr:@hiisi/viola-cli@^0.3.1 --project . --include src,mod.ts"
+    "lint": "deno run -A --min-dep-age=0 jsr:@hiisi/viola-cli@^0.3.1 --project . --include ."
   },
   "lint": {
     "rules": {
